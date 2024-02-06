@@ -9,3 +9,10 @@
 6. กมลรัตน์ แซ่บุญ 660610737
 
 https://archiash.notion.site/archiash/Project-CPP-952f912e54c345b7a3d771a66bc813d2
+>> Useful Library <<
+Json
+https://github.com/nlohmann/json?tab=readme-ov-file#examples
+Walnut GUI
+https://github.com/StudioCherno/Walnut
+MicroTex
+https://github.com/NanoMichael/MicroTeX
