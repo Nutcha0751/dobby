@@ -11,6 +11,7 @@ using namespace std;
 std::vector<string> equations;
 static void DeleteEquation(int index) {
 	equations.erase(equations.begin() + index);
+	
 }
 
 class ExampleLayer : public Walnut::Layer
