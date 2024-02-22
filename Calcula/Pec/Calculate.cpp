@@ -21,8 +21,10 @@ double Calculate(string problem)
             {
                 i++;
                 string subProblem = "";
-                while (oparation[i] != ')')
-                {
+                int subParenthesis = 0;
+                while (oparation[i] != ')' || subParenthesis > 0) {
+                    if (oparation[i] == '(') subParenthesis++;
+                    if (oparation[i] == ')') subParenthesis--;
                     subProblem += oparation[i];
                     i++;
                 }
