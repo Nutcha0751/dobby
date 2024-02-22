@@ -9,6 +9,9 @@
 using namespace std;
 
 std::vector<string> equations;
+static void DeleteEquation(int index) {
+	equations.erase(equations.begin() + index);
+}
 
 class ExampleLayer : public Walnut::Layer
 {
@@ -24,12 +27,11 @@ public:
 
 	virtual void OnUIRender() override
 	{
-		
 		ImGui::Begin("Hello");
 		ImDrawList* background = ImGui::GetWindowDrawList();
 		ImVec2 screen = ImGui::GetCursorScreenPos();
 		ImVec2 screenSize = ImGui::GetIO().DisplaySize;
-		background->AddImage(image->GetDescriptorSet(), screen, ImVec2(screen.x + screenSize.x, screenSize.y + screen.y), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), ImColor(255,255,255,100));
+		//background->AddImage(image->GetDescriptorSet(), screen, ImVec2(screen.x + screenSize.x, screenSize.y + screen.y), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), ImColor(255,255,255,100));
 		ImGui::Text("");
 		ImGui::Columns(3, "MyLayout", false);
 		ImGui::SetColumnWidth(0, (float)screenSize.x * 0.01);
@@ -37,7 +39,6 @@ public:
 		ImGui::SetColumnWidth(1, (float)screenSize.x * 0.39);
 		ImGui::Text("Equations List");
 		for (int i = 0; i < equations.size(); i++) {
-			ImGui::BeginHorizontal(5);
 			if (ImGui::Button(equations[i].c_str(), ImVec2((float)screenSize.x * 0.3, 30)))
 			{
 				menu = 2;
@@ -50,17 +51,19 @@ public:
 					variable[var[i]] = 0;
 				}
 				resultValue = "";
-			};
-			if (ImGui::Button("X", ImVec2(50, 30))) {
-				equations.erase(equations.begin() + i);
 			}
-			ImGui::EndHorizontal();
+			ImGui::SameLine();
+			ImGui::PushID(i);
+			if (ImGui::Button("X", ImVec2(50, 30))) {
+				DeleteEquation(i);
+				EquationManager::SaveEquations(equations);
+			}
+			ImGui::PopID();
 		}
 		if (ImGui::Button("+", ImVec2((float)screenSize.x * 0.3, 30)))
 		{
 			menu = 1;
-		};
-			
+		}			
 		ImGui::NextColumn();
 		ImGui::SetColumnWidth(2, (float)screenSize.x * 0.6);
 		if (menu == 1) {
@@ -100,9 +103,8 @@ Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
 
 	Walnut::Application* app = new Walnut::Application(spec);
 	app->PushLayer<ExampleLayer>();
-	equations = EquationManager::LoadEquations();
 	app->SetMenubarCallback([app]()
-	{/*
+	{
 		if (ImGui::BeginMenu("File"))
 		{
 			if (ImGui::MenuItem("Exit"))
@@ -123,7 +125,7 @@ Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
 				EquationManager::SaveEquations(equations);
 			}
 			ImGui::EndMenu();
-		}*/
+		}
 	});
 	return app;
 }
