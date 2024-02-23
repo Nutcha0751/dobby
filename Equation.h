@@ -10,9 +10,20 @@ class RectilinearMotion {
 
     public:
         string fomula = "v = s / t";
-        string description = "use to find velocity";
+        string description = "Use to find velocity";
         string tag = "Motion";
-        // string eq2 = "s = v * t";
-        // string description = "use to find displacement";
-        // string tag = "Motion";
 };
+
+class Area {
+    private:
+       string AreaOfCricle = "A"; //พื้นที่วงกลม
+       string Radius = "r"; //รัศมี
+       string Pi = "3.14"; //ค่าPi
+    
+    public:
+       string fomula = "Pi * r * r";
+       string description = "Use to find AreaOfCricle";
+       string tag = "Area";
+};
+
+
