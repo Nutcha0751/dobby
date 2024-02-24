@@ -33,6 +33,16 @@ double Function(string func, double value)
     else if (func == "cot" || func == "cotan" || func == "cotangent") result = 1.0L / tan(value * M_PI / 180.0L);
     else if (func == "ln") result = log(value);
     else if (func == "log") result = log10(value);
+    else if (func == "arcsin" || func == "asin") result = asin(value) * 180.0L / M_PI;
+    else if (func == "arccos" || func == "acos") result = acos(value) * 180.0L / M_PI;
+    else if (func == "arctan" || func == "atan") result = atan(value) * 180.0L / M_PI;
+    else if (func == "arcsec" || func == "asec") result = acos(1.0L / value) * 180.0L / M_PI;
+    else if (func == "arccsc" || func == "acsc") result = asin(1.0L / value) * 180.0L / M_PI;
+    else if (func == "arccot" || func == "acot") { 
+        result = atan(1.0L / value);
+        if (value < 0) result += M_PI;   
+        result *=  180.0L / M_PI;
+    }
     return sign * result;
 }
 double Calculate(string problem, string function = "")
@@ -76,8 +86,10 @@ double Calculate(string problem, string function = "")
         {
             if (alphabet.size() > 0)
             {
-                if (alphabet[0] == '-' && (alphabet[1] >= '0' && alphabet[1] <= '9')) {
-                    numList.push_back(stod(alphabet));
+                if (alphabet[0] == '-') {
+                    int i = 1;
+                    while (alphabet[i] == '-') i++;
+                    numList.push_back(pow(-1, i) * stod(alphabet.substr(i)));
                 }
                 else if (alphabet[0] >= '0' && alphabet[0] <= '9')
                     numList.push_back(stod(alphabet));
