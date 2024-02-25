@@ -8,6 +8,8 @@ namespace Pec {
 	{
 		public:
 			string formula;
+			string description;
+			string tag;
 
 	};
 
