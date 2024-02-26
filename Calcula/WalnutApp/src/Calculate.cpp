@@ -86,15 +86,28 @@ double Calculate(string problem, string function = "")
             if (alphabet.size() > 0)
             {
                 if (alphabet[0] == '-') {
-                    int i = 1;
-                    while (alphabet[i] == '-') i++;
-                    numList.push_back(pow(-1, i) * stod(alphabet.substr(i)));
+                    if (alphabet.size() == 1) {
+                        oparationList.push_back("+");
+                    }
+                    else {
+                        int i = 1;
+                        while (alphabet[i] == '-') i++;
+                        numList.push_back(pow(-1, i) * stod(alphabet.substr(i)));
+                        alphabet = "";
+                    }
                 }
-                else if (alphabet[0] >= '0' && alphabet[0] <= '9')
+                else if (alphabet[0] >= '0' && alphabet[0] <= '9') 
+                {
                     numList.push_back(stod(alphabet));
-                else
+                    alphabet = "";
+                }
+                 
+                else 
+                {
                     oparationList.push_back(alphabet);
-                alphabet = "";
+                    alphabet = "";
+                }
+                
             }
         }
     }
