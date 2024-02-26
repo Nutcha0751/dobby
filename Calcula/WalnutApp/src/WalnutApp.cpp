@@ -22,9 +22,9 @@ public:
 	string resultValue;
 	string resultVariable;
 	int menu = 0;
-	//float PX;
-	//float PY;
-	//float R;
+	float PX;
+	float PY;
+	float R;
 	virtual void OnAttach() {
 		image = std::make_shared<Walnut::Image>("GR.jpg");
 	}
