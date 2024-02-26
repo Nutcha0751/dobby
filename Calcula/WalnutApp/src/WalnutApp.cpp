@@ -90,6 +90,19 @@ public:
 			}
 			resultValue = "";
 		}
+		if (ImGui::Button("v = i * r", ImVec2((float)screenSize.x * 0.3, 30))) //default function 2
+		{
+			menu = 2;
+			S = "v = i * r";
+			variable.clear();
+
+			vector<string> var = GetInputVariablesList(S);
+			resultVariable = var[0];
+			for (int i = 1; i < var.size(); i++) {
+				variable[var[i]] = 0;
+			}
+			resultValue = "";
+		}
 		
 
 		if (ImGui::Button("+", ImVec2((float)screenSize.x * 0.3, 30)))
