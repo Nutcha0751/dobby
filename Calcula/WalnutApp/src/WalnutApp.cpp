@@ -59,8 +59,9 @@ public:
 		//background->AddImage(image->GetDescriptorSet(), screen, ImVec2(screen.x + screenSize.x, screenSize.y + screen.y), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), ImColor(255,255,255,100));
 		ImGui::Text("");
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); //black color
-		ImGui::SliderFloat("P.X", &PX,-900,900);
-		ImGui::SliderFloat("P.Y", &PY, -300, 300);
+		//ImGui::SliderFloat("P.X", &PX,-900,900);
+		//ImGui::SliderFloat("P.Y", &PY, -300, 300);
+		
 		ImGui::SliderFloat("R", &R,1,5);
 		ImGui::Columns(3, "MyLayout", false);
 		ImGui::SetColumnWidth(0, (float)screenSize.x * 0.01);
@@ -128,19 +129,32 @@ public:
 		}
 
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
-		if (ImGui::Button("+", ImVec2((float)screenSize.x * k, 30)))
+		
+		if (ImGui::Button("s = v * t", ImVec2((float)screenSize.x * 0.3, 30))) //default function 1
+		{
+			menu = 2;
+			S = "s = v * t";
+			variable.clear();
+
+			vector<string> var = GetInputVariablesList(S);
+			resultVariable = var[0];
+			for (int i = 1; i < var.size(); i++) {
+				variable[var[i]] = 0;
+			}
+			resultValue = "";
+		}
+		
+
+		if (ImGui::Button("+", ImVec2((float)screenSize.x * 0.3, 30)))
 		{
 			menu = 1;
 		}			
-		if (ImGui::IsItemHovered()) {
-			if(k < 0.32f) k += 0.02f * ImGui::GetIO().DeltaTime;
-		}
-		else k = 0.3f;
+
 		ImGui::NextColumn();
 		ImGui::SetColumnWidth(2, (float)screenSize.x * 0.6);
 		if (menu == 1) {
 			ImGui::Text("Input Equation");
-			ImGui::InputText("##", inputEquation, 255);
+			ImGui::InputText("##InputEquation", inputEquation, 255);
 			if (ImGui::Button("Add")) {
 				if (inputEquation[0] != '\0') {
 					equations.push_back(inputEquation);
@@ -148,7 +162,20 @@ public:
 					inputEquation[0] = '\0';
 				}
 			}
+			ImGui::Text("Description of Equation");
+			ImGui::InputText("##InputDesc", inputDescription, 255);
+			if (ImGui::Button("Add Description")) {
+				if (inputDescription[0] != '\0') {
+					//equations.push_back(inputDescription);
+					//DescriptionManager::SaveDescription(description);
+					//inputDescription[0] = '\0';
+				}
+			}
+		
 		}
+
+
+
 		else if (menu == 2) {
 			ImGui::Text(("Equation: " + S).c_str());
 			for (auto i = variable.begin(); i != variable.end(); i++) {
@@ -159,12 +186,16 @@ public:
 				if (S != "") resultValue = to_string(CalcualteEquation(S, variable));
 			}
 		}
+
+
 		ImGui::PopStyleColor();
 		ImGui::End();
 	}
 private:
 	char inputEquation[255];
 	unordered_map<string, double> variable;
+	char inputDescription[255];
+	unordered_map<string, double> description;
 };
 
 Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
@@ -200,3 +231,8 @@ Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
 	});
 	return app;
 }
+
+
+
+
+
