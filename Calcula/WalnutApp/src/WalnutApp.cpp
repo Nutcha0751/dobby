@@ -31,12 +31,12 @@ public:
 
 	virtual void OnUIRender() override
 	{
-		ImGui::Begin("Hello");
+		ImGui::Begin("Dobby's Calculation");
 		ImDrawList* background = ImGui::GetWindowDrawList();
 		ImVec2 screen = ImGui::GetCursorScreenPos();
 		ImVec2 screenSize = ImGui::GetIO().DisplaySize;
-		background->AddRectFilledMultiColor(screen, ImVec2(screen.x + screenSize.x, screenSize.y / 2 + screen.y), ImColor(64, 103, 158, 255), ImColor(64, 103, 158, 255), ImColor(255, 255, 255, 255), ImColor(255, 255, 255, 255));
-		background->AddRectFilledMultiColor(ImVec2(screen.x, screenSize.y / 2 + screen.y), ImVec2(screen.x + screenSize.x, screenSize.y + screen.y), ImColor(255, 255, 255, 255), ImColor(255, 255, 255, 255), ImColor(64, 103, 158, 255), ImColor(64, 103, 158, 255));
+		background->AddRectFilledMultiColor(screen, ImVec2(screen.x + screenSize.x, screenSize.y / 2 + screen.y), ImColor(255, 255, 204, 255), ImColor(255, 255, 204, 255), ImColor(255, 255, 255, 255), ImColor(255, 255, 255, 255));
+		background->AddRectFilledMultiColor(ImVec2(screen.x, screenSize.y / 2 + screen.y), ImVec2(screen.x + screenSize.x, screenSize.y + screen.y), ImColor(255, 255, 255, 255), ImColor(255, 255, 255, 255), ImColor(255, 229, 204, 255), ImColor(255, 229, 204, 255));
 		background->AddCircleFilled(ImVec2(screen.x + screenSize.x / 2 + PX, screenSize.y / 2 + screen.y + PY), R, ImColor(255, 0, 0, 255));
 		//background->AddImage(image->GetDescriptorSet(), screen, ImVec2(screen.x + screenSize.x, screenSize.y + screen.y), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), ImColor(255,255,255,100));
 		ImGui::Text("");
@@ -90,7 +90,7 @@ public:
 		else if (menu == 2) {
 			ImGui::Text(("Equation: " + S).c_str());
 			for (auto i = variable.begin(); i != variable.end(); i++) {
-				ImGui::InputFloat(i->first.c_str(), &i->second);
+				ImGui::InputDouble(i->first.c_str(), &i->second);
 			}
 			ImGui::Text((resultVariable + " = " + resultValue).c_str());
 			if (ImGui::Button("Calculate")) {
@@ -103,7 +103,7 @@ public:
 	}
 private:
 	char inputEquation[255];
-	unordered_map<string, float> variable;
+	unordered_map<string, double> variable;
 };
 
 Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
