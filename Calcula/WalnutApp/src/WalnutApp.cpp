@@ -40,9 +40,9 @@ public:
 		//background->AddImage(image->GetDescriptorSet(), screen, ImVec2(screen.x + screenSize.x, screenSize.y + screen.y), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), ImColor(255,255,255,100));
 		ImGui::Text("");
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); //black color
-		ImGui::SliderFloat("P.X", &PX,-900,900);
+		/*ImGui::SliderFloat("P.X", &PX,-900,900);
 		ImGui::SliderFloat("P.Y", &PY, -300, 300);
-		ImGui::SliderFloat("R", &R,0,1000);
+		ImGui::SliderFloat("R", &R,0,1000);*/
 		ImGui::Columns(3, "MyLayout", false);
 		ImGui::SetColumnWidth(0, (float)screenSize.x * 0.01);
 		ImGui::NextColumn();
@@ -127,6 +127,15 @@ public:
 		ImGui::SetColumnWidth(2, (float)screenSize.x * 0.6);
 		if (menu == 1) {
 			ImGui::Text("Input Equation");
+			ImGui::InputText("##", inputEquation, 255);
+			if (ImGui::Button("Add")) {
+				if (inputEquation[0] != '\0') {
+					equations.push_back(inputEquation);
+					EquationManager::SaveEquations(equations);
+					inputEquation[0] = '\0';
+				}
+			}
+			ImGui::Text("Description of Equation");
 			ImGui::InputText("##", inputEquation, 255);
 			if (ImGui::Button("Add")) {
 				if (inputEquation[0] != '\0') {
