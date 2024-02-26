@@ -9,6 +9,7 @@
 using namespace std;
 
 std::vector<string> equations;
+std::vector<string> description;
 static void DeleteEquation(int index) {
 	equations.erase(equations.begin() + index);
 }
@@ -21,9 +22,9 @@ public:
 	string resultValue;
 	string resultVariable;
 	int menu = 0;
-	/*float PX;
+	float PX;
 	float PY;
-	float R;*/
+	float R;
 	virtual void OnAttach() {
 
 	}
@@ -40,7 +41,7 @@ public:
 		//background->AddImage(image->GetDescriptorSet(), screen, ImVec2(screen.x + screenSize.x, screenSize.y + screen.y), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), ImColor(255,255,255,100));
 		ImGui::Text("");
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); //black color
-		/*ImGui::SliderFloat("P.X", &PX, -900, 900);
+		/*ImGui::SliderFloat("P.X", &PX,-900,900);
 		ImGui::SliderFloat("P.Y", &PY, -300, 300);
 		ImGui::SliderFloat("R", &R,0,1000);*/
 		ImGui::Columns(3, "MyLayout", false);
@@ -74,9 +75,10 @@ public:
 			ImGui::PopID();
 			ImGui::PopStyleColor();
 		}
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.647f, 0.0f, 0.5f)); //change button orange color
+
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
-		if (ImGui::Button("s = v * t", ImVec2((float)screenSize.x * 0.3, 30)))
+		
+		if (ImGui::Button("s = v * t", ImVec2((float)screenSize.x * 0.3, 30))) //default function 1
 		{
 			menu = 2;
 			S = "s = v * t";
@@ -108,6 +110,15 @@ public:
 					inputEquation[0] = '\0';
 				}
 			}
+			ImGui::Text("Description of Equation");
+			ImGui::InputText("##", inputDescription, 255);
+			if (ImGui::Button("Add Description")) {
+				if (inputDescription[0] != '\0') {
+					equations.push_back(inputDescription);
+					DescriptionManager::SaveDescription(description);
+					inputDescription[0] = '\0';
+				}
+			}
 		}
 		else if (menu == 2) {
 			ImGui::Text(("Equation: " + S).c_str());
@@ -120,17 +131,7 @@ public:
 			}
 		}
 
-		// Create a textbox
-		//let textbox = gui.TextBox(size: (200, 30));
-		//textbox.position = (50, 50);
 
-		// Add the textbox to the window
-		//window.add(textbox);
-
-		// Show the window
-		//window.show();
-
-		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
 		ImGui::End();
 
@@ -138,6 +139,8 @@ public:
 	}
 private:
 	char inputEquation[255];
+	unordered_map<string, double> variable;
+	char inputDescription[255];
 	unordered_map<string, double> variable;
 };
 
