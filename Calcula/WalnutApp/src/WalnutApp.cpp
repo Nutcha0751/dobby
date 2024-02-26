@@ -76,7 +76,8 @@ public:
 		}
 
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
-		if (ImGui::Button("s = v * t", ImVec2((float)screenSize.x * 0.3, 30)))
+		
+		if (ImGui::Button("s = v * t", ImVec2((float)screenSize.x * 0.3, 30))) //default function 1
 		{
 			menu = 2;
 			S = "s = v * t";
@@ -120,15 +121,6 @@ public:
 			}
 		}
 
-		// Create a textbox
-		//let textbox = gui.TextBox(size: (200, 30));
-		//textbox.position = (50, 50);
-
-		// Add the textbox to the window
-		//window.add(textbox);
-
-		// Show the window
-		//window.show();
 
 		ImGui::PopStyleColor();
 		ImGui::End();
