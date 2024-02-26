@@ -1,0 +1,107 @@
+﻿  EquationData.cpp
+  EquationManager.cpp
+D:\dobby\Calcula\WalnutApp\EquationManager.h(26,2): warning C4091: 'static ': ignored on left of 'EquationManager' when no variable is declared
+  (compiling source file 'EquationManager.cpp')
+  
+D:\dobby\Calcula\WalnutApp\EquationManager.h(22,21): warning C4018: '<': signed/unsigned mismatch
+  (compiling source file 'EquationManager.cpp')
+  
+  WalnutApp.cpp
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(37,21): error C2440: 'initializing': cannot convert from 'nullptr' to 'VkImage'
+  (compiling source file 'src/WalnutApp.cpp')
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(37,21):
+  A native nullptr can only be converted to bool or, using reinterpret_cast, to an integral type
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(37,11): error C2439: 'Walnut::Image::m_Image': member could not be initialized
+  (compiling source file 'src/WalnutApp.cpp')
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(37,11):
+  see declaration of 'Walnut::Image::m_Image'
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(38,29): error C2440: 'initializing': cannot convert from 'nullptr' to 'VkImageView'
+  (compiling source file 'src/WalnutApp.cpp')
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(38,29):
+  A native nullptr can only be converted to bool or, using reinterpret_cast, to an integral type
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(38,15): error C2439: 'Walnut::Image::m_ImageView': member could not be initialized
+  (compiling source file 'src/WalnutApp.cpp')
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(38,15):
+  see declaration of 'Walnut::Image::m_ImageView'
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(39,29): error C2440: 'initializing': cannot convert from 'nullptr' to 'VkDeviceMemory'
+  (compiling source file 'src/WalnutApp.cpp')
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(39,29):
+  A native nullptr can only be converted to bool or, using reinterpret_cast, to an integral type
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(39,18): error C2439: 'Walnut::Image::m_Memory': member could not be initialized
+  (compiling source file 'src/WalnutApp.cpp')
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(39,18):
+  see declaration of 'Walnut::Image::m_Memory'
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(40,25): error C2440: 'initializing': cannot convert from 'nullptr' to 'VkSampler'
+  (compiling source file 'src/WalnutApp.cpp')
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(40,25):
+  A native nullptr can only be converted to bool or, using reinterpret_cast, to an integral type
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(40,13): error C2439: 'Walnut::Image::m_Sampler': member could not be initialized
+  (compiling source file 'src/WalnutApp.cpp')
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(40,13):
+  see declaration of 'Walnut::Image::m_Sampler'
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(44,30): error C2440: 'initializing': cannot convert from 'nullptr' to 'VkBuffer'
+  (compiling source file 'src/WalnutApp.cpp')
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(44,30):
+  A native nullptr can only be converted to bool or, using reinterpret_cast, to an integral type
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(44,12): error C2439: 'Walnut::Image::m_StagingBuffer': member could not be initialized
+  (compiling source file 'src/WalnutApp.cpp')
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(44,12):
+  see declaration of 'Walnut::Image::m_StagingBuffer'
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(45,42): error C2440: 'initializing': cannot convert from 'nullptr' to 'VkDeviceMemory'
+  (compiling source file 'src/WalnutApp.cpp')
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(45,42):
+  A native nullptr can only be converted to bool or, using reinterpret_cast, to an integral type
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(45,18): error C2439: 'Walnut::Image::m_StagingBufferMemory': member could not be initialized
+  (compiling source file 'src/WalnutApp.cpp')
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(45,18):
+  see declaration of 'Walnut::Image::m_StagingBufferMemory'
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(49,37): error C2440: 'initializing': cannot convert from 'nullptr' to 'VkDescriptorSet'
+  (compiling source file 'src/WalnutApp.cpp')
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(49,37):
+  A native nullptr can only be converted to bool or, using reinterpret_cast, to an integral type
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(49,19): error C2439: 'Walnut::Image::m_DescriptorSet': member could not be initialized
+  (compiling source file 'src/WalnutApp.cpp')
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(49,19):
+  see declaration of 'Walnut::Image::m_DescriptorSet'
+  
+D:\dobby\Calcula\Pec\Calculate.cpp(54,23): warning C4018: '<': signed/unsigned mismatch
+  (compiling source file 'src/WalnutApp.cpp')
+  
+D:\dobby\Calcula\Pec\Calculate.cpp(182,23): warning C4018: '<': signed/unsigned mismatch
+  (compiling source file 'src/WalnutApp.cpp')
+  
+D:\dobby\Calcula\WalnutApp\EquationManager.h(26,2): warning C4091: 'static ': ignored on left of 'EquationManager' when no variable is declared
+  (compiling source file 'src/WalnutApp.cpp')
+  
+D:\dobby\Calcula\WalnutApp\EquationManager.h(22,21): warning C4018: '<': signed/unsigned mismatch
+  (compiling source file 'src/WalnutApp.cpp')
+  
+D:\dobby\Calcula\WalnutApp\src\WalnutApp.cpp(43,13): error C2664: 'void ImDrawList::AddImage(ImTextureID,const ImVec2 &,const ImVec2 &,const ImVec2 &,const ImVec2 &,ImU32)': cannot convert argument 1 from 'VkDescriptorSet' to 'ImTextureID'
+  D:\dobby\Calcula\WalnutApp\src\WalnutApp.cpp(43,47):
+  Conversion from integral type to pointer type requires reinterpret_cast, C-style cast or parenthesized function-style cast
+  D:\dobby\Calcula\Walnut\vendor\imgui\imgui.h(2690,21):
+  see declaration of 'ImDrawList::AddImage'
+  D:\dobby\Calcula\WalnutApp\src\WalnutApp.cpp(43,13):
+  while trying to match the argument list '(VkDescriptorSet, ImVec2, ImVec2)'
+  
+D:\dobby\Calcula\WalnutApp\src\WalnutApp.cpp(46,48): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+D:\dobby\Calcula\WalnutApp\src\WalnutApp.cpp(48,48): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+D:\dobby\Calcula\WalnutApp\src\WalnutApp.cpp(50,21): warning C4018: '<': signed/unsigned mismatch
+D:\dobby\Calcula\WalnutApp\src\WalnutApp.cpp(51,71): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+D:\dobby\Calcula\WalnutApp\src\WalnutApp.cpp(59,23): warning C4018: '<': signed/unsigned mismatch
+D:\dobby\Calcula\WalnutApp\src\WalnutApp.cpp(72,53): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+D:\dobby\Calcula\WalnutApp\src\WalnutApp.cpp(77,48): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  Generating Code...

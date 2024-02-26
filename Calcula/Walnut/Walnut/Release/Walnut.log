@@ -1,0 +1,101 @@
+﻿  Application.cpp
+  ImGuiBuild.cpp
+  Image.cpp
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(37,21): error C2440: 'initializing': cannot convert from 'nullptr' to 'VkImage'
+  (compiling source file 'src/Walnut/Image.cpp')
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(37,21):
+  A native nullptr can only be converted to bool or, using reinterpret_cast, to an integral type
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(37,11): error C2439: 'Walnut::Image::m_Image': member could not be initialized
+  (compiling source file 'src/Walnut/Image.cpp')
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(37,11):
+  see declaration of 'Walnut::Image::m_Image'
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(38,29): error C2440: 'initializing': cannot convert from 'nullptr' to 'VkImageView'
+  (compiling source file 'src/Walnut/Image.cpp')
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(38,29):
+  A native nullptr can only be converted to bool or, using reinterpret_cast, to an integral type
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(38,15): error C2439: 'Walnut::Image::m_ImageView': member could not be initialized
+  (compiling source file 'src/Walnut/Image.cpp')
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(38,15):
+  see declaration of 'Walnut::Image::m_ImageView'
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(39,29): error C2440: 'initializing': cannot convert from 'nullptr' to 'VkDeviceMemory'
+  (compiling source file 'src/Walnut/Image.cpp')
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(39,29):
+  A native nullptr can only be converted to bool or, using reinterpret_cast, to an integral type
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(39,18): error C2439: 'Walnut::Image::m_Memory': member could not be initialized
+  (compiling source file 'src/Walnut/Image.cpp')
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(39,18):
+  see declaration of 'Walnut::Image::m_Memory'
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(40,25): error C2440: 'initializing': cannot convert from 'nullptr' to 'VkSampler'
+  (compiling source file 'src/Walnut/Image.cpp')
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(40,25):
+  A native nullptr can only be converted to bool or, using reinterpret_cast, to an integral type
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(40,13): error C2439: 'Walnut::Image::m_Sampler': member could not be initialized
+  (compiling source file 'src/Walnut/Image.cpp')
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(40,13):
+  see declaration of 'Walnut::Image::m_Sampler'
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(44,30): error C2440: 'initializing': cannot convert from 'nullptr' to 'VkBuffer'
+  (compiling source file 'src/Walnut/Image.cpp')
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(44,30):
+  A native nullptr can only be converted to bool or, using reinterpret_cast, to an integral type
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(44,12): error C2439: 'Walnut::Image::m_StagingBuffer': member could not be initialized
+  (compiling source file 'src/Walnut/Image.cpp')
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(44,12):
+  see declaration of 'Walnut::Image::m_StagingBuffer'
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(45,42): error C2440: 'initializing': cannot convert from 'nullptr' to 'VkDeviceMemory'
+  (compiling source file 'src/Walnut/Image.cpp')
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(45,42):
+  A native nullptr can only be converted to bool or, using reinterpret_cast, to an integral type
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(45,18): error C2439: 'Walnut::Image::m_StagingBufferMemory': member could not be initialized
+  (compiling source file 'src/Walnut/Image.cpp')
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(45,18):
+  see declaration of 'Walnut::Image::m_StagingBufferMemory'
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(49,37): error C2440: 'initializing': cannot convert from 'nullptr' to 'VkDescriptorSet'
+  (compiling source file 'src/Walnut/Image.cpp')
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(49,37):
+  A native nullptr can only be converted to bool or, using reinterpret_cast, to an integral type
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(49,19): error C2439: 'Walnut::Image::m_DescriptorSet': member could not be initialized
+  (compiling source file 'src/Walnut/Image.cpp')
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.h(49,19):
+  see declaration of 'Walnut::Image::m_DescriptorSet'
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.cpp(176,15): error C2440: '=': cannot convert from 'nullptr' to 'VkSampler'
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.cpp(176,15):
+  A native nullptr can only be converted to bool or, using reinterpret_cast, to an integral type
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.cpp(177,17): error C2440: '=': cannot convert from 'nullptr' to 'VkImageView'
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.cpp(177,17):
+  A native nullptr can only be converted to bool or, using reinterpret_cast, to an integral type
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.cpp(178,13): error C2440: '=': cannot convert from 'nullptr' to 'VkImage'
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.cpp(178,13):
+  A native nullptr can only be converted to bool or, using reinterpret_cast, to an integral type
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.cpp(179,14): error C2440: '=': cannot convert from 'nullptr' to 'VkDeviceMemory'
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.cpp(179,14):
+  A native nullptr can only be converted to bool or, using reinterpret_cast, to an integral type
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.cpp(180,21): error C2440: '=': cannot convert from 'nullptr' to 'VkBuffer'
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.cpp(180,21):
+  A native nullptr can only be converted to bool or, using reinterpret_cast, to an integral type
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.cpp(181,27): error C2440: '=': cannot convert from 'nullptr' to 'VkDeviceMemory'
+  D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.cpp(181,27):
+  A native nullptr can only be converted to bool or, using reinterpret_cast, to an integral type
+  
+D:\dobby\Calcula\Walnut\Walnut\src\Walnut\Image.cpp(205,24): warning C4244: '=': conversion from 'VkDeviceSize' to 'size_t', possible loss of data
+  Input.cpp
+  Random.cpp
+  Generating Code...
