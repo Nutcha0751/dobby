@@ -109,6 +109,15 @@ public:
 					inputEquation[0] = '\0';
 				}
 			}
+			ImGui::Text("Description of Equation");
+			ImGui::InputText("##", inputEquation, 255);
+			if (ImGui::Button("Add")) {
+				if (inputEquation[0] != '\0') {
+					equations.push_back(inputEquation);
+					EquationManager::SaveEquations(equations);
+					inputEquation[0] = '\0';
+				}
+			}
 		}
 		else if (menu == 2) {
 			ImGui::Text(("Equation: " + S).c_str());
