@@ -76,10 +76,26 @@ public:
 		}
 
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
+		if (ImGui::Button("s = v * t", ImVec2((float)screenSize.x * 0.3, 30)))
+		{
+			menu = 2;
+			S = "s = v * t";
+			variable.clear();
+
+			vector<string> var = GetInputVariablesList(S);
+			resultVariable = var[0];
+			for (int i = 1; i < var.size(); i++) {
+				variable[var[i]] = 0;
+			}
+			resultValue = "";
+		}
+		
+
 		if (ImGui::Button("+", ImVec2((float)screenSize.x * 0.3, 30)))
 		{
 			menu = 1;
 		}			
+
 		ImGui::NextColumn();
 		ImGui::SetColumnWidth(2, (float)screenSize.x * 0.6);
 		if (menu == 1) {
@@ -103,6 +119,17 @@ public:
 				if (S != "") resultValue = to_string(CalcualteEquation(S, variable));
 			}
 		}
+
+		// Create a textbox
+		//let textbox = gui.TextBox(size: (200, 30));
+		//textbox.position = (50, 50);
+
+		// Add the textbox to the window
+		//window.add(textbox);
+
+		// Show the window
+		//window.show();
+
 		ImGui::PopStyleColor();
 		ImGui::End();
 
@@ -146,3 +173,8 @@ Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
 	});
 	return app;
 }
+
+
+
+
+
