@@ -3,24 +3,36 @@
 #include "vector"
 #include "string"
 #include "cstdlib"
-static class EquationManager
-{
+using namespace std;
+
+static class EquationManager {
 public:
-	static std::vector<std::string> LoadEquations() {
-		std::ifstream file("equation.txt");
-		std::vector<std::string> equations;
-		std::string equation;
-		while (getline(file, equation)) {
-			equations.push_back(equation);
+	static vector<string> LoadEquations() {
+		ifstream file("equation.txt");
+		vector<string> equations;
+		string formula;
+		string description;
+		string tag;
+		while (getline(file, formula, ',') && getline(file, description, ',') && getline(file, tag)) {
+			equations.push_back(formula);
+			equations.push_back(description);
+			equations.push_back(tag);
 		}
 		return equations;
 	}
 
-	static void SaveEquations(std::vector<std::string> & equations) {
-		std::ofstream file;
+	static void SaveEquations(vector<string>& formula, vector<string>& description, vector<string>& tag) {
+		ofstream file;
 		file.open("equation.txt");
-		for (int i = 0; i < equations.size(); i++) {
-			file << equations[i] << std::endl;
+		for (int i = 0; i < formula.size(); i++) {
+			file << "Formula: " << formula[i] << endl;
+			if (i < description.size()) {
+				file << "Description: " << description[i] << endl;
+			}
+			if (i < tag.size()) {
+				file << "Tag: " << tag[i] << endl;
+			}
+			file << endl << endl;
 		}
 	}
 };
