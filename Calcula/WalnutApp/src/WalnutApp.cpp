@@ -21,9 +21,9 @@ public:
 	string resultValue;
 	string resultVariable;
 	int menu = 0;
-	float PX;
+	/*float PX;
 	float PY;
-	float R;
+	float R;*/
 	virtual void OnAttach() {
 
 	}
@@ -40,9 +40,9 @@ public:
 		//background->AddImage(image->GetDescriptorSet(), screen, ImVec2(screen.x + screenSize.x, screenSize.y + screen.y), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), ImColor(255,255,255,100));
 		ImGui::Text("");
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); //black color
-		ImGui::SliderFloat("P.X", &PX,-900,900);
+		/*ImGui::SliderFloat("P.X", &PX, -900, 900);
 		ImGui::SliderFloat("P.Y", &PY, -300, 300);
-		ImGui::SliderFloat("R", &R,0,1000);
+		ImGui::SliderFloat("R", &R,0,1000);*/
 		ImGui::Columns(3, "MyLayout", false);
 		ImGui::SetColumnWidth(0, (float)screenSize.x * 0.01);
 		ImGui::NextColumn();
@@ -74,7 +74,7 @@ public:
 			ImGui::PopID();
 			ImGui::PopStyleColor();
 		}
-
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.647f, 0.0f, 0.5f)); //change button orange color
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
 		if (ImGui::Button("s = v * t", ImVec2((float)screenSize.x * 0.3, 30)))
 		{
@@ -130,6 +130,7 @@ public:
 		// Show the window
 		//window.show();
 
+		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
 		ImGui::End();
 
