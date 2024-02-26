@@ -9,7 +9,7 @@
 using namespace std;
 
 std::vector<string> equations;
-std::vector<string> description;
+//std::vector<string> description;
 static void DeleteEquation(int index) {
 	equations.erase(equations.begin() + index);
 }
@@ -110,16 +110,17 @@ public:
 					inputEquation[0] = '\0';
 				}
 			}
-			ImGui::Text("Description of Equation");
-			ImGui::InputText("##", inputDescription, 255);
-			if (ImGui::Button("Add Description")) {
-				if (inputDescription[0] != '\0') {
-					equations.push_back(inputDescription);
-					DescriptionManager::SaveDescription(description);
-					inputDescription[0] = '\0';
-				}
-			}
 		}
+		/*ImGui::Text("Description of Equation");
+		ImGui::InputText("##", inputDescription, 255);
+		if (ImGui::Button("Add Description")) {
+			if (inputDescription[0] != '\0') {
+				equations.push_back(inputDescription);
+				DescriptionManager::SaveDescription(description);
+				inputDescription[0] = '\0';
+			}
+		}*/
+
 		else if (menu == 2) {
 			ImGui::Text(("Equation: " + S).c_str());
 			for (auto i = variable.begin(); i != variable.end(); i++) {
@@ -140,8 +141,8 @@ public:
 private:
 	char inputEquation[255];
 	unordered_map<string, double> variable;
-	char inputDescription[255];
-	unordered_map<string, double> variable;
+	/*char inputDescription[255];
+	unordered_map<string, double> variable;*/
 };
 
 Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
