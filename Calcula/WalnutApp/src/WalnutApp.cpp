@@ -11,7 +11,6 @@ using namespace std;
 std::vector<string> equations;
 static void DeleteEquation(int index) {
 	equations.erase(equations.begin() + index);
-	
 }
 
 class ExampleLayer : public Walnut::Layer
@@ -26,7 +25,7 @@ public:
 	float PY;
 	float R;
 	virtual void OnAttach() {
-		image = std::make_shared<Walnut::Image>("GR.jpg");
+
 	}
 
 	virtual void OnUIRender() override
