@@ -62,7 +62,7 @@ public:
 		//ImGui::SliderFloat("P.X", &PX,-900,900);
 		//ImGui::SliderFloat("P.Y", &PY, -300, 300);
 		
-		ImGui::PushStyleColor(ImGuiCol_SliderGrab, ImVec4(1.0f, 1.0f, 1.0f, 1.0f)); //change orange button
+		ImGui::PushStyleColor(ImGuiCol_SliderGrab, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); //change black button
 		ImGui::SliderFloat("R", &R,1,5);
 		ImGui::PopStyleColor();
 
