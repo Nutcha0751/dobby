@@ -90,10 +90,23 @@ public:
 			}
 			resultValue = "";
 		}
-		if (ImGui::Button("v = i * r", ImVec2((float)screenSize.x * 0.3, 30))) //default function 2
+		if (ImGui::Button("s = u + v * t", ImVec2((float)screenSize.x * 0.3, 30))) //default function 2
 		{
 			menu = 2;
-			S = "v = i * r";
+			S = "s = u + v * t";
+			variable.clear();
+
+			vector<string> var = GetInputVariablesList(S);
+			resultVariable = var[0];
+			for (int i = 1; i < var.size(); i++) {
+				variable[var[i]] = 0;
+			}
+			resultValue = "";
+		}
+		if (ImGui::Button("F = m * x + b", ImVec2((float)screenSize.x * 0.3, 30))) //default function 3 
+		{
+			menu = 2;
+			S = "F = m * x + b";
 			variable.clear();
 
 			vector<string> var = GetInputVariablesList(S);
