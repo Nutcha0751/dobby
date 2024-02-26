@@ -9,6 +9,7 @@
 using namespace std;
 
 std::vector<string> equations;
+std::vector<string> description;
 static void DeleteEquation(int index) {
 	equations.erase(equations.begin() + index);
 }
@@ -110,12 +111,12 @@ public:
 				}
 			}
 			ImGui::Text("Description of Equation");
-			ImGui::InputText("##", inputEquation, 255);
-			if (ImGui::Button("Add")) {
-				if (inputEquation[0] != '\0') {
-					equations.push_back(inputEquation);
-					EquationManager::SaveEquations(equations);
-					inputEquation[0] = '\0';
+			ImGui::InputText("##", inputDescription, 255);
+			if (ImGui::Button("Add Description")) {
+				if (inputDescription[0] != '\0') {
+					equations.push_back(inputDescription);
+					DescriptionManager::SaveDescription(description);
+					inputDescription[0] = '\0';
 				}
 			}
 		}
@@ -138,6 +139,8 @@ public:
 	}
 private:
 	char inputEquation[255];
+	unordered_map<string, double> variable;
+	char inputDescription[255];
 	unordered_map<string, double> variable;
 };
 
