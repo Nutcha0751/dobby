@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "DAWG59jQDsytpYHqLISkL/BGXKLbTSXjSxnHB+9vkrOyZPi+IgWslbYybOCWWZ52RmyKJOIUfNUqa4qzg4B7cA==",
+  "success": true,
+  "projectFilePath": "D:\\dobby\\LaTex\\LaTex\\LaTex.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Archiash\\.nuget\\packages\\wpfmath\\2.1.0\\wpfmath.2.1.0.nupkg.sha512",
+    "C:\\Users\\Archiash\\.nuget\\packages\\xamlmath.shared\\2.1.0\\xamlmath.shared.2.1.0.nupkg.sha512"
+  ],
+  "logs": []
+}
