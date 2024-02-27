@@ -214,7 +214,7 @@ public:
 		ImGui::NextColumn();
 		ImGui::SetColumnWidth(3, (float)screenSize.x * C3/100);
 		if (menu == 1) {
-			Red += ImGui::GetIO().DeltaTime * 0.3;s
+			Red += ImGui::GetIO().DeltaTime * 0.3;
 			Green += ImGui::GetIO().DeltaTime * 0.3;
 			Blue += ImGui::GetIO().DeltaTime * 0.5;
 			ImGui::PushStyleColor(ImGuiCol_TextDisabled, ImVec4(Red, Green, Blue, 255)); // Enter Equation color
@@ -272,9 +272,9 @@ public:
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.4f, 0.5f, 0.8f, 1.0f));
 		
-			for (int i = 0; i < equations.size(); i++)
+	
 				if (ImGui::Button("DELETE", ImVec2(100, 30))) {
-				DeleteEquation(i);
+				DeleteEquation(edit_index);
 				EquationManager::SaveEquations(equations);
 				inputDescription[0] = '\0';
 				menu = 0;
