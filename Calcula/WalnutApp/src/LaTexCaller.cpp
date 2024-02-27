@@ -8,11 +8,14 @@ static unsigned Hashing(const std::string& name) {
 	return hasher(name);
 }
 
-static void GenarateImage(const std::string& formula, const std::string& fileName) {
+static int GenarateImage(const std::string& formula, const std::string& fileName) {
+	cout << formula << endl;
 	string fl = "\"" + formula + "\"";
 	string fn = " \"" + fileName + ".png\"";
 	string command = "LaTex\\LaTex.exe " + fl + fn + " \"0\" \"Amagro\"";
-	system(command.c_str());
+	int k = system(command.c_str());
+	cout << k << endl;
+	return k;
 }
 
 static string ToLaTexFormat(const std::string& formula) {

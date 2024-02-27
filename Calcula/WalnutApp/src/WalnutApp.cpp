@@ -37,8 +37,18 @@ public:
 			return buttonImage[id];
 		}
 		else if(!CheckFile(filename)) {
-			GenarateImage(ToLaTexFormat(equation), to_string(id));
+			try {
+				if (GenarateImage(ToLaTexFormat(equation), to_string(id)) == 2) {
+					cout << "Error\n";
+					throw(2);
+				}
+			}
+			catch (int x)
+			{
+				 isLaTexUsable = false;
+			}
 		}
+		cout << "Error Out\n";
 		buttonImage[id] = make_shared<Walnut::Image>(filename);
 		return buttonImage[id];
 	}
@@ -229,8 +239,8 @@ public:
 private:
 	char inputEquation[255];
 	unordered_map<string, double> variable;
-	/*char inputDescription[255];
-	unordered_map<string, double> description;*/
+	char inputDescription[255];
+	unordered_map<string, double> description;
 };
 
 Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
