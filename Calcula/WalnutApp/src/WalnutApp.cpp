@@ -163,14 +163,14 @@ public:
 				}
 			}
 			ImGui::Text("Description of Equation");
-			ImGui::InputText("##InputDesc", inputDescription, 255);
-			if (ImGui::Button("Add Description")) {
-				if (inputDescription[0] != '\0') {
-					//equations.push_back(inputDescription);
-					//DescriptionManager::SaveDescription(description);
-					//inputDescription[0] = '\0';
-				}
-			}
+			/*ImGui::InputText("##InputDesc", inputDescription, 255);*/
+			//if (ImGui::Button("Add Description")) {
+			//	if (inputDescription[0] != '\0') {
+			//		//equations.push_back(inputDescription);
+			//		//DescriptionManager::SaveDescription(description);
+			//		//inputDescription[0] = '\0';
+			//	}
+			//}
 		
 		}
 
@@ -194,8 +194,8 @@ public:
 private:
 	char inputEquation[255];
 	unordered_map<string, double> variable;
-	char inputDescription[255];
-	unordered_map<string, double> description;
+	/*char inputDescription[255];
+	unordered_map<string, double> description;*/
 };
 
 Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
