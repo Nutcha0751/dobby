@@ -1,1 +1,2 @@
-u = k + g,lovr
+v = s * k,sleep well
+L = M * N * O,

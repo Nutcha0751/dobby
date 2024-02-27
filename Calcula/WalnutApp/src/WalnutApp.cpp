@@ -93,6 +93,9 @@ public:
 		ImGui::Text("Equations List");
 		ImGui::PopStyleColor(); //finish change taxt color
 
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.5f, 0.8f, 1.0f)); //change blue button
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
+
 		for (int i = 0; i < equations.size(); i++) {
 			if (isLaTexUsable && equations[i].getFormula() != "") {
 				auto img = GetImage(equations[i].getFormula());
@@ -150,9 +153,6 @@ public:
 			}
 
 		}
-
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.5f, 0.8f, 1.0f)); //change blue button
-		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
 		
 		if (ImGui::Button("s = v * t", ImVec2((float)screenSize.x * 0.3, 30))) //default function 1
 		{
@@ -219,9 +219,6 @@ public:
 			
 
 		}
-
-
-
 		else if (menu == 2) {
 			ImGui::Text(("Equation: " + S).c_str());
 			for (auto i = variable.begin(); i != variable.end(); i++) {
