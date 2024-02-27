@@ -202,7 +202,7 @@ public:
 			Red += ImGui::GetIO().DeltaTime * 0.3;
 			Green += ImGui::GetIO().DeltaTime * 0.3;
 			Blue += ImGui::GetIO().DeltaTime * 0.5;
-			ImGui::PushStyleColor(ImGuiCol_TextDisabled, ImVec4(Red, Green, Blue, 255));
+			ImGui::PushStyleColor(ImGuiCol_TextDisabled, ImVec4(Red, Green, Blue, 255)); // Enter Equation color
 			//ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(Red, Green, Blue, 255));
 			ImGui::Text("Input Equation");
 			ImGui::InputTextWithHint("##InputEquation", "Enter Equation", inputEquation, 255);
