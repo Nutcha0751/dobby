@@ -86,15 +86,28 @@ double Calculate(string problem, string function = "")
             if (alphabet.size() > 0)
             {
                 if (alphabet[0] == '-') {
-                    int i = 1;
-                    while (alphabet[i] == '-') i++;
-                    numList.push_back(pow(-1, i) * stod(alphabet.substr(i)));
+                    if (alphabet.size() == 1) {
+                        oparationList.push_back("+");
+                    }
+                    else {
+                        int i = 1;
+                        while (alphabet[i] == '-') i++;
+                        numList.push_back(pow(-1, i) * stod(alphabet.substr(i)));
+                        alphabet = "";
+                    }
                 }
-                else if (alphabet[0] >= '0' && alphabet[0] <= '9')
+                else if (alphabet[0] >= '0' && alphabet[0] <= '9') 
+                {
                     numList.push_back(stod(alphabet));
-                else
+                    alphabet = "";
+                }
+                 
+                else 
+                {
                     oparationList.push_back(alphabet);
-                alphabet = "";
+                    alphabet = "";
+                }
+                
             }
         }
     }
@@ -109,19 +122,22 @@ double Calculate(string problem, string function = "")
             oparationList.erase(oparationList.begin() + i);
         }
     }
+    for (int i = oparationList.size() - 1; i >= 0; i--)
+    {
+        if (oparationList[i] == "/")
+        {
+            double op = numList[i] / numList[i + 1];
+            numList[i] = op;
+            numList.erase(numList.begin() + i + 1);
+            oparationList.erase(oparationList.begin() + i);
+        }
+    }
 
     for (int i = oparationList.size() - 1; i >= 0; i--)
     {
         if (oparationList[i] == "*")
         {
             double op = numList[i] * numList[i + 1];
-            numList[i] = op;
-            numList.erase(numList.begin() + i + 1);
-            oparationList.erase(oparationList.begin() + i);
-        }
-        else if (oparationList[i] == "/")
-        {
-            double op = numList[i] / numList[i + 1];
             numList[i] = op;
             numList.erase(numList.begin() + i + 1);
             oparationList.erase(oparationList.begin() + i);
@@ -153,9 +169,10 @@ static vector<string> GetInputVariablesList(string formula)
 {
     vector<string> variables;
     string var = "";
-    for (auto i : formula)
+    for (int k = 0; k < formula.size(); k++)
     {
-        if ((i >= 'a' && i <= 'z') || (i >= 'A' && i <= 'Z'))
+        char i = formula[k];
+        if ((i >= 'a' && i <= 'z') || (i >= 'A' && i <= 'Z') || i == '_')
         {
             var += i;
         }
@@ -164,13 +181,19 @@ static vector<string> GetInputVariablesList(string formula)
         }
         if (i == ' ' || i == '+' || i == '-' || i == '*' || i == '/' || i == '^' || i == ')')
         {
-            if (var != "")
-                variables.push_back(var);
+            if (var != "") {
+                if (var != "c_e" && var != "c_pi") {
+                    variables.push_back(var);
+                }
+            }
             var = "";
         }
     }
-    if (var != "")
-        variables.push_back(var);
+    if (var != "") {
+        if (var != "c_e" && var != "c_pi") {
+            variables.push_back(var);
+        }
+    }
     return variables;
 }
 
@@ -181,7 +204,7 @@ static double CalcualteEquation(string formula, unordered_map<string, double> va
     cout << formula << endl;
     for (int i = 0; i < formula.size(); i++)
     {
-        if ((formula[i] >= 'a' && formula[i] <= 'z') || (formula[i] >= 'A' && formula[i] <= 'Z'))
+        if ((formula[i] >= 'a' && formula[i] <= 'z') || (formula[i] >= 'A' && formula[i] <= 'Z') || formula[i] == '_')
         {
             var += formula[i];
         }
@@ -193,7 +216,9 @@ static double CalcualteEquation(string formula, unordered_map<string, double> va
             if (var != "")
             {
                 cout << var << endl;
-                formula.replace(i - var.size(), var.size(), to_string(variables[var]));
+                if(var == "c_e") formula.replace(i - var.size(), var.size(), to_string(M_E));
+                else if (var == "c_pi") formula.replace(i - var.size(), var.size(), to_string(M_PI));
+                else formula.replace(i - var.size(), var.size(), to_string(variables[var]));
                 cout << formula << endl;
             }
             var = "";
@@ -202,7 +227,9 @@ static double CalcualteEquation(string formula, unordered_map<string, double> va
     if (var != "")
     {
         cout << var << endl;
-        formula.replace(formula.size() - var.size(), var.size(), to_string(variables[var]));
+        if (var == "c_e") formula.replace(formula.size() - var.size(), var.size(), to_string(M_E));
+        else if (var == "c_pi") formula.replace(formula.size() - var.size(), var.size(), to_string(M_PI));
+        else formula.replace(formula.size() - var.size(), var.size(), to_string(variables[var]));
         cout << formula << endl;
     }
     double value = Calculate(formula);
