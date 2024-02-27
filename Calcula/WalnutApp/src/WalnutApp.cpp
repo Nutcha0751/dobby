@@ -218,7 +218,9 @@ public:
 		else if (menu == 2) {
 			ImGui::Text(("Equation: " + S).c_str());
 			for (auto i = variable.begin(); i != variable.end(); i++) {
-				ImGui::InputDouble(i->first.c_str(), &i->second);
+					ImGui::Text(i->first.c_str());
+					ImGui::SameLine();
+					ImGui::InputDouble(("##" + i->first).c_str(), &i->second);
 			}
 			ImGui::Text((resultVariable + " = " + resultValue).c_str());
 			if (ImGui::Button("Calculate")) {
