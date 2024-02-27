@@ -206,6 +206,8 @@ public:
 
 		if (ImGui::Button("+", ImVec2((float)screenSize.x * 0.3, 30)))
 		{
+			inputEquation[0] = '\0';
+			inputDescription[0] = '\0';
 			menu = 1;
 		}			
 
@@ -266,6 +268,7 @@ public:
 					EquationManager::SaveEquations(equations);//เพิ่มสมการที่ผู้ใช้กรอกเข้าไปใหม่
 					equations.push_back(EquationData(inputEquation, inputDescription));
 					EquationManager::SaveEquations(equations);
+					menu = 0;
 				}
 			}
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.5f, 0.8f, 1.0f));
