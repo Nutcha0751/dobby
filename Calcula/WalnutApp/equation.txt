@@ -1,2 +1,5 @@
-v = s * k,sleep well
-L = M * N * O,
+A = 1+2,
+A = j+k,
+A = k l,
+A = k / 0,
+2 = 3 + 4 + 5 + 6,
