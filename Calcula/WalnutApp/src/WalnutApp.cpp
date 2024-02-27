@@ -272,9 +272,9 @@ public:
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.4f, 0.5f, 0.8f, 1.0f));
 		
-			for (int i = 0; i < equations.size(); i++)
+	
 				if (ImGui::Button("DELETE", ImVec2(100, 30))) {
-				DeleteEquation(i);
+				DeleteEquation(edit_index);
 				EquationManager::SaveEquations(equations);
 				inputDescription[0] = '\0';
 				menu = 0;
