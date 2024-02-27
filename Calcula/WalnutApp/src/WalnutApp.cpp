@@ -10,7 +10,11 @@
 using namespace std;
 
 std::vector<string> equations;
+std::vector<string> desc;
 bool isLaTexUsable = false;
+float Red = 0;
+float Green = 0;
+float Blue = 0;
 
 static void DeleteEquation(int index) {
 	equations.erase(equations.begin() + index);
@@ -28,6 +32,8 @@ public:
 	float PY;
 	float k = 0.3;
 	float R = 1;
+
+
 	unordered_map<unsigned, std::shared_ptr<Walnut::Image>> buttonImage;
 
 	std::shared_ptr<Walnut::Image> GetImage(string equation) {
@@ -57,7 +63,7 @@ public:
 		background->AddRectFilledMultiColor(ImVec2(screen.x, screenSize.y / 2 + screen.y), ImVec2(screen.x + screenSize.x, screenSize.y + screen.y), ImColor(255, 255, 255, 255), ImColor(255, 255, 255, 255), ImColor(255, 229, 204, 255), ImColor(255, 229, 204, 255));
 		//background->AddCircleFilled(ImVec2(screen.x + screenSize.x / 2 + PX, screenSize.y / 2 + screen.y + PY), R, ImColor(255, 0, 0, 255));
 		background->AddImage(image->GetDescriptorSet(), screen, ImVec2(screen.x + screenSize.x, screenSize.y + screen.y));
-		string backgroundImageFile = "PK.jpg";
+		//string backgroundImageFile = "PK.jpg";
 		
 		ImGui::Text("");
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); //text black color
@@ -65,7 +71,7 @@ public:
 		//ImGui::SliderFloat("P.Y", &PY, -300, 300);
 		
 		ImGui::PushStyleColor(ImGuiCol_SliderGrab, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); //change black button
-		//ImGui::SliderFloat("R", &R,1,5);
+		ImGui::SliderFloat("R", &R,1,5);
 		ImGui::PopStyleColor();
 
 		ImGui::Columns(3, "MyLayout", false);
@@ -100,7 +106,7 @@ public:
 				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
 				if (ImGui::Button("X", ImVec2(50, height + 20))) {
 					DeleteEquation(i);
-					EquationManager::SaveEquations(equations);
+					EquationManager::SaveEquations(equations, desc);
 				}
 				ImGui::PopID();
 				ImGui::PopStyleColor();
@@ -125,7 +131,7 @@ public:
 				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
 				if (ImGui::Button("X", ImVec2(50, 30))) {
 					DeleteEquation(i);
-					EquationManager::SaveEquations(equations);
+					EquationManager::SaveEquations(equations, desc);
 				}
 				ImGui::PopID();
 				ImGui::PopStyleColor();
@@ -133,7 +139,7 @@ public:
 
 		}
 
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.647f, 0.0f, 0.5f)); //change orange button
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.5f, 0.8f, 1.0f)); //change blue button
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
 		
 		if (ImGui::Button("s = v * t", ImVec2((float)screenSize.x * 0.3, 30))) //default function 1
@@ -183,18 +189,23 @@ public:
 		}			
 
 		ImGui::NextColumn();
-		ImGui::SetColumnWidth(2, (float)screenSize.x * 0.6);
+		ImGui::SetColumnWidth(2, (float)screenSize.x * 0.6); 
 		if (menu == 1) {
-			ImGui::PushStyleColor(ImGuiCol_TextDisabled, IM_COL32(0, 255, 0, 255));
+			Red += ImGui::GetIO().DeltaTime * 0.3;
+			Green += ImGui::GetIO().DeltaTime * 0.3;
+			Blue += ImGui::GetIO().DeltaTime * 0.5;
+			ImGui::PushStyleColor(ImGuiCol_TextDisabled, ImVec4(Red, Green, Blue, 255));
+			//ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(Red, Green, Blue, 255));
 			ImGui::Text("Input Equation");
 			ImGui::InputTextWithHint("##InputEquation", "Enter Equation", inputEquation, 255);
 			if (ImGui::Button("Add")) {
 				if (inputEquation[0] != '\0') {
 					equations.push_back(inputEquation);
-					EquationManager::SaveEquations(equations);
+					EquationManager::SaveEquations(equations, desc);
 					inputEquation[0] = '\0';
 				}
 			}
+			//ImGui::PopStyleColor();
 			ImGui::PopStyleColor();
 			ImGui::Text("Description of Equation");
 			/*ImGui::InputText("##InputDesc", inputDescription, 255);*/
@@ -211,6 +222,9 @@ public:
 
 
 		else if (menu == 2) {
+			Red = 0;
+			Green = 0;
+			Blue = 0;
 			ImGui::Text(("Equation: " + S).c_str());
 			for (auto i = variable.begin(); i != variable.end(); i++) {
 				ImGui::InputDouble(i->first.c_str(), &i->second);
@@ -229,8 +243,8 @@ public:
 private:
 	char inputEquation[255];
 	unordered_map<string, double> variable;
-	/*char inputDescription[255];
-	unordered_map<string, double> description;*/
+	//char inputDescription[255];
+	//unordered_map<string, double> description;
 };
 
 Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
@@ -259,7 +273,7 @@ Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
 			}
 			if (ImGui::MenuItem("Save"))
 			{
-				EquationManager::SaveEquations(equations);
+				EquationManager::SaveEquations(equations, desc);
 			}
 			ImGui::EndMenu();
 		}
