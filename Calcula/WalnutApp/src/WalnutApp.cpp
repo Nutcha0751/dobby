@@ -55,8 +55,10 @@ public:
 		ImVec2 screenSize = ImGui::GetWindowViewport()->Size;
 		background->AddRectFilledMultiColor(screen, ImVec2(screen.x + screenSize.x, screenSize.y / 2 + screen.y), ImColor(255, 255, 204, 255), ImColor(255, 255, 204, 255), ImColor(255, 255, 255, 255), ImColor(255, 255, 255, 255));
 		background->AddRectFilledMultiColor(ImVec2(screen.x, screenSize.y / 2 + screen.y), ImVec2(screen.x + screenSize.x, screenSize.y + screen.y), ImColor(255, 255, 255, 255), ImColor(255, 255, 255, 255), ImColor(255, 229, 204, 255), ImColor(255, 229, 204, 255));
-		//background->AddCircleFilled(ImVec2(screen.x + screenSize.x / 2 + PX, screenSize.y / 2 + screen.y + PY), R, ImColor(255, 0, 0, 255));
-		//background->AddImage(image->GetDescriptorSet(), screen, ImVec2(screen.x + screenSize.x, screenSize.y + screen.y), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), ImColor(255,255,255,100));
+		/*
+		background->AddCircleFilled(ImVec2(screen.x + screenSize.x / 2 + PX, screenSize.y / 2 + screen.y + PY), R, ImColor(255, 0, 0, 255));
+		background->AddImage(image->GetDescriptorSet(), screen, ImVec2(screen.x + screenSize.x, screenSize.y + screen.y), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), ImColor(255,255,255,100));
+		*/		
 		ImGui::Text("");
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); //black color
 		//ImGui::SliderFloat("P.X", &PX,-900,900);
@@ -153,8 +155,9 @@ public:
 		ImGui::NextColumn();
 		ImGui::SetColumnWidth(2, (float)screenSize.x * 0.6);
 		if (menu == 1) {
+			ImGui::PushStyleColor(ImGuiCol_TextDisabled, IM_COL32(0, 255, 0, 255));
 			ImGui::Text("Input Equation");
-			ImGui::InputText("##InputEquation", inputEquation, 255);
+			ImGui::InputTextWithHint("##InputEquation", "Enter Equation", inputEquation, 255);
 			if (ImGui::Button("Add")) {
 				if (inputEquation[0] != '\0') {
 					equations.push_back(inputEquation);
@@ -162,6 +165,7 @@ public:
 					inputEquation[0] = '\0';
 				}
 			}
+			ImGui::PopStyleColor();
 			ImGui::Text("Description of Equation");
 			ImGui::InputText("##InputDesc", inputDescription, 255);
 			if (ImGui::Button("Add Description")) {
