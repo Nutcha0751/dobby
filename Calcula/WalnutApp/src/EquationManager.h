@@ -27,7 +27,7 @@ public:
 			if (i < description.size()) {
 				file << "Description: " << description[i] << endl;
 			}
-			file << endl << endl;
+			file << endl;
 		}
 	}
 };
