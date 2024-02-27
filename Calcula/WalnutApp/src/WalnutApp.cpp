@@ -65,7 +65,7 @@ public:
 		//ImGui::SliderFloat("P.Y", &PY, -300, 300);
 		
 		ImGui::PushStyleColor(ImGuiCol_SliderGrab, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); //change black button
-		ImGui::SliderFloat("R", &R,1,5);
+		//ImGui::SliderFloat("R", &R,1,5);
 		ImGui::PopStyleColor();
 
 		ImGui::Columns(3, "MyLayout", false);
@@ -149,6 +149,32 @@ public:
 			}
 			resultValue = "";
 		}
+		if (ImGui::Button("s = u + a * t", ImVec2((float)screenSize.x * 0.3, 30))) //default function 1
+		{
+			menu = 2;
+			S = "s = u + a * t";
+			variable.clear();
+
+			vector<string> var = GetInputVariablesList(S);
+			resultVariable = var[0];
+			for (int i = 1; i < var.size(); i++) {
+				variable[var[i]] = 0;
+			}
+			resultValue = "";
+		}
+		if (ImGui::Button("f = m * x + b", ImVec2((float)screenSize.x * 0.3, 30))) //default function 1
+		{
+			menu = 2;
+			S = "f = m * x + b";
+			variable.clear();
+
+			vector<string> var = GetInputVariablesList(S);
+			resultVariable = var[0];
+			for (int i = 1; i < var.size(); i++) {
+				variable[var[i]] = 0;
+			}
+			resultValue = "";
+		}
 		
 
 		if (ImGui::Button("+", ImVec2((float)screenSize.x * 0.3, 30)))
@@ -169,14 +195,14 @@ public:
 				}
 			}
 			ImGui::Text("Description of Equation");
-			ImGui::InputText("##InputDesc", inputDescription, 255);
-			if (ImGui::Button("Add Description")) {
-				if (inputDescription[0] != '\0') {
-					//equations.push_back(inputDescription);
-					//DescriptionManager::SaveDescription(description);
-					//inputDescription[0] = '\0';
-				}
-			}
+			/*ImGui::InputText("##InputDesc", inputDescription, 255);*/
+			//if (ImGui::Button("Add Description")) {
+			//	if (inputDescription[0] != '\0') {
+			//		//equations.push_back(inputDescription);
+			//		//DescriptionManager::SaveDescription(description);
+			//		//inputDescription[0] = '\0';
+			//	}
+			//}
 		
 		}
 
@@ -201,8 +227,8 @@ public:
 private:
 	char inputEquation[255];
 	unordered_map<string, double> variable;
-	char inputDescription[255];
-	unordered_map<string, double> description;
+	/*char inputDescription[255];
+	unordered_map<string, double> description;*/
 };
 
 Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
