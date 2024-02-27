@@ -17,16 +17,16 @@ static void GenarateImage(const std::string& formula, const std::string& fileNam
 
 static string ToLaTexFormat(const std::string& formula) {
 	string result = formula;
-	int i = result.find("c_pi");
+	int i = result.find("c:pi");
 	while (i < result.size()) {
 		result.replace(i, 4, " \\pi ");
-		i = result.find("c_pi");
+		i = result.find("c:pi");
 	}
 
-	i = result.find("c_e");
+	i = result.find("c:e");
 	while (i < result.size()) {
 		result.replace(i, 3, " e ");
-		i = result.find("c_e");
+		i = result.find("c:e");
 	}
 
 	i = result.find("*");

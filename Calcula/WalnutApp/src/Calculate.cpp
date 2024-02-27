@@ -6,6 +6,7 @@
 #include <string>
 #include <unordered_map>
 using namespace std;
+
 void ToLowerCase(string &s)
 {
     string r = "";
@@ -15,7 +16,7 @@ void ToLowerCase(string &s)
     }
     s = r;
 }
-double Function(string func, double value)
+static double Function(string func, double value)
 {
     ToLowerCase(func);
     int sign = 1;
@@ -44,7 +45,7 @@ double Function(string func, double value)
     }
     return sign * result;
 }
-double Calculate(string problem, string function = "")
+static double Calculate(string problem, string function = "")
 {
     vector<string> oparationList;
     vector<double> numList;
@@ -164,7 +165,6 @@ double Calculate(string problem, string function = "")
 
     return Function(function, numList[0]);
 }
-
 static vector<string> GetInputVariablesList(string formula)
 {
     vector<string> variables;
@@ -172,7 +172,7 @@ static vector<string> GetInputVariablesList(string formula)
     for (int k = 0; k < formula.size(); k++)
     {
         char i = formula[k];
-        if ((i >= 'a' && i <= 'z') || (i >= 'A' && i <= 'Z') || i == '_')
+        if ((i >= 'a' && i <= 'z') || (i >= 'A' && i <= 'Z') || i == '_' || i == ':')
         {
             var += i;
         }
@@ -182,7 +182,7 @@ static vector<string> GetInputVariablesList(string formula)
         if (i == ' ' || i == '+' || i == '-' || i == '*' || i == '/' || i == '^' || i == ')')
         {
             if (var != "") {
-                if (var != "c_e" && var != "c_pi") {
+                if (var != "c:e" && var != "c:pi") {
                     variables.push_back(var);
                 }
             }
@@ -190,13 +190,12 @@ static vector<string> GetInputVariablesList(string formula)
         }
     }
     if (var != "") {
-        if (var != "c_e" && var != "c_pi") {
+        if (var != "c:e" && var != "c:pi") {
             variables.push_back(var);
         }
     }
     return variables;
 }
-
 static double CalcualteEquation(string formula, unordered_map<string, double> variables)
 {
     formula = formula.substr(formula.find("=") + 1);
@@ -204,7 +203,7 @@ static double CalcualteEquation(string formula, unordered_map<string, double> va
     cout << formula << endl;
     for (int i = 0; i < formula.size(); i++)
     {
-        if ((formula[i] >= 'a' && formula[i] <= 'z') || (formula[i] >= 'A' && formula[i] <= 'Z') || formula[i] == '_')
+        if ((formula[i] >= 'a' && formula[i] <= 'z') || (formula[i] >= 'A' && formula[i] <= 'Z') || formula[i] == '_' || formula[i] == ':')
         {
             var += formula[i];
         }
@@ -216,8 +215,8 @@ static double CalcualteEquation(string formula, unordered_map<string, double> va
             if (var != "")
             {
                 cout << var << endl;
-                if(var == "c_e") formula.replace(i - var.size(), var.size(), to_string(M_E));
-                else if (var == "c_pi") formula.replace(i - var.size(), var.size(), to_string(M_PI));
+                if(var == "c:e") formula.replace(i - var.size(), var.size(), to_string(M_E));
+                else if (var == "c:pi") formula.replace(i - var.size(), var.size(), to_string(M_PI));
                 else formula.replace(i - var.size(), var.size(), to_string(variables[var]));
                 cout << formula << endl;
             }
@@ -227,11 +226,15 @@ static double CalcualteEquation(string formula, unordered_map<string, double> va
     if (var != "")
     {
         cout << var << endl;
-        if (var == "c_e") formula.replace(formula.size() - var.size(), var.size(), to_string(M_E));
-        else if (var == "c_pi") formula.replace(formula.size() - var.size(), var.size(), to_string(M_PI));
+        if (var == "c:e") formula.replace(formula.size() - var.size(), var.size(), to_string(M_E));
+        else if (var == "c:pi") formula.replace(formula.size() - var.size(), var.size(), to_string(M_PI));
         else formula.replace(formula.size() - var.size(), var.size(), to_string(variables[var]));
         cout << formula << endl;
     }
     double value = Calculate(formula);
     return value;
 }
+/*
+unordered_map<string, double> constances { 
+    ("c:e", M_E), ("c:pi", M_PI)
+};*/
