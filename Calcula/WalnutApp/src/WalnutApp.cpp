@@ -3,7 +3,6 @@
 #include "Walnut/Image.h"
 #include "string"
 #include "unordered_map"
-
 #include "Calculate.cpp"
 #include "EquationManager.h"
 #include "LaTexCaller.cpp"
@@ -24,14 +23,17 @@ class ExampleLayer : public Walnut::Layer
 {
 public:
 	string S;
+	string D; //D stand for Description
 	std::shared_ptr<Walnut::Image> image;
 	string resultValue;
 	string resultVariable;
 	int menu = 0;
+	int edit_index;
 	float PX;
 	float PY;
 	float k = 0.3;
-	float R = 1;
+	float R = 2.25;
+	vector<int>List_idex;
 	unordered_map<unsigned, std::shared_ptr<Walnut::Image>> buttonImage;
 
 	float C0 = 6;
@@ -42,21 +44,19 @@ public:
 	std::shared_ptr<Walnut::Image> GetImage(string equation) {
 		unsigned id = Hashing(equation);
 		string filename = to_string(id) + ".png";
-		//cout << "Equation: " << equation << endl;
-		//cout << "Finding: " << filename;
 		if (buttonImage[id]) {
 			return buttonImage[id];
 		}
 		else if (!CheckFile(filename)) {
 			try {
 				if (GenarateImage(ToLaTexFormat(equation), to_string(id)) == 2) {
-					cout << "Error\n";
 					throw(2);
 				}
 			}
 			catch (int x)
 			{
 				isLaTexUsable = false;
+				return 0;
 			}
 		}
 
@@ -70,19 +70,19 @@ public:
 	
 	virtual void OnUIRender() override
 	{
-
-		//for (int i = 0; i < equations.size(); i++) cout << equations[i].getFormula() << endl;
 		ImGui::Begin("Dobby's Calculation");
-		ImDrawList* background = ImGui::GetWindowDrawList();
+
+		// Get Dobby's Calculation Window Pos and Size
 		ImVec2 screen = ImGui::GetWindowViewport()->Pos;
 		ImVec2 screenSize = ImGui::GetWindowViewport()->Size;
-		double yPos = screen.y + screenSize.y - 200;
-		background->AddRectFilledMultiColor(screen, ImVec2(screen.x + screenSize.x, screenSize.y / 2 + screen.y), ImColor(255, 255, 204, 255), ImColor(255, 255, 204, 255), ImColor(255, 255, 255, 255), ImColor(255, 255, 255, 255));
-		background->AddRectFilledMultiColor(ImVec2(screen.x, screenSize.y / 2 + screen.y), ImVec2(screen.x + screenSize.x, screenSize.y + screen.y), ImColor(255, 255, 255, 255), ImColor(255, 255, 255, 255), ImColor(255, 229, 204, 255), ImColor(255, 229, 204, 255));
-		//background->AddCircleFilled(ImVec2(screen.x + screenSize.x / 2 + PX, screenSize.y / 2 + screen.y + PY), R, ImColor(255, 0, 0, 255));
+
+		// Draw Background
+		ImDrawList* background = ImGui::GetWindowDrawList();
 		background->AddImage(image->GetDescriptorSet(), screen, ImVec2(screen.x + screenSize.x, screenSize.y + screen.y));
-		//string backgroundImageFile = "PK.jpg";
-		ImGui::Text("");
+		
+		ImGui::Text("##TopPadding");
+
+		// Set Main Color Theme of Application
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); //text black color
 		ImGui::SliderFloat("C0", &C0,0,100);
 		ImGui::SliderFloat("C1", &C1, 0, 100);
@@ -98,15 +98,11 @@ public:
 		ImGui::NextColumn();
 		ImGui::SetColumnWidth(1, (float)screenSize.x * C1 / 100);
 		ImGui::Text("Equations List");
-		ImGui::PopStyleColor(); //finish change taxt color
 
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.5f, 0.8f, 1.0f)); //change blue button
-		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
-
+		// Create List of Equation
 		for (int i = 0; i < equations.size(); i++) {
-			if (isLaTexUsable && equations[i].getFormula() != "") {
+			if (isLaTexUsable) {
 				auto img = GetImage(equations[i].getFormula());
-				//double width = img->GetWidth() * 50.0 / img->GetHeight();
 				double width = img->GetWidth() / (R + 2) ;
 				double height = img->GetHeight() / (R + 2);
 				float offsetX = ((float)screenSize.x * 0.3 - width) / 2.0;
@@ -114,6 +110,7 @@ public:
 				if (ImGui::ImageButton(img->GetDescriptorSet(), ImVec2(width, height), {0,0}, {1,1})) {
 					menu = 2;
 					S = equations[i].getFormula();
+					D = equations[i].getDescription();
 					variable.clear();
 					vector<string> var = GetInputVariablesList(S);
 					resultVariable = var[0];
@@ -128,6 +125,7 @@ public:
 				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
 				if (ImGui::Button("EDIT", ImVec2(50, height + 20))) {
 					menu = 3;
+					edit_index = i;
 				}
 				ImGui::PopID();
 				ImGui::PopStyleColor();
@@ -152,10 +150,8 @@ public:
 				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
 				if (ImGui::Button("EDIT", ImVec2(50, 30))) {
 					menu = 3;
+					edit_index = i;
 				}
-				/*if (ImGui::Button("EDIT", ImVec2(50, 30))) {
-					menu = 3;
-				}*/
 				ImGui::PopID();
 				ImGui::PopStyleColor();
 			}
@@ -200,8 +196,7 @@ public:
 				variable[var[i]] = 0;
 			}
 			resultValue = "";
-		}
-		
+		}	
 
 		if (ImGui::Button("+", ImVec2((float)screenSize.x * 0.3, 30)))
 		{
@@ -221,7 +216,7 @@ public:
 			ImGui::Text("Input Equation");
 			ImGui::InputTextWithHint("##InputEquation", "Enter Equation", inputEquation, 255);
 			ImGui::Text("Description of Equation");
-			ImGui::InputText("##InputDesc", inputDescription, 255);
+			ImGui::InputTextWithHint("##InputDesc", "Enter Description", inputDescription, 255);
 			if (ImGui::Button("Add")) {
 				if (inputEquation[0] != '\0') {
 					equations.push_back(EquationData(inputEquation, inputDescription));
@@ -234,17 +229,18 @@ public:
 
 		}
 		else if (menu == 2) {
-			ImGui::Text(("Equation: " + S).c_str());
-			for (auto i = variable.begin(); i != variable.end(); i++) {
-					ImGui::Text(i->first.c_str());
-					ImGui::SameLine();
-					ImGui::InputDouble(("##" + i->first).c_str(), &i->second);
+				ImGui::Text(("Equation: " + S).c_str());
+				for (auto i = variable.begin(); i != variable.end(); i++) {
+						ImGui::Text(i->first.c_str());
+						ImGui::SameLine();
+						ImGui::InputDouble(("##" + i->first).c_str(), &i->second);
+				}
+				ImGui::Text((resultVariable + " = " + resultValue).c_str());
+				if (ImGui::Button("Calculate")) {
+					if (S != "") resultValue = to_string(CalcualteEquation(S, variable));
+				}
+				ImGui::Text(("Description: " + D).c_str());
 			}
-			ImGui::Text((resultVariable + " = " + resultValue).c_str());
-			if (ImGui::Button("Calculate")) {
-				if (S != "") resultValue = to_string(CalcualteEquation(S, variable));
-			}
-		}
 
 		else if (menu == 3) {
 			ImGui::PushStyleColor(ImGuiCol_TextDisabled, IM_COL32(0, 255, 0, 255));
@@ -272,7 +268,7 @@ public:
 				if (ImGui::Button("DELETE", ImVec2(100, 30))) {
 				DeleteEquation(i);
 				EquationManager::SaveEquations(equations);
-
+				menu = 0;
 				}
 			ImGui::PopStyleColor(7);
 		}
@@ -320,8 +316,3 @@ Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
 	});
 	return app;
 }
-
-
-
-
-
