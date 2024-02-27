@@ -3,31 +3,31 @@
 #include "vector"
 #include "string"
 #include "cstdlib"
+#include "EquationData.h"
 using namespace std;
 
 static class EquationManager {
 public:
-	static vector<string> LoadEquations() {
+	static vector<EquationData> LoadEquations() {
 		ifstream file("equation.txt");
-		vector<string> equations;
+		vector<EquationData> equations;
+		string equation;
 		string formula;
 		string description;
-		while (getline(file, formula, ',') && getline(file, description, ',')) {
-			equations.push_back(formula);
-			//equations.push_back(description);
+		while (getline(file, equation) ){
+			sscanf(equation.c_str(), "%[^,],%[^,]", formula.c_str(), description.c_str());
+			cout << "Load " << formula.c_str() << "size: " << strlen(formula.c_str());
+			equations.push_back(EquationData(formula, description));
 		}
 		return equations;
 	}
 
-	static void SaveEquations(vector<string>& formula, vector<string>& description) {
+	static void SaveEquations(vector<EquationData>& equations) {
 		ofstream file;
 		file.open("equation.txt");
-		for (int i = 0; i < formula.size(); i++) {
-			file << "Formula: " << formula[i] << endl;
-			if (i < description.size()) {
-				file << "Description: " << description[i] << endl;
-			}
-			file << endl;
+		for (int i = 0; i < equations.size(); i++) {
+			cout << "Save " << equations[i].getFormula() << "size: " << equations[i].getFormula().size();
+			file <<  equations[i].getFormula() << "," << equations[i].getDescription() << endl;
 		}
 	}
 };
