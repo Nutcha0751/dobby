@@ -8,18 +8,17 @@ using namespace std;
 
 static class EquationManager {
 public:
-	static vector<EquationData> LoadEquations() {
+	static void LoadEquations(vector<EquationData>& equations) {
+		equations.clear();
 		ifstream file("equation.txt");
-		vector<EquationData> equations;
 		string equation;
 		string formula;
 		string description;
 		while (getline(file, equation) ){
 			sscanf(equation.c_str(), "%[^,],%[^,]", formula.c_str(), description.c_str());
 			cout << "Load " << formula.c_str() << "size: " << strlen(formula.c_str());
-			equations.push_back(EquationData(formula, description));
+			equations.push_back(EquationData(formula.c_str(), description.c_str()));
 		}
-		return equations;
 	}
 
 	static void SaveEquations(vector<EquationData>& equations) {
