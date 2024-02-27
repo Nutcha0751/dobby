@@ -141,10 +141,13 @@ public:
 				ImGui::SameLine();
 				ImGui::PushID(i);
 				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
-				if (ImGui::Button("X", ImVec2(50, 30))) {
+				if (ImGui::Button("EDIT", ImVec2(50, 30))) {
 					DeleteEquation(i);
 					EquationManager::SaveEquations(equations);
 				}
+				/*if (ImGui::Button("EDIT", ImVec2(50, 30))) {
+					menu = 3;
+				}*/
 				ImGui::PopID();
 				ImGui::PopStyleColor();
 			}
@@ -234,6 +237,26 @@ public:
 				if (S != "") resultValue = to_string(CalcualteEquation(S, variable));
 			}
 		}
+
+		/*else if (menu == 3) {
+			ImGui::PushStyleColor(ImGuiCol_TextDisabled, IM_COL32(0, 255, 0, 255));
+			ImGui::Text("Input Equation");
+			ImGui::InputTextWithHint("##InputEquation", "Enter Equation", inputEquation, 255);
+			ImGui::Text("Description of Equation");
+			ImGui::InputText("##InputDesc", inputDescription, 255);
+			if (ImGui::Button("Add")) {
+				if (inputEquation[0] != '\0') {
+					equations.push_back(EquationData(inputEquation, inputDescription));
+					EquationManager::SaveEquations(equations);
+					inputEquation[0] = '\0';
+				}
+			}
+			for (int i = 0; i < equations.size(); i++)
+				if (ImGui::Button("X", ImVec2(100, 30))) {
+				DeleteEquation(i);
+				EquationManager::SaveEquations(equations);
+				}
+		}*/
 
 
 		ImGui::PopStyleColor();
