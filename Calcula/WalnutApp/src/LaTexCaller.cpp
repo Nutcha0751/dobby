@@ -11,7 +11,7 @@ static unsigned Hashing(const std::string& name) {
 static void GenarateImage(const std::string& formula, const std::string& fileName) {
 	string fl = "\"" + formula + "\"";
 	string fn = " \"" + fileName + ".png\"";
-	string command = "LaTex\\LaTex.exe " + fl + fn + " \"0\" \"Amagro\"";
+	string command = "LaTex\\LaTex.exe " + fl + fn;
 	system(command.c_str());
 }
 
