@@ -1,2 +1,1 @@
-v = s / t
-\textit{v = s / t}
+v = s / t,
