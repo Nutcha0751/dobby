@@ -9,11 +9,10 @@ namespace Pec {
     private:
         string formula;
         string description;
-        string tag;
 
     public:
         EquationData(const string& _formula, const string& _description, const string& _tag)
-            : formula(_formula), description(_description), tag(_tag) {}
+            : formula(_formula), description(_description) {}
 
         // Setter functions
         void setFormula(const string& _formula) {
@@ -24,10 +23,6 @@ namespace Pec {
             description = _description;
         }
 
-        void setTag(const string& _tag) {
-            tag = _tag;
-        }
-
         // Getter functions
         string getFormula() const {
             return formula;
@@ -35,10 +30,6 @@ namespace Pec {
 
         string getDescription() const {
             return description;
-        }
-
-        string getTag() const {
-            return tag;
         }
     };
 

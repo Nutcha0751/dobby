@@ -185,8 +185,9 @@ public:
 		ImGui::NextColumn();
 		ImGui::SetColumnWidth(2, (float)screenSize.x * 0.6);
 		if (menu == 1) {
+			ImGui::PushStyleColor(ImGuiCol_TextDisabled, IM_COL32(0, 255, 0, 255));
 			ImGui::Text("Input Equation");
-			ImGui::InputText("##InputEquation", inputEquation, 255);
+			ImGui::InputTextWithHint("##InputEquation", "Enter Equation", inputEquation, 255);
 			if (ImGui::Button("Add")) {
 				if (inputEquation[0] != '\0') {
 					equations.push_back(inputEquation);
@@ -194,6 +195,7 @@ public:
 					inputEquation[0] = '\0';
 				}
 			}
+			ImGui::PopStyleColor();
 			ImGui::Text("Description of Equation");
 			/*ImGui::InputText("##InputDesc", inputDescription, 255);*/
 			//if (ImGui::Button("Add Description")) {
