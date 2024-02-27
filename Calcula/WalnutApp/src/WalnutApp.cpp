@@ -25,10 +25,12 @@ class ExampleLayer : public Walnut::Layer
 {
 public:
 	string S;
+	string D; //D stand for Description
 	std::shared_ptr<Walnut::Image> image;
 	string resultValue;
 	string resultVariable;
 	int menu = 0;
+	int edit_index;
 	float PX;
 	float PY;
 	float k = 0.3;
@@ -121,6 +123,7 @@ public:
 				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
 				if (ImGui::Button("EDIT", ImVec2(50, height + 20))) {
 					menu = 3;
+					edit_index = i;
 				}
 				ImGui::PopID();
 				ImGui::PopStyleColor();
@@ -145,6 +148,7 @@ public:
 				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
 				if (ImGui::Button("EDIT", ImVec2(50, 30))) {
 					menu = 3;
+					edit_index = i;
 				}
 				/*if (ImGui::Button("EDIT", ImVec2(50, 30))) {
 					menu = 3;
@@ -208,7 +212,7 @@ public:
 			ImGui::Text("Input Equation");
 			ImGui::InputTextWithHint("##InputEquation", "Enter Equation", inputEquation, 255);
 			ImGui::Text("Description of Equation");
-			ImGui::InputText("##InputDesc", inputDescription, 255);
+			ImGui::InputTextWithHint("##InputDesc", "Enter Description", inputDescription, 255);
 			if (ImGui::Button("Add")) {
 				if (inputEquation[0] != '\0') {
 					equations.push_back(EquationData(inputEquation, inputDescription));
@@ -231,6 +235,7 @@ public:
 			if (ImGui::Button("Calculate")) {
 				if (S != "") resultValue = to_string(CalcualteEquation(S, variable));
 			}
+			/*ImGui::Text(("Description: " + S).c_str());*/
 		}
 
 		else if (menu == 3) {
@@ -246,10 +251,10 @@ public:
 					inputEquation[0] = '\0';
 				}
 			}
-			for (int i = 0; i < equations.size(); i++)
-				if (ImGui::Button("DELETE", ImVec2(100, 30))) {
-				DeleteEquation(i);
+			if (ImGui::Button("DELETE", ImVec2(100, 30))) {
+				DeleteEquation(edit_index);
 				EquationManager::SaveEquations(equations);
+				menu = 0;
 				}
 			ImGui::PopStyleColor();
 		}
