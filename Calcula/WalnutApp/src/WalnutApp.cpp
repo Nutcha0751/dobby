@@ -84,14 +84,13 @@ public:
 
 		// Set Main Color Theme of Application
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); //text black color
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.5f, 0.8f, 1.0f)); //button color
 		ImGui::SliderFloat("C0", &C0,0,100);
 		ImGui::SliderFloat("C1", &C1, 0, 100);
 		ImGui::SliderFloat("C2", &C2, 0, 100);
 		ImGui::SliderFloat("C3", &C3, 0, 100);
 		
-		ImGui::PushStyleColor(ImGuiCol_SliderGrab, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); //change black button
 		ImGui::SliderFloat("R", &R,1,5);
-		ImGui::PopStyleColor();
 
 		ImGui::Columns(4, "MyLayout", false);
 		ImGui::SetColumnWidth(0, (float)screenSize.x * C0 / 100);
