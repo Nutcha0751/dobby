@@ -13,6 +13,10 @@ using namespace std;
 std::vector<EquationData> equations;
 bool isLaTexUsable = false;
 
+float Red = 0;
+float Green = 0;
+float Blue = 0;
+
 static void DeleteEquation(int index) {
 	equations.erase(equations.begin() + index);
 }
@@ -34,10 +38,12 @@ public:
 	std::shared_ptr<Walnut::Image> GetImage(string equation) {
 		unsigned id = Hashing(equation);
 		string filename = to_string(id) + ".png";
+		cout << "Equation: " << equation << endl;
+		cout << "Finding: " << filename;
 		if (buttonImage[id]) {
 			return buttonImage[id];
 		}
-		else if(!CheckFile(filename)) {
+		else if (!CheckFile(filename)) {
 			try {
 				if (GenarateImage(ToLaTexFormat(equation), to_string(id)) == 2) {
 					cout << "Error\n";
@@ -46,10 +52,10 @@ public:
 			}
 			catch (int x)
 			{
-				 isLaTexUsable = false;
+				isLaTexUsable = false;
 			}
 		}
-		cout << "Error Out\n";
+
 		buttonImage[id] = make_shared<Walnut::Image>(filename);
 		return buttonImage[id];
 	}
@@ -60,6 +66,7 @@ public:
 
 	virtual void OnUIRender() override
 	{
+		for (int i = 0; i < equations.size(); i++) cout << equations[i].getFormula() << endl;
 		ImGui::Begin("Dobby's Calculation");
 		ImDrawList* background = ImGui::GetWindowDrawList();
 		ImVec2 screen = ImGui::GetWindowViewport()->Pos;
@@ -87,7 +94,7 @@ public:
 		ImGui::PopStyleColor(); //finish change taxt color
 
 		for (int i = 0; i < equations.size(); i++) {
-			if (isLaTexUsable) {
+			if (isLaTexUsable && equations[i].getFormula() != "") {
 				auto img = GetImage(equations[i].getFormula());
 				//double width = img->GetWidth() * 50.0 / img->GetHeight();
 				double width = img->GetWidth() / (R + 2) ;
@@ -259,7 +266,7 @@ Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
 		if (ImGui::BeginMenu("Equation")) {
 			if (ImGui::MenuItem("Load"))
 			{
-				equations = EquationManager::LoadEquations();
+				EquationManager::LoadEquations(equations);
 			}
 			if (ImGui::MenuItem("Save"))
 			{
