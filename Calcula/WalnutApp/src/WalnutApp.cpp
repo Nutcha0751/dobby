@@ -214,7 +214,7 @@ public:
 		ImGui::NextColumn();
 		ImGui::SetColumnWidth(3, (float)screenSize.x * C3/100);
 		if (menu == 1) {
-			Red += ImGui::GetIO().DeltaTime * 0.3;
+			Red += ImGui::GetIO().DeltaTime * 0.3;s
 			Green += ImGui::GetIO().DeltaTime * 0.3;
 			Blue += ImGui::GetIO().DeltaTime * 0.5;
 			ImGui::PushStyleColor(ImGuiCol_TextDisabled, ImVec4(Red, Green, Blue, 255)); // Enter Equation color
