@@ -16,6 +16,10 @@ float Red = 0;
 float Green = 0;
 float Blue = 0;
 
+float Red = 0;
+float Green = 0;
+float Blue = 0;
+
 static void DeleteEquation(int index) {
 	equations.erase(equations.begin() + index);
 }
@@ -37,10 +41,12 @@ public:
 	std::shared_ptr<Walnut::Image> GetImage(string equation) {
 		unsigned id = Hashing(equation);
 		string filename = to_string(id) + ".png";
+		cout << "Equation: " << equation << endl;
+		cout << "Finding: " << filename;
 		if (buttonImage[id]) {
 			return buttonImage[id];
 		}
-		else if(!CheckFile(filename)) {
+		else if (!CheckFile(filename)) {
 			try {
 				if (GenarateImage(ToLaTexFormat(equation), to_string(id)) == 2) {
 					cout << "Error\n";
@@ -49,10 +55,10 @@ public:
 			}
 			catch (int x)
 			{
-				 isLaTexUsable = false;
+				isLaTexUsable = false;
 			}
 		}
-		cout << "Error Out\n";
+
 		buttonImage[id] = make_shared<Walnut::Image>(filename);
 		return buttonImage[id];
 	}
@@ -63,6 +69,7 @@ public:
 
 	virtual void OnUIRender() override
 	{
+		for (int i = 0; i < equations.size(); i++) cout << equations[i].getFormula() << endl;
 		ImGui::Begin("Dobby's Calculation");
 		ImDrawList* background = ImGui::GetWindowDrawList();
 		ImVec2 screen = ImGui::GetWindowViewport()->Pos;
@@ -89,8 +96,11 @@ public:
 		ImGui::Text("Equations List");
 		ImGui::PopStyleColor(); //finish change taxt color
 
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.5f, 0.8f, 1.0f)); //change blue button
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
+
 		for (int i = 0; i < equations.size(); i++) {
-			if (isLaTexUsable) {
+			if (isLaTexUsable && equations[i].getFormula() != "") {
 				auto img = GetImage(equations[i].getFormula());
 				//double width = img->GetWidth() * 50.0 / img->GetHeight();
 				double width = img->GetWidth() / (R + 2) ;
@@ -112,9 +122,8 @@ public:
 				ImGui::SameLine();
 				ImGui::PushID(i);
 				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
-				if (ImGui::Button("X", ImVec2(50, height + 20))) {
-					DeleteEquation(i);
-					EquationManager::SaveEquations(equations);
+				if (ImGui::Button("EDIT", ImVec2(50, height + 20))) {
+					menu = 3;
 				}
 				ImGui::PopID();
 				ImGui::PopStyleColor();
@@ -137,18 +146,17 @@ public:
 				ImGui::SameLine();
 				ImGui::PushID(i);
 				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
-				if (ImGui::Button("X", ImVec2(50, 30))) {
-					DeleteEquation(i);
-					EquationManager::SaveEquations(equations);
+				if (ImGui::Button("EDIT", ImVec2(50, 30))) {
+					menu = 3;
 				}
+				/*if (ImGui::Button("EDIT", ImVec2(50, 30))) {
+					menu = 3;
+				}*/
 				ImGui::PopID();
 				ImGui::PopStyleColor();
 			}
 
 		}
-
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.5f, 0.8f, 1.0f)); //change blue button
-		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
 		
 		if (ImGui::Button("s = v * t", ImVec2((float)screenSize.x * 0.3, 30))) //default function 1
 		{
@@ -219,18 +227,38 @@ public:
 			
 
 		}
-
-
-
 		else if (menu == 2) {
 			ImGui::Text(("Equation: " + S).c_str());
 			for (auto i = variable.begin(); i != variable.end(); i++) {
-				ImGui::InputDouble(i->first.c_str(), &i->second);
+					ImGui::Text(i->first.c_str());
+					ImGui::SameLine();
+					ImGui::InputDouble(("##" + i->first).c_str(), &i->second);
 			}
 			ImGui::Text((resultVariable + " = " + resultValue).c_str());
 			if (ImGui::Button("Calculate")) {
 				if (S != "") resultValue = to_string(CalcualteEquation(S, variable));
 			}
+		}
+
+		else if (menu == 3) {
+			ImGui::PushStyleColor(ImGuiCol_TextDisabled, IM_COL32(0, 255, 0, 255));
+			ImGui::Text("Edit your Equation");
+			ImGui::InputTextWithHint("##InputEquation", "Enter Equation", inputEquation, 255);
+			ImGui::Text("Edit your Description of Equation");
+			ImGui::InputText("##InputDesc", inputDescription, 255);
+			if (ImGui::Button("SAVE")) {
+				if (inputEquation[0] != '\0') {
+					equations.push_back(EquationData(inputEquation, inputDescription));
+					EquationManager::SaveEquations(equations);
+					inputEquation[0] = '\0';
+				}
+			}
+			for (int i = 0; i < equations.size(); i++)
+				if (ImGui::Button("DELETE", ImVec2(100, 30))) {
+				DeleteEquation(i);
+				EquationManager::SaveEquations(equations);
+				}
+			ImGui::PopStyleColor();
 		}
 
 
@@ -266,7 +294,7 @@ Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
 		if (ImGui::BeginMenu("Equation")) {
 			if (ImGui::MenuItem("Load"))
 			{
-				equations = EquationManager::LoadEquations();
+				EquationManager::LoadEquations(equations);
 			}
 			if (ImGui::MenuItem("Save"))
 			{
