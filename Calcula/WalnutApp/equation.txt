@@ -1,2 +1,2 @@
-p = a + m,pam
-k = h * a + w,khaw
+s = o * y,soy
+p = a + t,pat

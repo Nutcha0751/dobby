@@ -118,6 +118,8 @@ public:
 				if (ImGui::Button("EDIT", ImVec2(50, height + 20))) {
 					menu = 3;
 					edit_index = i;
+					strcpy(inputEquation, equations[i].getFormula().c_str());
+					strcpy(inputDescription, equations[i].getDescription().c_str());
 				}
 				ImGui::PopID();
 				ImGui::PopStyleColor();
@@ -143,6 +145,8 @@ public:
 				if (ImGui::Button("EDIT", ImVec2(50, 30))) {
 					menu = 3;
 					edit_index = i;
+					strcpy(inputEquation, equations[i].getFormula().c_str());
+					strcpy(inputDescription, equations[i].getDescription().c_str());
 				}
 				ImGui::PopID();
 				ImGui::PopStyleColor();
@@ -154,6 +158,7 @@ public:
 		{
 			menu = 2;
 			S = "s = v * t";
+			D = "find valosity";
 			variable.clear();
 
 			vector<string> var = GetInputVariablesList(S);
@@ -167,6 +172,7 @@ public:
 		{
 			menu = 2;
 			S = "s = u + a * t";
+			D = "Find distance";
 			variable.clear();
 
 			vector<string> var = GetInputVariablesList(S);
@@ -179,7 +185,8 @@ public:
 		if (ImGui::Button("f = m * x + b", ImVec2((float)screenSize.x * 0.3, 30))) //default function 1
 		{
 			menu = 2;
-			S = "f = m * x + b";
+			S = "y = m * x + c";
+			D = "Find y by using linear formula";
 			variable.clear();
 
 			vector<string> var = GetInputVariablesList(S);
@@ -208,6 +215,7 @@ public:
 					equations.push_back(EquationData(inputEquation, inputDescription));
 					EquationManager::SaveEquations(equations);
 					inputEquation[0] = '\0';
+					inputDescription[0] = '\0';
 				}
 			}
 			ImGui::PopStyleColor();
@@ -231,23 +239,26 @@ public:
 		else if (menu == 3) {
 			ImGui::PushStyleColor(ImGuiCol_TextDisabled, IM_COL32(0, 255, 0, 255));
 			ImGui::Text("Edit your Equation");
-			ImGui::InputTextWithHint("##InputEquation", "Enter Equation", inputEquation, 255);
+			ImGui::InputText("##InputEquation", inputEquation, 255);
 			ImGui::Text("Edit your Description of Equation");
 			ImGui::InputText("##InputDesc", inputDescription, 255);
 			if (ImGui::Button("SAVE")) {
 				if (inputEquation[0] != '\0') {
+					DeleteEquation(edit_index); //ลบสมการเดิมออก
+					EquationManager::SaveEquations(equations);//เพิ่มสมการที่ผู้ใช้กรอกเข้าไปใหม่
 					equations.push_back(EquationData(inputEquation, inputDescription));
 					EquationManager::SaveEquations(equations);
-					inputEquation[0] = '\0';
 				}
 			}
 			if (ImGui::Button("DELETE", ImVec2(100, 30))) {
 				DeleteEquation(edit_index);
 				EquationManager::SaveEquations(equations);
+				inputDescription[0] = '\0';
 				menu = 0;
 				}
 			ImGui::PopStyleColor();
 		}
+
 
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
