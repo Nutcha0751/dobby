@@ -1,1 +1,1 @@
-y = p + d,love
+r = u + t,love
