@@ -12,6 +12,7 @@ using namespace std;
 
 std::vector<EquationData> equations;
 bool isLaTexUsable = false;
+
 float Red = 0;
 float Green = 0;
 float Blue = 0;
@@ -60,7 +61,7 @@ public:
 	}
 
 	virtual void OnAttach() {
-		image = make_shared<Walnut::Image>("PK.jpg");
+		
 	}
 
 	virtual void OnUIRender() override
@@ -72,17 +73,17 @@ public:
 		ImVec2 screenSize = ImGui::GetWindowViewport()->Size;
 		background->AddRectFilledMultiColor(screen, ImVec2(screen.x + screenSize.x, screenSize.y / 2 + screen.y), ImColor(255, 255, 204, 255), ImColor(255, 255, 204, 255), ImColor(255, 255, 255, 255), ImColor(255, 255, 255, 255));
 		background->AddRectFilledMultiColor(ImVec2(screen.x, screenSize.y / 2 + screen.y), ImVec2(screen.x + screenSize.x, screenSize.y + screen.y), ImColor(255, 255, 255, 255), ImColor(255, 255, 255, 255), ImColor(255, 229, 204, 255), ImColor(255, 229, 204, 255));
-		//background->AddCircleFilled(ImVec2(screen.x + screenSize.x / 2 + PX, screenSize.y / 2 + screen.y + PY), R, ImColor(255, 0, 0, 255));
-		background->AddImage(image->GetDescriptorSet(), screen, ImVec2(screen.x + screenSize.x, screenSize.y + screen.y));
-		//string backgroundImageFile = "PK.jpg";
-		
+		/*
+		background->AddCircleFilled(ImVec2(screen.x + screenSize.x / 2 + PX, screenSize.y / 2 + screen.y + PY), R, ImColor(255, 0, 0, 255));
+		background->AddImage(image->GetDescriptorSet(), screen, ImVec2(screen.x + screenSize.x, screenSize.y + screen.y), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), ImColor(255,255,255,100));
+		*/		
 		ImGui::Text("");
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); //text black color
 		//ImGui::SliderFloat("P.X", &PX,-900,900);
 		//ImGui::SliderFloat("P.Y", &PY, -300, 300);
 		
 		ImGui::PushStyleColor(ImGuiCol_SliderGrab, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); //change black button
-		ImGui::SliderFloat("R", &R,1,5);
+		//ImGui::SliderFloat("R", &R,1,5);
 		ImGui::PopStyleColor();
 
 		ImGui::Columns(3, "MyLayout", false);
@@ -150,7 +151,7 @@ public:
 
 		}
 
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.5f, 0.8f, 1.0f)); //change blue button
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.647f, 0.0f, 0.5f)); //change orange button
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
 		
 		if (ImGui::Button("s = v * t", ImVec2((float)screenSize.x * 0.3, 30))) //default function 1
