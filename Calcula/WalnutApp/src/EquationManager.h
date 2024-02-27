@@ -14,7 +14,7 @@ public:
 		string description;
 		while (getline(file, formula, ',') && getline(file, description, ',')) {
 			equations.push_back(formula);
-			equations.push_back(description);
+			//equations.push_back(description);
 		}
 		return equations;
 	}
