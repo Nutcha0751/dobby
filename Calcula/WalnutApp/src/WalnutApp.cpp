@@ -58,11 +58,14 @@ public:
 		//background->AddCircleFilled(ImVec2(screen.x + screenSize.x / 2 + PX, screenSize.y / 2 + screen.y + PY), R, ImColor(255, 0, 0, 255));
 		//background->AddImage(image->GetDescriptorSet(), screen, ImVec2(screen.x + screenSize.x, screenSize.y + screen.y), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), ImColor(255,255,255,100));
 		ImGui::Text("");
-		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); //black color
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); //text black color
 		//ImGui::SliderFloat("P.X", &PX,-900,900);
 		//ImGui::SliderFloat("P.Y", &PY, -300, 300);
 		
+		ImGui::PushStyleColor(ImGuiCol_SliderGrab, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); //change black button
 		ImGui::SliderFloat("R", &R,1,5);
+		ImGui::PopStyleColor();
+
 		ImGui::Columns(3, "MyLayout", false);
 		ImGui::SetColumnWidth(0, (float)screenSize.x * 0.01);
 		ImGui::NextColumn();
@@ -128,6 +131,7 @@ public:
 
 		}
 
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.647f, 0.0f, 0.5f)); //change orange button
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
 		
 		if (ImGui::Button("s = v * t", ImVec2((float)screenSize.x * 0.3, 30))) //default function 1
@@ -188,6 +192,7 @@ public:
 		}
 
 
+		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
 		ImGui::End();
 	}
