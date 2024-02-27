@@ -16,10 +16,6 @@ float Red = 0;
 float Green = 0;
 float Blue = 0;
 
-float Red = 0;
-float Green = 0;
-float Blue = 0;
-
 static void DeleteEquation(int index) {
 	equations.erase(equations.begin() + index);
 }
@@ -38,11 +34,16 @@ public:
 	float R = 1;
 	unordered_map<unsigned, std::shared_ptr<Walnut::Image>> buttonImage;
 
+	float C0 = 6;
+	float C1 = 33;
+	float C2 = 4;
+	float C3 = 74;
+
 	std::shared_ptr<Walnut::Image> GetImage(string equation) {
 		unsigned id = Hashing(equation);
 		string filename = to_string(id) + ".png";
-		cout << "Equation: " << equation << endl;
-		cout << "Finding: " << filename;
+		//cout << "Equation: " << equation << endl;
+		//cout << "Finding: " << filename;
 		if (buttonImage[id]) {
 			return buttonImage[id];
 		}
@@ -66,33 +67,36 @@ public:
 	virtual void OnAttach() {
 		image = make_shared<Walnut::Image>("PK.jpg");
 	}
-
+	
 	virtual void OnUIRender() override
 	{
-		for (int i = 0; i < equations.size(); i++) cout << equations[i].getFormula() << endl;
+
+		//for (int i = 0; i < equations.size(); i++) cout << equations[i].getFormula() << endl;
 		ImGui::Begin("Dobby's Calculation");
 		ImDrawList* background = ImGui::GetWindowDrawList();
 		ImVec2 screen = ImGui::GetWindowViewport()->Pos;
 		ImVec2 screenSize = ImGui::GetWindowViewport()->Size;
+		double yPos = screen.y + screenSize.y - 200;
 		background->AddRectFilledMultiColor(screen, ImVec2(screen.x + screenSize.x, screenSize.y / 2 + screen.y), ImColor(255, 255, 204, 255), ImColor(255, 255, 204, 255), ImColor(255, 255, 255, 255), ImColor(255, 255, 255, 255));
 		background->AddRectFilledMultiColor(ImVec2(screen.x, screenSize.y / 2 + screen.y), ImVec2(screen.x + screenSize.x, screenSize.y + screen.y), ImColor(255, 255, 255, 255), ImColor(255, 255, 255, 255), ImColor(255, 229, 204, 255), ImColor(255, 229, 204, 255));
 		//background->AddCircleFilled(ImVec2(screen.x + screenSize.x / 2 + PX, screenSize.y / 2 + screen.y + PY), R, ImColor(255, 0, 0, 255));
 		background->AddImage(image->GetDescriptorSet(), screen, ImVec2(screen.x + screenSize.x, screenSize.y + screen.y));
 		//string backgroundImageFile = "PK.jpg";
-		
 		ImGui::Text("");
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); //text black color
-		//ImGui::SliderFloat("P.X", &PX,-900,900);
-		//ImGui::SliderFloat("P.Y", &PY, -300, 300);
+		ImGui::SliderFloat("C0", &C0,0,100);
+		ImGui::SliderFloat("C1", &C1, 0, 100);
+		ImGui::SliderFloat("C2", &C2, 0, 100);
+		ImGui::SliderFloat("C3", &C3, 0, 100);
 		
 		ImGui::PushStyleColor(ImGuiCol_SliderGrab, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); //change black button
 		ImGui::SliderFloat("R", &R,1,5);
 		ImGui::PopStyleColor();
 
-		ImGui::Columns(3, "MyLayout", false);
-		ImGui::SetColumnWidth(0, (float)screenSize.x * 0.01);
+		ImGui::Columns(4, "MyLayout", false);
+		ImGui::SetColumnWidth(0, (float)screenSize.x * C0 / 100);
 		ImGui::NextColumn();
-		ImGui::SetColumnWidth(1, (float)screenSize.x * 0.39);
+		ImGui::SetColumnWidth(1, (float)screenSize.x * C1 / 100);
 		ImGui::Text("Equations List");
 		ImGui::PopStyleColor(); //finish change taxt color
 
@@ -205,7 +209,9 @@ public:
 		}			
 
 		ImGui::NextColumn();
-		ImGui::SetColumnWidth(2, (float)screenSize.x * 0.6);
+		ImGui::SetColumnWidth(2, (float)screenSize.x * C2 /100);
+		ImGui::NextColumn();
+		ImGui::SetColumnWidth(3, (float)screenSize.x * C3/100);
 		if (menu == 1) {
 			Red += ImGui::GetIO().DeltaTime * 0.3;
 			Green += ImGui::GetIO().DeltaTime * 0.3;
@@ -246,6 +252,11 @@ public:
 			ImGui::InputTextWithHint("##InputEquation", "Enter Equation", inputEquation, 255);
 			ImGui::Text("Edit your Description of Equation");
 			ImGui::InputText("##InputDesc", inputDescription, 255);
+
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.5f, 0.8f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.4f, 0.5f, 0.8f, 1.0f));
+
 			if (ImGui::Button("SAVE")) {
 				if (inputEquation[0] != '\0') {
 					equations.push_back(EquationData(inputEquation, inputDescription));
@@ -253,17 +264,21 @@ public:
 					inputEquation[0] = '\0';
 				}
 			}
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.5f, 0.8f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.4f, 0.5f, 0.8f, 1.0f));
+		
 			for (int i = 0; i < equations.size(); i++)
 				if (ImGui::Button("DELETE", ImVec2(100, 30))) {
 				DeleteEquation(i);
 				EquationManager::SaveEquations(equations);
+
 				}
-			ImGui::PopStyleColor();
+			ImGui::PopStyleColor(7);
 		}
 
 
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
+		ImGui::PopStyleColor(2);
 		ImGui::End();
 	}
 private:
