@@ -1,2 +1,2 @@
-e = p + i,asdf
-s = k + x,looovveee
+p = a + m,pam
+k = h * a + w,khaw

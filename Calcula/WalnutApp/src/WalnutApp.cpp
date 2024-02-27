@@ -34,6 +34,7 @@ public:
 	float PY;
 	float k = 0.3;
 	float R = 2.25;
+	vector<int>List_idex;
 	unordered_map<unsigned, std::shared_ptr<Walnut::Image>> buttonImage;
 
 	std::shared_ptr<Walnut::Image> GetImage(string equation) {
@@ -101,6 +102,7 @@ public:
 				if (ImGui::ImageButton(img->GetDescriptorSet(), ImVec2(width, height), {0,0}, {1,1})) {
 					menu = 2;
 					S = equations[i].getFormula();
+					D = equations[i].getDescription();
 					variable.clear();
 					vector<string> var = GetInputVariablesList(S);
 					resultVariable = var[0];
@@ -142,9 +144,6 @@ public:
 					menu = 3;
 					edit_index = i;
 				}
-				/*if (ImGui::Button("EDIT", ImVec2(50, 30))) {
-					menu = 3;
-				}*/
 				ImGui::PopID();
 				ImGui::PopStyleColor();
 			}
@@ -216,18 +215,18 @@ public:
 
 		}
 		else if (menu == 2) {
-			ImGui::Text(("Equation: " + S).c_str());
-			for (auto i = variable.begin(); i != variable.end(); i++) {
-					ImGui::Text(i->first.c_str());
-					ImGui::SameLine();
-					ImGui::InputDouble(("##" + i->first).c_str(), &i->second);
+				ImGui::Text(("Equation: " + S).c_str());
+				for (auto i = variable.begin(); i != variable.end(); i++) {
+						ImGui::Text(i->first.c_str());
+						ImGui::SameLine();
+						ImGui::InputDouble(("##" + i->first).c_str(), &i->second);
+				}
+				ImGui::Text((resultVariable + " = " + resultValue).c_str());
+				if (ImGui::Button("Calculate")) {
+					if (S != "") resultValue = to_string(CalcualteEquation(S, variable));
+				}
+				ImGui::Text(("Description: " + D).c_str());
 			}
-			ImGui::Text((resultVariable + " = " + resultValue).c_str());
-			if (ImGui::Button("Calculate")) {
-				if (S != "") resultValue = to_string(CalcualteEquation(S, variable));
-			}
-			/*ImGui::Text(("Description: " + S).c_str());*/
-		}
 
 		else if (menu == 3) {
 			ImGui::PushStyleColor(ImGuiCol_TextDisabled, IM_COL32(0, 255, 0, 255));
