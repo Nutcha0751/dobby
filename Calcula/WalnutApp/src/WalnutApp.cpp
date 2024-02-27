@@ -3,14 +3,14 @@
 #include "Walnut/Image.h"
 #include "string"
 #include "unordered_map"
+
 #include "Calculate.cpp"
 #include "EquationManager.h"
 #include "LaTexCaller.cpp"
 
 using namespace std;
 
-std::vector<string> equations;
-std::vector<string> desc;
+std::vector<EquationData> equations;
 bool isLaTexUsable = false;
 float Red = 0;
 float Green = 0;
@@ -32,8 +32,6 @@ public:
 	float PY;
 	float k = 0.3;
 	float R = 1;
-
-
 	unordered_map<unsigned, std::shared_ptr<Walnut::Image>> buttonImage;
 
 	std::shared_ptr<Walnut::Image> GetImage(string equation) {
@@ -93,7 +91,7 @@ public:
 
 		for (int i = 0; i < equations.size(); i++) {
 			if (isLaTexUsable) {
-				auto img = GetImage(equations[i]);
+				auto img = GetImage(equations[i].getFormula());
 				//double width = img->GetWidth() * 50.0 / img->GetHeight();
 				double width = img->GetWidth() / (R + 2) ;
 				double height = img->GetHeight() / (R + 2);
@@ -101,7 +99,7 @@ public:
 				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { offsetX, 10 });
 				if (ImGui::ImageButton(img->GetDescriptorSet(), ImVec2(width, height), {0,0}, {1,1})) {
 					menu = 2;
-					S = equations[i];
+					S = equations[i].getFormula();
 					variable.clear();
 					vector<string> var = GetInputVariablesList(S);
 					resultVariable = var[0];
@@ -116,16 +114,16 @@ public:
 				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
 				if (ImGui::Button("X", ImVec2(50, height + 20))) {
 					DeleteEquation(i);
-					EquationManager::SaveEquations(equations, desc);
+					EquationManager::SaveEquations(equations);
 				}
 				ImGui::PopID();
 				ImGui::PopStyleColor();
 			}
 			else {
-				if (ImGui::Button(equations[i].c_str(), ImVec2((float)screenSize.x * 0.3, 30)))
+				if (ImGui::Button(equations[i].getFormula().c_str(), ImVec2((float)screenSize.x * 0.3, 30)))
 				{
 					menu = 2;
-					S = equations[i];
+					S = equations[i].getFormula();
 					variable.clear();
 
 					vector<string> var = GetInputVariablesList(S);
@@ -141,7 +139,7 @@ public:
 				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
 				if (ImGui::Button("X", ImVec2(50, 30))) {
 					DeleteEquation(i);
-					EquationManager::SaveEquations(equations, desc);
+					EquationManager::SaveEquations(equations);
 				}
 				ImGui::PopID();
 				ImGui::PopStyleColor();
@@ -199,42 +197,28 @@ public:
 		}			
 
 		ImGui::NextColumn();
-		ImGui::SetColumnWidth(2, (float)screenSize.x * 0.6); 
+		ImGui::SetColumnWidth(2, (float)screenSize.x * 0.6);
 		if (menu == 1) {
-			Red += ImGui::GetIO().DeltaTime * 0.3;
-			Green += ImGui::GetIO().DeltaTime * 0.3;
-			Blue += ImGui::GetIO().DeltaTime * 0.5;
-			ImGui::PushStyleColor(ImGuiCol_TextDisabled, ImVec4(Red, Green, Blue, 255));
-			//ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(Red, Green, Blue, 255));
+			ImGui::PushStyleColor(ImGuiCol_TextDisabled, IM_COL32(0, 255, 0, 255));
 			ImGui::Text("Input Equation");
 			ImGui::InputTextWithHint("##InputEquation", "Enter Equation", inputEquation, 255);
+			ImGui::Text("Description of Equation");
+			ImGui::InputText("##InputDesc", inputDescription, 255);
 			if (ImGui::Button("Add")) {
 				if (inputEquation[0] != '\0') {
-					equations.push_back(inputEquation);
-					EquationManager::SaveEquations(equations, desc);
+					equations.push_back(EquationData(inputEquation, inputDescription));
+					EquationManager::SaveEquations(equations);
 					inputEquation[0] = '\0';
 				}
 			}
-			//ImGui::PopStyleColor();
 			ImGui::PopStyleColor();
-			ImGui::Text("Description of Equation");
-			/*ImGui::InputText("##InputDesc", inputDescription, 255);*/
-			//if (ImGui::Button("Add Description")) {
-			//	if (inputDescription[0] != '\0') {
-			//		//equations.push_back(inputDescription);
-			//		//DescriptionManager::SaveDescription(description);
-			//		//inputDescription[0] = '\0';
-			//	}
-			//}
-		
+			
+
 		}
 
 
 
 		else if (menu == 2) {
-			Red = 0;
-			Green = 0;
-			Blue = 0;
 			ImGui::Text(("Equation: " + S).c_str());
 			for (auto i = variable.begin(); i != variable.end(); i++) {
 				ImGui::InputDouble(i->first.c_str(), &i->second);
@@ -253,8 +237,7 @@ public:
 private:
 	char inputEquation[255];
 	unordered_map<string, double> variable;
-	//char inputDescription[255];
-	//unordered_map<string, double> description;
+	char inputDescription[255];
 };
 
 Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
@@ -283,7 +266,7 @@ Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
 			}
 			if (ImGui::MenuItem("Save"))
 			{
-				EquationManager::SaveEquations(equations, desc);
+				EquationManager::SaveEquations(equations);
 			}
 			ImGui::EndMenu();
 		}
