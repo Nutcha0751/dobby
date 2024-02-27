@@ -43,8 +43,18 @@ public:
 			return buttonImage[id];
 		}
 		else if(!CheckFile(filename)) {
-			GenarateImage(ToLaTexFormat(equation), to_string(id));
+			try {
+				if (GenarateImage(ToLaTexFormat(equation), to_string(id)) == 2) {
+					cout << "Error\n";
+					throw(2);
+				}
+			}
+			catch (int x)
+			{
+				 isLaTexUsable = false;
+			}
 		}
+		cout << "Error Out\n";
 		buttonImage[id] = make_shared<Walnut::Image>(filename);
 		return buttonImage[id];
 	}
