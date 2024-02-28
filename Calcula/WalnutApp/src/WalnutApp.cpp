@@ -11,11 +11,10 @@ using namespace std;
 
 std::vector<EquationData> equations;
 bool isLaTexUsable = false;
-
 float Red = 0;
 float Green = 0;
 float Blue = 0;
-
+float Saturation = 0;
 static void DeleteEquation(int index) {
 	equations.erase(equations.begin() + index);
 }
@@ -24,13 +23,23 @@ class ExampleLayer : public Walnut::Layer
 {
 public:
 	string S;
+	string D; //D stand for Description
 	std::shared_ptr<Walnut::Image> image;
 	string resultValue;
 	string resultVariable;
 	int menu = 0;
+	int edit_index;
+	float PX;
+	float PY;
 	float k = 0.3;
 	float R = 2.25;
+	vector<int>List_idex;
 	unordered_map<unsigned, std::shared_ptr<Walnut::Image>> buttonImage;
+
+	float C0 = 6;
+	float C1 = 33;
+	float C2 = 4;
+	float C3 = 74;
 
 	std::shared_ptr<Walnut::Image> GetImage(string equation) {
 		unsigned id = Hashing(equation);
@@ -58,7 +67,7 @@ public:
 	virtual void OnAttach() {
 		image = make_shared<Walnut::Image>("PK.jpg");
 	}
-
+	
 	virtual void OnUIRender() override
 	{
 		ImGui::Begin("Dobby's Calculation");
@@ -75,15 +84,17 @@ public:
 
 		// Set Main Color Theme of Application
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); //text black color
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.5f, 0.8f, 1.0f)); //change blue button
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.5f, 0.8f, 1.0f)); //button color
+		ImGui::SliderFloat("C0", &C0,0,100);
+		ImGui::SliderFloat("C1", &C1, 0, 100);
+		ImGui::SliderFloat("C2", &C2, 0, 100);
+		ImGui::SliderFloat("C3", &C3, 0, 100);
+		ImGui::SliderFloat("R", &R,1,5);
 
-		// Set Column 0 : Left Margin 1% of screen 
-		ImGui::Columns(3, "MyLayout", false);
-		ImGui::SetColumnWidth(0, (float)screenSize.x * 0.01);
-		
-		// Set Column 1 : Equation List 39% of screen
+		ImGui::Columns(4, "MyLayout", false);
+		ImGui::SetColumnWidth(0, (float)screenSize.x * C0 / 100);
 		ImGui::NextColumn();
-		ImGui::SetColumnWidth(1, (float)screenSize.x * 0.39);
+		ImGui::SetColumnWidth(1, (float)screenSize.x * C1 / 100);
 		ImGui::Text("Equations List");
 
 		// Create List of Equation
@@ -97,6 +108,7 @@ public:
 				if (ImGui::ImageButton(img->GetDescriptorSet(), ImVec2(width, height), {0,0}, {1,1})) {
 					menu = 2;
 					S = equations[i].getFormula();
+					D = equations[i].getDescription();
 					variable.clear();
 					vector<string> var = GetInputVariablesList(S);
 					resultVariable = var[0];
@@ -111,6 +123,9 @@ public:
 				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
 				if (ImGui::Button("EDIT", ImVec2(50, height + 20))) {
 					menu = 3;
+					edit_index = i;
+					strcpy(inputEquation, equations[i].getFormula().c_str());
+					strcpy(inputDescription, equations[i].getDescription().c_str());
 				}
 				ImGui::PopID();
 				ImGui::PopStyleColor();
@@ -135,10 +150,10 @@ public:
 				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
 				if (ImGui::Button("EDIT", ImVec2(50, 30))) {
 					menu = 3;
+					edit_index = i;
+					strcpy(inputEquation, equations[i].getFormula().c_str());
+					strcpy(inputDescription, equations[i].getDescription().c_str());
 				}
-				/*if (ImGui::Button("EDIT", ImVec2(50, 30))) {
-					menu = 3;
-				}*/
 				ImGui::PopID();
 				ImGui::PopStyleColor();
 			}
@@ -149,6 +164,7 @@ public:
 		{
 			menu = 2;
 			S = "s = v * t";
+			D = "find valosity";
 			variable.clear();
 
 			vector<string> var = GetInputVariablesList(S);
@@ -162,6 +178,7 @@ public:
 		{
 			menu = 2;
 			S = "s = u + a * t";
+			D = "Find distance";
 			variable.clear();
 
 			vector<string> var = GetInputVariablesList(S);
@@ -174,7 +191,8 @@ public:
 		if (ImGui::Button("f = m * x + b", ImVec2((float)screenSize.x * 0.3, 30))) //default function 1
 		{
 			menu = 2;
-			S = "f = m * x + b";
+			S = "y = m * x + c";
+			D = "Find y by using linear formula";
 			variable.clear();
 
 			vector<string> var = GetInputVariablesList(S);
@@ -187,22 +205,30 @@ public:
 
 		if (ImGui::Button("+", ImVec2((float)screenSize.x * 0.3, 30)))
 		{
+			inputEquation[0] = '\0';
+			inputDescription[0] = '\0';
 			menu = 1;
 		}			
 
 		ImGui::NextColumn();
-		ImGui::SetColumnWidth(2, (float)screenSize.x * 0.6);
+		ImGui::SetColumnWidth(2, (float)screenSize.x * C2 /100);
+		ImGui::NextColumn(); 
+		ImGui::SetColumnWidth(3, (float)screenSize.x * C3/100);
 		if (menu == 1) {
-			ImGui::PushStyleColor(ImGuiCol_TextDisabled, IM_COL32(0, 255, 0, 255));
+			// menu1 = หน้าสร้างสมการ
+			Saturation += 0.5 * ImGui::GetIO().DeltaTime;
+			ImGui::PushStyleColor(ImGuiCol_TextDisabled, (ImVec4)ImColor::HSV(0.5,abs(sin(Saturation)), 0.87, 1.0)); // Enter Equation color
+			//ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(Red, Green, Blue, 255));
 			ImGui::Text("Input Equation");
 			ImGui::InputTextWithHint("##InputEquation", "Enter Equation", inputEquation, 255);
 			ImGui::Text("Description of Equation");
-			ImGui::InputText("##InputDesc", inputDescription, 255);
+			ImGui::InputTextWithHint("##InputDesc", "Enter Description", inputDescription, 255);
 			if (ImGui::Button("Add")) {
 				if (inputEquation[0] != '\0') {
 					equations.push_back(EquationData(inputEquation, inputDescription));
 					EquationManager::SaveEquations(equations);
 					inputEquation[0] = '\0';
+					inputDescription[0] = '\0';
 				}
 			}
 			ImGui::PopStyleColor();
@@ -210,6 +236,7 @@ public:
 
 		}
 		else if (menu == 2) {
+			//menu = 2 คือหน้าคำนวณสมการ
 			ImGui::Text(("Equation: " + S).c_str());
 			for (auto i = variable.begin(); i != variable.end(); i++) {
 					ImGui::Text(i->first.c_str());
@@ -220,31 +247,46 @@ public:
 			if (ImGui::Button("Calculate")) {
 				if (S != "") resultValue = to_string(CalcualteEquation(S, variable));
 			}
-		}
+			ImGui::Text(("Description: " + D).c_str());
+			}
 
 		else if (menu == 3) {
+			// menu = 3 คือหน้าeditสมการ
 			ImGui::PushStyleColor(ImGuiCol_TextDisabled, IM_COL32(0, 255, 0, 255));
 			ImGui::Text("Edit your Equation");
-			ImGui::InputTextWithHint("##InputEquation", "Enter Equation", inputEquation, 255);
+			ImGui::InputText("##InputEquation", inputEquation, 255);
 			ImGui::Text("Edit your Description of Equation");
 			ImGui::InputText("##InputDesc", inputDescription, 255);
+
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.5f, 0.8f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.4f, 0.5f, 0.8f, 1.0f));
+
 			if (ImGui::Button("SAVE")) {
 				if (inputEquation[0] != '\0') {
+					DeleteEquation(edit_index); //ลบสมการเดิมออก
+					EquationManager::SaveEquations(equations);//เพิ่มสมการที่ผู้ใช้กรอกเข้าไปใหม่
 					equations.push_back(EquationData(inputEquation, inputDescription));
 					EquationManager::SaveEquations(equations);
-					inputEquation[0] = '\0';
+					menu = 0;
 				}
 			}
-			for (int i = 0; i < equations.size(); i++)
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.5f, 0.8f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.4f, 0.5f, 0.8f, 1.0f));
+		
+	
 				if (ImGui::Button("DELETE", ImVec2(100, 30))) {
-				DeleteEquation(i);
+				DeleteEquation(edit_index);
 				EquationManager::SaveEquations(equations);
+				inputDescription[0] = '\0';
+				menu = 0;
 				}
-			ImGui::PopStyleColor();
+			ImGui::PopStyleColor(7);
 		}
 
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
+
+		ImGui::PopStyleColor(2);
 		ImGui::End();
 	}
 private:

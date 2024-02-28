@@ -1,4 +1,2 @@
-A = F * X,
-A = BCD,
-YoungModulus = Stress / Stain,
-NamKhaw = Pam + Pam + Pam + Pam + Pam,
+A = B + C,Calculated A = B + C
+X = Y,
