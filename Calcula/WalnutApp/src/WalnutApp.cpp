@@ -155,7 +155,7 @@ public:
 	virtual void OnAttach() {
 		backgroundImage = make_shared<Walnut::Image>("PK.jpg");
 	}
-	
+
 	virtual void OnUIRender() override
 	{
 		//Setting Window Pos size to Full Viewport
@@ -165,7 +165,7 @@ public:
 		ImGui::SetNextWindowViewport(viewport->ID);
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-		ImGui::Begin("Dobby's Calculation", 0, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_MenuBar );
+		ImGui::Begin("Dobby's Calculator", 0, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_MenuBar );
 		ImGui::PopStyleVar();
 
 		//Menubar
@@ -183,6 +183,8 @@ public:
 		}
 		ImGui::EndMenuBar();
 
+		ImFont* k =  ImGui::GetIO().Fonts->Fonts[1];
+
 		//Set Padding
 		ImVec2 p = ImGui::GetCursorScreenPos();
 		ImGui::SetCursorScreenPos(ImVec2(p.x + PaX, p.y + PaY));
@@ -199,6 +201,15 @@ public:
 		//Set Main Color Theme
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); //text black color
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.5f, 0.8f, 1.0f)); //button color
+
+		ImGui::PushFont(k);
+		//Adjust the text to be centered on the screen.
+		float textWidth = ImGui::CalcTextSize("Dobby's Calculator").x;
+		float windowWidth = ImGui::GetWindowWidth();
+		float centerPosX = (windowWidth - textWidth) / 2.0f;
+		ImGui::SetCursorPosX(centerPosX);
+		ImGui::Text("Dobby's Calculator");
+		ImGui::PopFont();
 
 		//UI Debugging Tool
 		if (debugEnable) {
@@ -397,14 +408,18 @@ public:
 		ImGui::PopStyleColor(2);
 		ImGui::EndVertical();
 		ImGui::End();
+
+		//ImGui::ShowMetricsWindow();
 	}
 };
 
 Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
 {
+	
 	Walnut::ApplicationSpecification spec;
 	spec.Name = "Walnut Example";
 	Walnut::Application* app = new Walnut::Application(spec);
+
 	isLaTexUsable = CheckFile("LaTex\\LaTex.exe");
 	app->PushLayer<ExampleLayer>();
 	return app;
