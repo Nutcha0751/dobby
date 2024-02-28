@@ -1,2 +1,1 @@
-A = B + C,Calculated A = B + C
-X = Y,
+A = B,Dobby Like|Kai Tord

@@ -6,41 +6,84 @@
 #include "Calculate.cpp"
 #include "EquationManager.h"
 #include "LaTexCaller.cpp"
+#include <imgui_internal.h>
 
 using namespace std;
 
+//Custom Input Multiline with hint
+namespace ImGui
+{
+	bool InputTextMultilineWithHint(const char* label, const char* hint, char* buf, size_t buf_size, const ImVec2& size, ImGuiInputTextFlags flags, ImGuiInputTextCallback callback, void* user_data)
+	{
+		return InputTextEx(label, hint, buf, (int)buf_size, size, flags | ImGuiInputTextFlags_Multiline, callback, user_data);
+	}
+};
+
+// List of User Equation
 std::vector<EquationData> equations;
+
 bool isLaTexUsable = false;
-float Red = 0;
-float Green = 0;
-float Blue = 0;
+
+// Control Hint Color
 float Saturation = 0;
+
+// Function For Delete User Equation
 static void DeleteEquation(int index) {
 	equations.erase(equations.begin() + index);
 }
 
+// Use to turn on/off UI Debug Tool
+bool debugEnable = true;
+
 class ExampleLayer : public Walnut::Layer
 {
-public:
-	string S;
-	string D; //D stand for Description
-	std::shared_ptr<Walnut::Image> image;
+	// Use to send equation between menu 
+	string onWorkFormula;
+	string onWorkDesc;
+
+	//Background Image
+	std::shared_ptr<Walnut::Image> backgroundImage;
+
+	// Use to store about of calulation
 	string resultValue;
 	string resultVariable;
+	unordered_map<string, double> variable;
+
+	// Current Right Menu
 	int menu = 0;
+
+	// Current Equation to edit 
 	int edit_index;
-	float PX;
-	float PY;
-	float k = 0.3;
-	float R = 2.25;
-	vector<int>List_idex;
+
+	//Use to Controll LaTex Equation Button
+	float lbWidth = 0.3; // Width Size
+	float lbHeight = 1.75; // Font Size Dont Effect Button Size
+
+	// List of LaTex Equation Image
 	unordered_map<unsigned, std::shared_ptr<Walnut::Image>> buttonImage;
 
-	float C0 = 6;
-	float C1 = 33;
-	float C2 = 4;
-	float C3 = 74;
+	//Controll Columns size
+	float C0 = 36;
+	float C1 = 0.5;
+	float C2 = 100 - C0 - C1;
 
+	//Padding
+	float PaX = 30;
+	float PaY = 30;
+
+	//Open Debug Menu
+	bool setting = false;
+	bool debugChildBorder = false;
+
+	//Screen Pos and Size 
+	ImVec2 screen;
+	ImVec2 screenSize;
+
+	//Variable to store input data
+	char inputEquation[255];
+	char inputDescription[1024];
+
+	//Function to Get LaTex Equation Image
 	std::shared_ptr<Walnut::Image> GetImage(string equation) {
 		unsigned id = Hashing(equation);
 		string filename = to_string(id) + ".png";
@@ -64,53 +107,128 @@ public:
 		return buttonImage[id];
 	}
 
+	//Function to Create LaTex Equation Button
+	void LaTexEquationButton(string equationFormula, string equationDesc) {
+		if (!isLaTexUsable) return;
+		auto img = GetImage(equationFormula);
+		double width = img->GetWidth() / (lbHeight + 2);
+		double height = img->GetHeight() / (lbHeight + 2);
+		float offsetX = ((float)screenSize.x * lbWidth - width) / 2.0;
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { offsetX, 10 });
+		bool button = ImGui::ImageButton(img->GetDescriptorSet(), ImVec2(width, height), { 0,0 }, { 1,1 });
+		if (button) {
+			menu = 2;
+			onWorkFormula = equationFormula;
+			onWorkDesc = equationDesc;
+			variable.clear();
+			vector<string> var = GetInputVariablesList(onWorkFormula);
+			resultVariable = var[0];
+			for (int i = 1; i < var.size(); i++) {
+				variable[var[i]] = 0;
+			}
+			resultValue = "";
+		}
+		ImGui::PopStyleVar();
+	}
+
+public:
+	//Load Background When Start
 	virtual void OnAttach() {
-		image = make_shared<Walnut::Image>("PK.jpg");
+		backgroundImage = make_shared<Walnut::Image>("PK.jpg");
 	}
 	
 	virtual void OnUIRender() override
 	{
-		ImGui::Begin("Dobby's Calculation");
+		//Setting Window Pos size to Full Viewport
+		ImGuiViewport* viewport = ImGui::GetMainViewport();
+		ImGui::SetNextWindowPos(viewport->WorkPos);
+		ImGui::SetNextWindowSize(viewport->WorkSize);
+		ImGui::SetNextWindowViewport(viewport->ID);
+
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+		ImGui::Begin("Dobby's Calculation", 0, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_MenuBar );
+		ImGui::PopStyleVar();
+
+		//Menubar
+		ImGui::BeginMenuBar();
+		if (ImGui::BeginMenu("Equation")) {
+			if (ImGui::MenuItem("Load"))
+			{
+				EquationManager::LoadEquations(equations);
+			}
+			if (ImGui::MenuItem("Save"))
+			{
+				EquationManager::SaveEquations(equations);
+			}
+			ImGui::EndMenu();
+		}
+		ImGui::EndMenuBar();
+
+		//Set Padding
+		ImVec2 p = ImGui::GetCursorScreenPos();
+		ImGui::SetCursorScreenPos(ImVec2(p.x + PaX, p.y + PaY));
+		ImGui::BeginVertical(99);
 
 		// Get Dobby's Calculation Window Pos and Size
-		ImVec2 screen = ImGui::GetWindowViewport()->Pos;
-		ImVec2 screenSize = ImGui::GetWindowViewport()->Size;
+		screen = ImGui::GetWindowViewport()->Pos;
+		screenSize = ImGui::GetWindowViewport()->Size;
 
 		// Draw Background
 		ImDrawList* background = ImGui::GetWindowDrawList();
-		background->AddImage(image->GetDescriptorSet(), screen, ImVec2(screen.x + screenSize.x, screenSize.y + screen.y));
+ 		background->AddImage(backgroundImage->GetDescriptorSet(), screen, ImVec2(screen.x + screenSize.x, screenSize.y + screen.y));
 		
-		ImGui::Text("##TopPadding");
-
-		// Set Main Color Theme of Application
+		//Set Main Color Theme
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); //text black color
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.5f, 0.8f, 1.0f)); //button color
-		ImGui::SliderFloat("C0", &C0,0,100);
-		ImGui::SliderFloat("C1", &C1, 0, 100);
-		ImGui::SliderFloat("C2", &C2, 0, 100);
-		ImGui::SliderFloat("C3", &C3, 0, 100);
-		ImGui::SliderFloat("R", &R,1,5);
 
-		ImGui::Columns(4, "MyLayout", false);
+		//UI Debugging Tool
+		if (debugEnable) {
+			ImGui::Checkbox("Setting", &setting);
+			ImGui::SameLine();
+			ImGui::Checkbox("ChildBorder", &debugChildBorder);
+			if (setting) {
+				ImGui::SliderFloat("PaX", &PaX, 0, 100);
+				ImGui::SliderFloat("PaY", &PaY, 0, 100);
+				ImGui::SliderFloat("C0", &C0, 0, 100);
+				ImGui::SliderFloat("C1", &C1, 0, 100);
+				ImGui::SliderFloat("C2", &C2, 0, 100);
+				ImGui::SliderFloat("lbHeight", &lbHeight, 1, 5);
+				ImGui::SliderFloat("lbWidth", &lbWidth, 0, 1);
+			}
+		}
+
+		// Calculate Child Window Y Size
+		float getBeginY = ImGui::GetCursorScreenPos().y;
+		double childSizeY = screen.y + screenSize.y - getBeginY - PaY;
+
+		//Start Columns
+		ImGui::Columns(3, "MyLayout", false);
+
+		// Start Column 1
 		ImGui::SetColumnWidth(0, (float)screenSize.x * C0 / 100);
-		ImGui::NextColumn();
-		ImGui::SetColumnWidth(1, (float)screenSize.x * C1 / 100);
 		ImGui::Text("Equations List");
 
-		// Create List of Equation
+		//Begin Child and Set Slider color
+		ImGui::PushStyleColor(ImGuiCol_ScrollbarBg, ImVec4(0, 0, 0, 0));
+		ImGui::PushStyleColor(ImGuiCol_ScrollbarGrab, ImVec4(0.4f, 0.5f, 0.8f, 0.5f));
+		ImGui::BeginChild(22,ImVec2(0, childSizeY), debugChildBorder);
+		ImGui::PopStyleColor(2);
+
+		// Create List of Equation Button
 		for (int i = 0; i < equations.size(); i++) {
+			// If can use LaTex use Image from LaTex
 			if (isLaTexUsable) {
 				auto img = GetImage(equations[i].getFormula());
-				double width = img->GetWidth() / (R + 2) ;
-				double height = img->GetHeight() / (R + 2);
+				double width = img->GetWidth() / (lbHeight + 2) ;
+				double height = img->GetHeight() / (lbHeight + 2);
 				float offsetX = ((float)screenSize.x * 0.3 - width) / 2.0;
 				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { offsetX, 10 });
 				if (ImGui::ImageButton(img->GetDescriptorSet(), ImVec2(width, height), {0,0}, {1,1})) {
 					menu = 2;
-					S = equations[i].getFormula();
-					D = equations[i].getDescription();
+					onWorkFormula = equations[i].getFormula();
+					onWorkDesc = equations[i].getDescription();
 					variable.clear();
-					vector<string> var = GetInputVariablesList(S);
+					vector<string> var = GetInputVariablesList(onWorkFormula);
 					resultVariable = var[0];
 					for (int i = 1; i < var.size(); i++) {
 						variable[var[i]] = 0;
@@ -130,21 +248,21 @@ public:
 				ImGui::PopID();
 				ImGui::PopStyleColor();
 			}
+			// Else If cant use just use normal text
 			else {
 				if (ImGui::Button(equations[i].getFormula().c_str(), ImVec2((float)screenSize.x * 0.3, 30)))
 				{
 					menu = 2;
-					S = equations[i].getFormula();
+					onWorkFormula = equations[i].getFormula();
 					variable.clear();
 
-					vector<string> var = GetInputVariablesList(S);
+					vector<string> var = GetInputVariablesList(onWorkFormula);
 					resultVariable = var[0];
 					for (int i = 1; i < var.size(); i++) {
 						variable[var[i]] = 0;
 					}
 					resultValue = "";
 				}
-
 				ImGui::SameLine();
 				ImGui::PushID(i);
 				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
@@ -157,73 +275,93 @@ public:
 				ImGui::PopID();
 				ImGui::PopStyleColor();
 			}
-
 		}
 		
-		if (ImGui::Button("s = v * t", ImVec2((float)screenSize.x * 0.3, 30))) //default function 1
-		{
-			menu = 2;
-			S = "s = v * t";
-			D = "find valosity";
-			variable.clear();
+		// Create Build-in Equation Button
+		if (!isLaTexUsable) {
+			if (ImGui::Button("s = v * t", ImVec2((float)screenSize.x * 0.3, 30))) //default function 1
+			{
+				menu = 2;
+				onWorkFormula = "s = v * t";
+				onWorkDesc = "find valosity";
+				variable.clear();
 
-			vector<string> var = GetInputVariablesList(S);
-			resultVariable = var[0];
-			for (int i = 1; i < var.size(); i++) {
-				variable[var[i]] = 0;
+				vector<string> var = GetInputVariablesList(onWorkFormula);
+				resultVariable = var[0];
+				for (int i = 1; i < var.size(); i++) {
+					variable[var[i]] = 0;
+				}
+				resultValue = "";
 			}
-			resultValue = "";
+			if (ImGui::Button("s = u + a * t", ImVec2((float)screenSize.x * 0.3, 30))) //default function 1
+			{
+				menu = 2;
+				onWorkFormula = "s = u + a * t";
+				onWorkDesc = "Find distance";
+				variable.clear();
+
+				vector<string> var = GetInputVariablesList(onWorkFormula);
+				resultVariable = var[0];
+				for (int i = 1; i < var.size(); i++) {
+					variable[var[i]] = 0;
+				}
+				resultValue = "";
+			}
+			if (ImGui::Button("y = m * x + b", ImVec2((float)screenSize.x * 0.3, 30))) //default function 1
+			{
+				menu = 2;
+				onWorkFormula = "y = m * x + c";
+				onWorkDesc = "Find y by using linear formula";
+				variable.clear();
+
+				vector<string> var = GetInputVariablesList(onWorkFormula);
+				resultVariable = var[0];
+				for (int i = 1; i < var.size(); i++) {
+					variable[var[i]] = 0;
+				}
+				resultValue = "";
+			}
 		}
-		if (ImGui::Button("s = u + a * t", ImVec2((float)screenSize.x * 0.3, 30))) //default function 1
-		{
-			menu = 2;
-			S = "s = u + a * t";
-			D = "Find distance";
-			variable.clear();
-
-			vector<string> var = GetInputVariablesList(S);
-			resultVariable = var[0];
-			for (int i = 1; i < var.size(); i++) {
-				variable[var[i]] = 0;
-			}
-			resultValue = "";
+		else {
+			LaTexEquationButton("s = v * t", "find valosity");
+			LaTexEquationButton("s = u + a * t", "Find distance");
+			LaTexEquationButton("y = m * x + b", "Find y by using linear formula");
 		}
-		if (ImGui::Button("f = m * x + b", ImVec2((float)screenSize.x * 0.3, 30))) //default function 1
-		{
-			menu = 2;
-			S = "y = m * x + c";
-			D = "Find y by using linear formula";
-			variable.clear();
 
-			vector<string> var = GetInputVariablesList(S);
-			resultVariable = var[0];
-			for (int i = 1; i < var.size(); i++) {
-				variable[var[i]] = 0;
-			}
-			resultValue = "";
-		}	
-
+		// Button to open menu for add equation
 		if (ImGui::Button("+", ImVec2((float)screenSize.x * 0.3, 30)))
 		{
 			inputEquation[0] = '\0';
 			inputDescription[0] = '\0';
 			menu = 1;
 		}			
+		ImGui::EndChild();
 
+		// Start Column 2 to make space between menu
 		ImGui::NextColumn();
-		ImGui::SetColumnWidth(2, (float)screenSize.x * C2 /100);
+		ImGui::SetColumnWidth(1, (float)screenSize.x * C1 /100);
+
+		// Start Column 3 AKA Right Menu 
 		ImGui::NextColumn(); 
-		ImGui::SetColumnWidth(3, (float)screenSize.x * C3/100);
+		ImGui::SetColumnWidth(2, (float)screenSize.x * C2/100);
+		ImGui::BeginChild(23, ImVec2(0, childSizeY), debugChildBorder);
+		// If check which menu is using
+		// menu1 = หน้าสร้างสมการ
 		if (menu == 1) {
-			// menu1 = หน้าสร้างสมการ
-			Saturation += 0.5 * ImGui::GetIO().DeltaTime;
-			ImGui::PushStyleColor(ImGuiCol_TextDisabled, (ImVec4)ImColor::HSV(0.5,abs(sin(Saturation)), 0.87, 1.0)); // Enter Equation color
-			//ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(Red, Green, Blue, 255));
+			//Code to make hint color change
+			Saturation += 1.5 * ImGui::GetIO().DeltaTime;
+			ImGui::PushStyleColor(ImGuiCol_TextDisabled, (ImVec4)ImColor::HSV(0.5,sin(Saturation)/2 + 0.5, 0.87, 1.0));
+			// Calculate width of item 
+			double x = ImGui::GetCursorScreenPos().x;
+			double l = screen.x + screenSize.x - x - PaX - 10;
+			ImGui::PushItemWidth(l);
+			// Input equation
 			ImGui::Text("Input Equation");
 			ImGui::InputTextWithHint("##InputEquation", "Enter Equation", inputEquation, 255);
 			ImGui::Text("Description of Equation");
-			ImGui::InputTextWithHint("##InputDesc", "Enter Description", inputDescription, 255);
-			if (ImGui::Button("Add")) {
+			ImGui::InputTextMultilineWithHint("##InputDesc", "Enter Description", inputDescription, 1024, ImVec2(l,150),0,0,0);
+			// Add equation button
+			if (ImGui::Button("Add", ImVec2(l,0))) {
 				if (inputEquation[0] != '\0') {
 					equations.push_back(EquationData(inputEquation, inputDescription));
 					EquationManager::SaveEquations(equations);
@@ -231,13 +369,13 @@ public:
 					inputDescription[0] = '\0';
 				}
 			}
+			ImGui::PopItemWidth();
 			ImGui::PopStyleColor();
-			
-
 		}
+		//menu = 2 คือหน้าคำนวณสมการ
 		else if (menu == 2) {
-			//menu = 2 คือหน้าคำนวณสมการ
-			ImGui::Text(("Equation: " + S).c_str());
+			ImGui::Text(("Equation: " + onWorkFormula).c_str());
+			// Create input for all variable
 			for (auto i = variable.begin(); i != variable.end(); i++) {
 					ImGui::Text(i->first.c_str());
 					ImGui::SameLine();
@@ -245,24 +383,30 @@ public:
 			}
 			ImGui::Text((resultVariable + " = " + resultValue).c_str());
 			if (ImGui::Button("Calculate")) {
-				if (S != "") resultValue = to_string(CalcualteEquation(S, variable));
+				if (onWorkFormula != "") resultValue = to_string(CalcualteEquation(onWorkFormula, variable));
 			}
-			ImGui::Text(("Description: " + D).c_str());
+			ImGui::Text(("Description: " + onWorkDesc).c_str());
 			}
-
+		// menu = 3 คือหน้าeditสมการ
 		else if (menu == 3) {
-			// menu = 3 คือหน้าeditสมการ
-			ImGui::PushStyleColor(ImGuiCol_TextDisabled, IM_COL32(0, 255, 0, 255));
-			ImGui::Text("Edit your Equation");
-			ImGui::InputText("##InputEquation", inputEquation, 255);
-			ImGui::Text("Edit your Description of Equation");
-			ImGui::InputText("##InputDesc", inputDescription, 255);
+			// Calculate width of item 
+			double x = ImGui::GetCursorScreenPos().x;
+			double l = screen.x + screenSize.x - x - PaX - 10;
+			ImGui::PushItemWidth(l);
+			//Code to make hint color change
+			Saturation += 1.5 * ImGui::GetIO().DeltaTime;
+			ImGui::PushStyleColor(ImGuiCol_TextDisabled, (ImVec4)ImColor::HSV(0.5, sin(Saturation) / 2 + 0.5, 0.87, 1.0));
+			ImGui::Text("Input Equation");
+			ImGui::InputTextWithHint("##InputEquation", "Enter Equation", inputEquation, 255);
+			ImGui::Text("Description of Equation");
+			ImGui::InputTextMultilineWithHint("##InputDesc", "Enter Description", inputDescription, 1024, ImVec2(l, 150), 0, 0, 0);
+			ImGui::PopItemWidth();
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.5f, 0.8f, 1.0f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.4f, 0.5f, 0.8f, 1.0f));
 
-			if (ImGui::Button("SAVE")) {
+			if (ImGui::Button("SAVE", ImVec2(l, 0))) {
 				if (inputEquation[0] != '\0') {
 					DeleteEquation(edit_index); //ลบสมการเดิมออก
 					EquationManager::SaveEquations(equations);//เพิ่มสมการที่ผู้ใช้กรอกเข้าไปใหม่
@@ -276,23 +420,21 @@ public:
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.4f, 0.5f, 0.8f, 1.0f));
 		
 	
-				if (ImGui::Button("DELETE", ImVec2(100, 30))) {
+			if (ImGui::Button("DELETE", ImVec2(l, 0))) {
 				DeleteEquation(edit_index);
 				EquationManager::SaveEquations(equations);
 				inputDescription[0] = '\0';
 				menu = 0;
-				}
+			}
 			ImGui::PopStyleColor(7);
+			
 		}
 
-
+		ImGui::EndChild();
 		ImGui::PopStyleColor(2);
+		ImGui::EndVertical();
 		ImGui::End();
 	}
-private:
-	char inputEquation[255];
-	unordered_map<string, double> variable;
-	char inputDescription[255];
 };
 
 Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
@@ -302,6 +444,7 @@ Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
 	Walnut::Application* app = new Walnut::Application(spec);
 	isLaTexUsable = CheckFile("LaTex\\LaTex.exe");
 	app->PushLayer<ExampleLayer>();
+	/*
 	app->SetMenubarCallback([app]()
 	{
 		if (ImGui::BeginMenu("File"))
@@ -325,6 +468,6 @@ Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
 			}
 			ImGui::EndMenu();
 		}
-	});
+	});*/
 	return app;
 }
