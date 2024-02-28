@@ -1,1 +1,2 @@
-A = B,Dobby Like|Kai Tord
+A = B,
+A = \frac{L}{R},

@@ -106,6 +106,20 @@ class ExampleLayer : public Walnut::Layer
 		buttonImage[id] = make_shared<Walnut::Image>(filename);
 		return buttonImage[id];
 	}
+	
+	//Function to send equation to calulate menu
+	void OnEquationButton(string equationFormula, string equationDesc) {
+		menu = 2;
+		onWorkFormula = equationFormula;
+		onWorkDesc = equationDesc;
+		variable.clear();
+		vector<string> var = GetInputVariablesList(onWorkFormula);
+		resultVariable = var[0];
+		for (int i = 1; i < var.size(); i++) {
+			variable[var[i]] = 0;
+		}
+		resultValue = "";
+	}
 
 	//Function to Create LaTex Equation Button
 	void LaTexEquationButton(string equationFormula, string equationDesc) {
@@ -116,19 +130,24 @@ class ExampleLayer : public Walnut::Layer
 		float offsetX = ((float)screenSize.x * lbWidth - width) / 2.0;
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { offsetX, 10 });
 		bool button = ImGui::ImageButton(img->GetDescriptorSet(), ImVec2(width, height), { 0,0 }, { 1,1 });
-		if (button) {
-			menu = 2;
-			onWorkFormula = equationFormula;
-			onWorkDesc = equationDesc;
-			variable.clear();
-			vector<string> var = GetInputVariablesList(onWorkFormula);
-			resultVariable = var[0];
-			for (int i = 1; i < var.size(); i++) {
-				variable[var[i]] = 0;
-			}
-			resultValue = "";
-		}
+		if (button) OnEquationButton(equationFormula, equationDesc);
 		ImGui::PopStyleVar();
+	}
+
+	void DrawLaTexEquation(string equationFormula) {
+		if (!isLaTexUsable) return;
+		auto img = GetImage(equationFormula);
+		double width = img->GetWidth() / (lbHeight + 1);
+		double height = img->GetHeight() / (lbHeight + 1);
+		float offsetX = ((float)screenSize.x * lbWidth - width) / 2.0;
+		ImGui::Image(img->GetDescriptorSet(), ImVec2(width, height));
+	}
+
+	void OnEditEquationButton(int equationIndex) {
+		menu = 3;
+		edit_index = equationIndex;
+		strcpy(inputEquation, equations[equationIndex].getFormula().c_str());
+		strcpy(inputDescription, equations[equationIndex].getDescription().c_str());
 	}
 
 public:
@@ -223,55 +242,26 @@ public:
 				double height = img->GetHeight() / (lbHeight + 2);
 				float offsetX = ((float)screenSize.x * 0.3 - width) / 2.0;
 				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { offsetX, 10 });
-				if (ImGui::ImageButton(img->GetDescriptorSet(), ImVec2(width, height), {0,0}, {1,1})) {
-					menu = 2;
-					onWorkFormula = equations[i].getFormula();
-					onWorkDesc = equations[i].getDescription();
-					variable.clear();
-					vector<string> var = GetInputVariablesList(onWorkFormula);
-					resultVariable = var[0];
-					for (int i = 1; i < var.size(); i++) {
-						variable[var[i]] = 0;
-					}
-					resultValue = "";
-				}
+				if (ImGui::ImageButton(img->GetDescriptorSet(), ImVec2(width, height), {0,0}, {1,1})) 
+				OnEquationButton(equations[i].getFormula(), equations[i].getDescription());
 				ImGui::PopStyleVar();
 				ImGui::SameLine();
 				ImGui::PushID(i);
 				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
-				if (ImGui::Button("EDIT", ImVec2(50, height + 20))) {
-					menu = 3;
-					edit_index = i;
-					strcpy(inputEquation, equations[i].getFormula().c_str());
-					strcpy(inputDescription, equations[i].getDescription().c_str());
-				}
+				if (ImGui::Button("EDIT", ImVec2(50, height + 20))) 
+				OnEditEquationButton(i);
 				ImGui::PopID();
 				ImGui::PopStyleColor();
 			}
 			// Else If cant use just use normal text
 			else {
 				if (ImGui::Button(equations[i].getFormula().c_str(), ImVec2((float)screenSize.x * 0.3, 30)))
-				{
-					menu = 2;
-					onWorkFormula = equations[i].getFormula();
-					variable.clear();
-
-					vector<string> var = GetInputVariablesList(onWorkFormula);
-					resultVariable = var[0];
-					for (int i = 1; i < var.size(); i++) {
-						variable[var[i]] = 0;
-					}
-					resultValue = "";
-				}
+				OnEquationButton(equations[i].getFormula(), equations[i].getDescription());		
 				ImGui::SameLine();
 				ImGui::PushID(i);
 				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
-				if (ImGui::Button("EDIT", ImVec2(50, 30))) {
-					menu = 3;
-					edit_index = i;
-					strcpy(inputEquation, equations[i].getFormula().c_str());
-					strcpy(inputDescription, equations[i].getDescription().c_str());
-				}
+				if (ImGui::Button("EDIT", ImVec2(50, 30))) 
+				OnEditEquationButton(i);			
 				ImGui::PopID();
 				ImGui::PopStyleColor();
 			}
@@ -279,48 +269,12 @@ public:
 		
 		// Create Build-in Equation Button
 		if (!isLaTexUsable) {
-			if (ImGui::Button("s = v * t", ImVec2((float)screenSize.x * 0.3, 30))) //default function 1
-			{
-				menu = 2;
-				onWorkFormula = "s = v * t";
-				onWorkDesc = "find valosity";
-				variable.clear();
-
-				vector<string> var = GetInputVariablesList(onWorkFormula);
-				resultVariable = var[0];
-				for (int i = 1; i < var.size(); i++) {
-					variable[var[i]] = 0;
-				}
-				resultValue = "";
-			}
-			if (ImGui::Button("s = u + a * t", ImVec2((float)screenSize.x * 0.3, 30))) //default function 1
-			{
-				menu = 2;
-				onWorkFormula = "s = u + a * t";
-				onWorkDesc = "Find distance";
-				variable.clear();
-
-				vector<string> var = GetInputVariablesList(onWorkFormula);
-				resultVariable = var[0];
-				for (int i = 1; i < var.size(); i++) {
-					variable[var[i]] = 0;
-				}
-				resultValue = "";
-			}
-			if (ImGui::Button("y = m * x + b", ImVec2((float)screenSize.x * 0.3, 30))) //default function 1
-			{
-				menu = 2;
-				onWorkFormula = "y = m * x + c";
-				onWorkDesc = "Find y by using linear formula";
-				variable.clear();
-
-				vector<string> var = GetInputVariablesList(onWorkFormula);
-				resultVariable = var[0];
-				for (int i = 1; i < var.size(); i++) {
-					variable[var[i]] = 0;
-				}
-				resultValue = "";
-			}
+			if (ImGui::Button("s = v * t", ImVec2((float)screenSize.x * 0.3, 30)))
+			OnEquationButton("s = v * t", "find valosity");			
+			if (ImGui::Button("s = u + a * t", ImVec2((float)screenSize.x * 0.3, 30)))		
+			OnEquationButton("s = u + a * t", "Find distance");			
+			if (ImGui::Button("y = m * x + b", ImVec2((float)screenSize.x * 0.3, 30)))	
+			OnEquationButton("y = m * x + c", "Find y by using linear formula");	
 		}
 		else {
 			LaTexEquationButton("s = v * t", "find valosity");
@@ -374,7 +328,11 @@ public:
 		}
 		//menu = 2 คือหน้าคำนวณสมการ
 		else if (menu == 2) {
-			ImGui::Text(("Equation: " + onWorkFormula).c_str());
+			if (isLaTexUsable) { 
+				ImGui::Text("Equation");
+				DrawLaTexEquation(onWorkFormula);
+			}
+			else ImGui::Text(("Equation: " + onWorkFormula).c_str());
 			// Create input for all variable
 			for (auto i = variable.begin(); i != variable.end(); i++) {
 					ImGui::Text(i->first.c_str());
@@ -385,7 +343,7 @@ public:
 			if (ImGui::Button("Calculate")) {
 				if (onWorkFormula != "") resultValue = to_string(CalcualteEquation(onWorkFormula, variable));
 			}
-			ImGui::Text(("Description: " + onWorkDesc).c_str());
+			ImGui::Text(("Description\n" + onWorkDesc).c_str());
 			}
 		// menu = 3 คือหน้าeditสมการ
 		else if (menu == 3) {
@@ -444,30 +402,5 @@ Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
 	Walnut::Application* app = new Walnut::Application(spec);
 	isLaTexUsable = CheckFile("LaTex\\LaTex.exe");
 	app->PushLayer<ExampleLayer>();
-	/*
-	app->SetMenubarCallback([app]()
-	{
-		if (ImGui::BeginMenu("File"))
-		{
-			if (ImGui::MenuItem("Exit"))
-			{
-				app->Close();
-			}
-
-			ImGui::EndMenu();
-		}
-		
-		if (ImGui::BeginMenu("Equation")) {
-			if (ImGui::MenuItem("Load"))
-			{
-				EquationManager::LoadEquations(equations);
-			}
-			if (ImGui::MenuItem("Save"))
-			{
-				EquationManager::SaveEquations(equations);
-			}
-			ImGui::EndMenu();
-		}
-	});*/
 	return app;
 }
