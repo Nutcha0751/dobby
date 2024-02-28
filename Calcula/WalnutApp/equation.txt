@@ -1,2 +1,0 @@
-s = o * y,soy
-p = a + t,pat
