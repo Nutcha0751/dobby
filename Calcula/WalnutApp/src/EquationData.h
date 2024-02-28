@@ -9,24 +9,25 @@ private:
     string description;
 
 public:
-    EquationData(const string& _formula, const string& _description)
-        : formula(_formula), description(_description) {}
+    EquationData(string _formula, string _description)
+        : formula(_formula), description(_description) {
+    }
 
     // Setter functions
-    void setFormula(const string& _formula) {
+    void setFormula(string _formula) {
         formula = _formula;
     }
 
-    void setDescription(const string& _description) {
+    void setDescription(string _description) {
         description = _description;
     }
 
     // Getter functions
-    string getFormula() const {
+    string getFormula() {
         return formula;
     }
 
-    string getDescription() const {
+    string getDescription() {
         return description;
     }
 };
