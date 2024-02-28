@@ -14,10 +14,17 @@ public:
 		string equation;
 		string formula;
 		string description;
-		while (getline(file, equation) ){
+		string multilinedesc;
+		while (getline(file, equation)) {
 			sscanf(equation.c_str(), "%[^,],%[^,]", formula.c_str(), description.c_str());
 			cout << "Load " << formula.c_str() << "size: " << strlen(formula.c_str());
-			equations.push_back(EquationData(formula.c_str(), description.c_str()));
+			multilinedesc = description.c_str();
+			int newLine = multilinedesc.find('|');
+			while (newLine < multilinedesc.size()) {
+				multilinedesc.replace(newLine, 1, "\n");
+				newLine = multilinedesc.find('|');
+			}
+			equations.push_back(EquationData(formula.c_str(), multilinedesc));
 		}
 	}
 
@@ -26,7 +33,14 @@ public:
 		file.open("equation.txt");
 		for (int i = 0; i < equations.size(); i++) {
 			cout << "Save " << equations[i].getFormula() << "size: " << equations[i].getFormula().size();
-			file <<  equations[i].getFormula() << "," << equations[i].getDescription() << endl;
+			
+			string desc = equations[i].getDescription();
+			int newLine = desc.find('\n');
+			while (newLine < desc.size()) {
+				desc.replace(newLine, 1, "|");
+				newLine = desc.find('\n');
+			}
+			file <<  equations[i].getFormula() << "," << desc << endl;
 		}
 	}
 };
