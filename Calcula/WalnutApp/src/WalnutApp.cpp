@@ -270,15 +270,15 @@ public:
 		// Create Build-in Equation Button
 		if (!isLaTexUsable) {
 			if (ImGui::Button("s = v * t", ImVec2((float)screenSize.x * 0.3, 30)))
-			OnEquationButton("s = v * t", "find valosity");			
+			OnEquationButton("s = v * t", "find displacement");			
 			if (ImGui::Button("s = u + a * t", ImVec2((float)screenSize.x * 0.3, 30)))		
-			OnEquationButton("s = u + a * t", "Find distance");			
+			OnEquationButton("s = u + a * t", "Find displacement");			
 			if (ImGui::Button("y = m * x + b", ImVec2((float)screenSize.x * 0.3, 30)))	
 			OnEquationButton("y = m * x + c", "Find y by using linear formula");	
 		}
 		else {
-			LaTexEquationButton("s = v * t", "find valosity");
-			LaTexEquationButton("s = u + a * t", "Find distance");
+			LaTexEquationButton("s = v * t", "find displacement");
+			LaTexEquationButton("s = u + a * t", "Find displacement");
 			LaTexEquationButton("y = m * x + b", "Find y by using linear formula");
 		}
 
