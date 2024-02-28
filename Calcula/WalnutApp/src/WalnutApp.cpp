@@ -207,6 +207,10 @@ public:
 		// Start Column 1
 		ImGui::SetColumnWidth(0, (float)screenSize.x * C0 / 100);
 		ImGui::Text("Equations List");
+		ImGui::PushStyleColor(ImGuiCol_ScrollbarBg, ImVec4(0, 0, 0, 0));
+		ImGui::PushStyleColor(ImGuiCol_ScrollbarGrab, ImVec4(0.4f, 0.5f, 0.8f, 0.5f));
+		ImGui::BeginChild(22,ImVec2(0, childSizeY), debugChildBorder);
+		ImGui::PopStyleColor(2);
 
 		//Begin Child and Set Slider color
 		ImGui::PushStyleColor(ImGuiCol_ScrollbarBg, ImVec4(0, 0, 0, 0));
