@@ -6,8 +6,18 @@
 #include "Calculate.cpp"
 #include "EquationManager.h"
 #include "LaTexCaller.cpp"
+#include <imgui_internal.h>
 
 using namespace std;
+
+//Custom Input Multiline with hint
+namespace ImGui
+{
+	bool InputTextMultilineWithHint(const char* label, const char* hint, char* buf, size_t buf_size, const ImVec2& size, ImGuiInputTextFlags flags, ImGuiInputTextCallback callback, void* user_data)
+	{
+		return InputTextEx(label, hint, buf, (int)buf_size, size, flags | ImGuiInputTextFlags_Multiline, callback, user_data);
+	}
+};
 
 std::vector<EquationData> equations;
 bool isLaTexUsable = false;
@@ -18,6 +28,8 @@ float Saturation = 0;
 static void DeleteEquation(int index) {
 	equations.erase(equations.begin() + index);
 }
+
+bool debugEnable = true;
 
 class ExampleLayer : public Walnut::Layer
 {
@@ -36,10 +48,14 @@ public:
 	vector<int>List_idex;
 	unordered_map<unsigned, std::shared_ptr<Walnut::Image>> buttonImage;
 
-	float C0 = 6;
-	float C1 = 33;
-	float C2 = 4;
-	float C3 = 74;
+	float C0 = 36;
+	float C1 = 0.5;
+	float C2 = 100 - C0 - C1;
+
+	float PaX = 30;
+	float PaY = 30;
+	bool setting = false;
+	bool debugChildBorder = false;
 
 	std::shared_ptr<Walnut::Image> GetImage(string equation) {
 		unsigned id = Hashing(equation);
@@ -70,7 +86,32 @@ public:
 	
 	virtual void OnUIRender() override
 	{
-		ImGui::Begin("Dobby's Calculation");
+		ImGuiViewport* viewport = ImGui::GetMainViewport();
+		ImGui::SetNextWindowPos(viewport->WorkPos);
+		ImGui::SetNextWindowSize(viewport->WorkSize);
+		ImGui::SetNextWindowViewport(viewport->ID);
+
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+		ImGui::Begin("Dobby's Calculation", 0, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_MenuBar );
+		ImGui::PopStyleVar();
+
+		ImGui::BeginMenuBar();
+		if (ImGui::BeginMenu("Equation")) {
+			if (ImGui::MenuItem("Load"))
+			{
+				EquationManager::LoadEquations(equations);
+			}
+			if (ImGui::MenuItem("Save"))
+			{
+				EquationManager::SaveEquations(equations);
+			}
+			ImGui::EndMenu();
+		}
+		ImGui::EndMenuBar();
+
+		ImVec2 p = ImGui::GetCursorScreenPos();
+		ImGui::SetCursorScreenPos(ImVec2(p.x + PaX, p.y + PaY));
+		ImGui::BeginVertical(99);
 
 		// Get Dobby's Calculation Window Pos and Size
 		ImVec2 screen = ImGui::GetWindowViewport()->Pos;
@@ -78,24 +119,36 @@ public:
 
 		// Draw Background
 		ImDrawList* background = ImGui::GetWindowDrawList();
-		background->AddImage(image->GetDescriptorSet(), screen, ImVec2(screen.x + screenSize.x, screenSize.y + screen.y));
+ 		background->AddImage(image->GetDescriptorSet(), screen, ImVec2(screen.x + screenSize.x, screenSize.y + screen.y));
 		
-		ImGui::Text("##TopPadding");
-
-		// Set Main Color Theme of Application
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); //text black color
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.5f, 0.8f, 1.0f)); //button color
-		ImGui::SliderFloat("C0", &C0,0,100);
-		ImGui::SliderFloat("C1", &C1, 0, 100);
-		ImGui::SliderFloat("C2", &C2, 0, 100);
-		ImGui::SliderFloat("C3", &C3, 0, 100);
-		ImGui::SliderFloat("R", &R,1,5);
 
-		ImGui::Columns(4, "MyLayout", false);
+		if (debugEnable) {
+			ImGui::Checkbox("Setting", &setting);
+			ImGui::SameLine();
+			ImGui::Checkbox("ChildBorder", &debugChildBorder);
+			if (setting) {
+				ImGui::SliderFloat("PaX", &PaX, 0, 100);
+				ImGui::SliderFloat("PaY", &PaY, 0, 100);
+				ImGui::SliderFloat("C0", &C0, 0, 100);
+				ImGui::SliderFloat("C1", &C1, 0, 100);
+				ImGui::SliderFloat("C2", &C2, 0, 100);
+				ImGui::SliderFloat("R", &R, 1, 5);
+			}
+		}
+
+		ImGui::Columns(3, "MyLayout", false);
 		ImGui::SetColumnWidth(0, (float)screenSize.x * C0 / 100);
-		ImGui::NextColumn();
-		ImGui::SetColumnWidth(1, (float)screenSize.x * C1 / 100);
+
+		float getBeginY = ImGui::GetCursorScreenPos().y;
+		double childSizeY = screen.y + screenSize.y - getBeginY - PaY;
+
 		ImGui::Text("Equations List");
+		ImGui::PushStyleColor(ImGuiCol_ScrollbarBg, ImVec4(0, 0, 0, 0));
+		ImGui::PushStyleColor(ImGuiCol_ScrollbarGrab, ImVec4(0.4f, 0.5f, 0.8f, 0.5f));
+		ImGui::BeginChild(22,ImVec2(0, childSizeY), debugChildBorder);
+		ImGui::PopStyleColor(2);
 
 		// Create List of Equation
 		for (int i = 0; i < equations.size(); i++) {
@@ -209,21 +262,28 @@ public:
 			inputDescription[0] = '\0';
 			menu = 1;
 		}			
+		ImGui::EndChild();
 
 		ImGui::NextColumn();
-		ImGui::SetColumnWidth(2, (float)screenSize.x * C2 /100);
+		ImGui::SetColumnWidth(1, (float)screenSize.x * C1 /100);
+
 		ImGui::NextColumn(); 
-		ImGui::SetColumnWidth(3, (float)screenSize.x * C3/100);
+		
+		ImGui::SetColumnWidth(2, (float)screenSize.x * C2/100);
+		ImGui::BeginChild(23, ImVec2(0, childSizeY), debugChildBorder);
 		if (menu == 1) {
 			// menu1 = หน้าสร้างสมการ
-			Saturation += 0.5 * ImGui::GetIO().DeltaTime;
-			ImGui::PushStyleColor(ImGuiCol_TextDisabled, (ImVec4)ImColor::HSV(0.5,abs(sin(Saturation)), 0.87, 1.0)); // Enter Equation color
+			Saturation += 1.5 * ImGui::GetIO().DeltaTime;
+			ImGui::PushStyleColor(ImGuiCol_TextDisabled, (ImVec4)ImColor::HSV(0.5,sin(Saturation)/2 + 0.5, 0.87, 1.0)); // Enter Equation color
 			//ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(Red, Green, Blue, 255));
+			double x = ImGui::GetCursorScreenPos().x;
+			double l = screen.x + screenSize.x - x - PaX - 10;
+			ImGui::PushItemWidth(l);
 			ImGui::Text("Input Equation");
 			ImGui::InputTextWithHint("##InputEquation", "Enter Equation", inputEquation, 255);
 			ImGui::Text("Description of Equation");
-			ImGui::InputTextWithHint("##InputDesc", "Enter Description", inputDescription, 255);
-			if (ImGui::Button("Add")) {
+			ImGui::InputTextMultilineWithHint("##InputDesc", "Enter Description", inputDescription, 255, ImVec2(l,150),0,0,0);
+			if (ImGui::Button("Add", ImVec2(l,0))) {
 				if (inputEquation[0] != '\0') {
 					equations.push_back(EquationData(inputEquation, inputDescription));
 					EquationManager::SaveEquations(equations);
@@ -231,6 +291,7 @@ public:
 					inputDescription[0] = '\0';
 				}
 			}
+			ImGui::PopItemWidth();
 			ImGui::PopStyleColor();
 			
 
@@ -249,7 +310,6 @@ public:
 			}
 			ImGui::Text(("Description: " + D).c_str());
 			}
-
 		else if (menu == 3) {
 			// menu = 3 คือหน้าeditสมการ
 			ImGui::PushStyleColor(ImGuiCol_TextDisabled, IM_COL32(0, 255, 0, 255));
@@ -285,8 +345,9 @@ public:
 			ImGui::PopStyleColor(7);
 		}
 
-
+		ImGui::EndChild();
 		ImGui::PopStyleColor(2);
+		ImGui::EndVertical();
 		ImGui::End();
 	}
 private:
@@ -302,6 +363,7 @@ Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
 	Walnut::Application* app = new Walnut::Application(spec);
 	isLaTexUsable = CheckFile("LaTex\\LaTex.exe");
 	app->PushLayer<ExampleLayer>();
+	/*
 	app->SetMenubarCallback([app]()
 	{
 		if (ImGui::BeginMenu("File"))
@@ -325,6 +387,6 @@ Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
 			}
 			ImGui::EndMenu();
 		}
-	});
+	});*/
 	return app;
 }
