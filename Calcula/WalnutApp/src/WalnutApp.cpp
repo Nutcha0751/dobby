@@ -165,7 +165,7 @@ public:
 		ImGui::SetNextWindowViewport(viewport->ID);
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-		ImGui::Begin("Dobby's Calculation", 0, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_MenuBar );
+		ImGui::Begin("Dobby's Calculator", 0, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_MenuBar );
 		ImGui::PopStyleVar();
 
 		//Menubar
@@ -199,6 +199,17 @@ public:
 		//Set Main Color Theme
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); //text black color
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.5f, 0.8f, 1.0f)); //button color
+
+		//Adjust the text to be centered on the screen.
+		float textWidth = ImGui::CalcTextSize("Dobby's Calculator").x;
+		float windowWidth = ImGui::GetWindowWidth();
+		float centerPosX = (windowWidth - textWidth) / 2.0f;
+		ImGui::SetCursorPosX(centerPosX);
+
+		//Adjust font size
+		ImGui::SetWindowFontScale(2.0f);
+		ImGui::Text("Dobby's Calculator");
+		ImGui::SetWindowFontScale(1.0f);
 
 		//UI Debugging Tool
 		if (debugEnable) {
