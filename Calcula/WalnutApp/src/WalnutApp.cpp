@@ -227,9 +227,7 @@ public:
 			}
 		}
 
-		// Calculate Child Window Y Size
-		float getBeginY = ImGui::GetCursorScreenPos().y;
-		double childSizeY = screen.y + screenSize.y - getBeginY - PaY;
+
 
 		//Start Columns
 		ImGui::Columns(3, "MyLayout", false);
@@ -237,6 +235,10 @@ public:
 		// Start Column 1
 		ImGui::SetColumnWidth(0, (float)screenSize.x * C0 / 100);
 		ImGui::Text("Equations List");
+
+		// Calculate Child Window Y Size
+		float getBeginY = ImGui::GetCursorScreenPos().y;
+		double childSizeY = screen.y + screenSize.y - getBeginY - PaY;
 
 		//Begin Child and Set Slider color
 		ImGui::PushStyleColor(ImGuiCol_ScrollbarBg, ImVec4(0, 0, 0, 0));
@@ -330,6 +332,8 @@ public:
 				if (inputEquation[0] != '\0') {
 					equations.push_back(EquationData(inputEquation, inputDescription));
 					EquationManager::SaveEquations(equations);
+					string test = inputEquation;
+					//CalculateV2(test);
 					inputEquation[0] = '\0';
 					inputDescription[0] = '\0';
 				}
@@ -342,6 +346,7 @@ public:
 			if (isLaTexUsable) { 
 				ImGui::Text("Equation");
 				DrawLaTexEquation(onWorkFormula);
+				ImGui::Text(("Input Format: " + onWorkFormula).c_str());
 			}
 			else ImGui::Text(("Equation: " + onWorkFormula).c_str());
 			// Create input for all variable
@@ -352,7 +357,9 @@ public:
 			}
 			ImGui::Text((resultVariable + " = " + resultValue).c_str());
 			if (ImGui::Button("Calculate")) {
-				if (onWorkFormula != "") resultValue = to_string(CalcualteEquation(onWorkFormula, variable));
+				string result = "";
+				if (onWorkFormula != "") resultValue = to_string(CalcualteEquation(onWorkFormula, variable, &result));
+				if (result == "Wrong Format") resultValue = "Equation Wrong Format or not Compatible";
 			}
 			ImGui::Text(("Description\n" + onWorkDesc).c_str());
 			}
@@ -384,18 +391,16 @@ public:
 					menu = 0;
 				}
 			}
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.5f, 0.8f, 1.0f));
+
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.4f, 0.5f, 0.8f, 1.0f));
-		
-	
+
 			if (ImGui::Button("DELETE", ImVec2(l, 0))) {
 				DeleteEquation(edit_index);
 				EquationManager::SaveEquations(equations);
 				inputDescription[0] = '\0';
 				menu = 0;
 			}
-			ImGui::PopStyleColor(7);
+			ImGui::PopStyleColor(5);
 			
 		}
 
