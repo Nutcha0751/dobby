@@ -216,6 +216,7 @@ public:
 		ImGui::NextColumn();
 		ImGui::SetColumnWidth(3, (float)screenSize.x * C3/100);
 		if (menu == 1) {
+			// menu1 = หน้าสร้างสมการ
 			Red += ImGui::GetIO().DeltaTime * 0.3;
 			Green += ImGui::GetIO().DeltaTime * 0.3;
 			Blue += ImGui::GetIO().DeltaTime * 0.5;
@@ -238,20 +239,22 @@ public:
 
 		}
 		else if (menu == 2) {
-				ImGui::Text(("Equation: " + S).c_str());
-				for (auto i = variable.begin(); i != variable.end(); i++) {
-						ImGui::Text(i->first.c_str());
-						ImGui::SameLine();
-						ImGui::InputDouble(("##" + i->first).c_str(), &i->second);
-				}
-				ImGui::Text((resultVariable + " = " + resultValue).c_str());
-				if (ImGui::Button("Calculate")) {
-					if (S != "") resultValue = to_string(CalcualteEquation(S, variable));
-				}
-				ImGui::Text(("Description: " + D).c_str());
+			//menu = 2 คือหน้าคำนวณสมการ
+			ImGui::Text(("Equation: " + S).c_str());
+			for (auto i = variable.begin(); i != variable.end(); i++) {
+					ImGui::Text(i->first.c_str());
+					ImGui::SameLine();
+					ImGui::InputDouble(("##" + i->first).c_str(), &i->second);
+			}
+			ImGui::Text((resultVariable + " = " + resultValue).c_str());
+			if (ImGui::Button("Calculate")) {
+				if (S != "") resultValue = to_string(CalcualteEquation(S, variable));
+			}
+			ImGui::Text(("Description: " + D).c_str());
 			}
 
 		else if (menu == 3) {
+			// menu = 3 คือหน้าeditสมการ
 			ImGui::PushStyleColor(ImGuiCol_TextDisabled, IM_COL32(0, 255, 0, 255));
 			ImGui::Text("Edit your Equation");
 			ImGui::InputText("##InputEquation", inputEquation, 255);
