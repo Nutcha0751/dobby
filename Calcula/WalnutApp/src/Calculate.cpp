@@ -205,7 +205,7 @@ static double Calculate(string problem, string function = "", string* result = 0
             }
             if (alphabet != "")
             {
-                if (alphabet[0] >= '0' && alphabet[0] <= '9' || alphabet[0] == '-') {
+                if (alphabet[0] >= '0' && alphabet[0] <= '9' || (alphabet[0] == '-' && oparation[i] != '-')) {
                     if (isOparation(string("") + oparation[i])) {
                          numList.push_back(TryStod(alphabet, result));
                          lastAdd = 2;
@@ -213,7 +213,7 @@ static double Calculate(string problem, string function = "", string* result = 0
                     }
                 }
                 if (alphabet == "-") {
-
+                    
                 }else if (isOparation(alphabet)) {
                      oparationList.push_back(alphabet);
                         lastAdd = 1;
@@ -222,6 +222,7 @@ static double Calculate(string problem, string function = "", string* result = 0
                 }
             }
             alphabet += oparation[i];
+            if(alphabet == "--") alphabet = "";
         }
 
         if (oparation[i] == ' ' || i == oparation.size() - 1)
