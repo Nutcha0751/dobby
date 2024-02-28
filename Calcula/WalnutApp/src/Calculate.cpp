@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
+#include <stdexcept>
 using namespace std;
 
 void ToLowerCase(string &s)
@@ -45,24 +46,145 @@ static double Function(string func, double value)
     }
     return sign * result;
 }
-static double Calculate(string problem, string function = "")
+
+vector<string> allOparations = { "+", "-", "*", "/", "^" };
+bool isOparation(string alphabet) {
+    //cout << "Alphabet: " << alphabet << endl;
+    for (auto i : allOparations) {
+        //cout << "Check: " << i << endl;
+        if (alphabet == i) return 1;
+    }
+    return 0;
+}
+bool isOparation(char alphabet) {
+    //cout << "Alphabet: " << alphabet << endl;
+    for (auto i : allOparations) {
+        //cout << "Check: " << i << endl;
+        if (alphabet == i[0]) return 1;
+    }
+    return 0;
+}
+
+enum readType {
+    None, Oparation, Number
+};
+/*
+static string Read(string problem, unsigned& index) {
+    string read = "";
+    while (problem[index] == ' ') index++;
+    switch (problem[index]) {
+        case '0':case '1':case '2':case '3':case '4':case '5':case '6':case '7':case '8':case '9':
+            do {
+                read += problem[index];
+                index++;
+                if (index >= problem.size()) break;
+            } while (problem[index] >= '0' && problem[index] <= '9');
+            break;
+        case '+':case '*':case '/':case '^':
+            read += problem[index];
+            index++;
+            break;
+        case '-':
+            read += '-';
+            index++;
+            while (problem[index] >= '0' && problem[index] <= '9') {
+                read += problem[index];
+                index++;
+                if(index >= problem.size())break;
+            }
+            break;
+        case '(':
+            int open = 1;
+            int close = 0;
+            index++;
+            for (int i = index; i < problem.size(); i++) {
+                if (problem[i] == '(') open++;
+                if (problem[i] == ')') close++;
+                if (open == close) break;
+                read += problem[i];
+                index++;
+            }
+            index++;
+            break;
+    }
+    cout << read << endl;
+    return read;
+}
+static double CalculateV2(string problem, string function = "", string* result = 0) {
+    vector<string> alphabet;
+    unsigned index = 0;
+    alphabet.push_back(Read(problem, index));
+}*/
+
+static double TryStod(const string& str, string* result = 0) {
+
+    double d;
+    try {
+        d = std::strtod(str.c_str(),0);
+    }
+    catch (const std::invalid_argument&) {
+        std::cerr << "Argument is invalid\n";
+        *result = "Wrong Format";
+        throw;
+    }
+    catch (const std::out_of_range&) {
+        std::cerr << "Argument is out of range for a double\n";
+        *result = "Wrong Format";
+        throw;
+    }
+    return d;
+}
+
+static double Calculate(string problem, string function = "", string* result = 0)
 {
     vector<string> oparationList;
     vector<double> numList;
     string oparation = problem;
     string alphabet = "";
-
+    int lastAdd = 0;
     for (int i = 0; i < oparation.size(); i++)
-    {
+    {   
+        if (*result == "Wrong Format") return -1;
+        cout << i << " " << alphabet << endl;
+        cout << oparation[i] << endl;
         if (oparation[i] != ' ')
         {
             if (oparation[i] == '(')
             {
+                if (i > 2) if (oparation[i - 1] == ')')
+                {
+                    oparationList.push_back("*");
+                    lastAdd = 1;
+                }
+                /*
+                if (isOparation(alphabet)) {
+                    oparationList.push_back(alphabet);
+                    alphabet = "";
+                }*/
                 string func = "";
                 if (alphabet.size() > 0)
                 {
-                    func = alphabet;
-                    alphabet = "";
+                    if (isOparation(alphabet) && alphabet != "-") {
+                        oparationList.push_back(alphabet);
+                        lastAdd = 1;
+                    }
+                    else if (alphabet == "-") {
+                        if (lastAdd == 2) {
+                            oparationList.push_back("+");
+                            func = "-";
+                            alphabet = "";
+                            lastAdd = 1;
+                        }
+                        else {
+                            func = "-";
+                            alphabet = "";
+                            lastAdd = 1;
+                        }
+                    }
+                    else {
+                        func = alphabet;
+                        alphabet = "";
+                    }
                 }
                 i++;
                 string subProblem = "";
@@ -76,8 +198,28 @@ static double Calculate(string problem, string function = "")
                     subProblem += oparation[i];
                     i++;
                 }
-                numList.push_back(Calculate(subProblem, func));
+                numList.push_back(Calculate(subProblem, func, result));
+                lastAdd = 2;
+                if(result) if (*result == "Wrong Format") return -1;
                 continue;
+            }
+            if (alphabet != "")
+            {
+                if (alphabet[0] >= '0' && alphabet[0] <= '9' || alphabet[0] == '-') {
+                    if (isOparation(string("") + oparation[i])) {
+                         numList.push_back(TryStod(alphabet, result));
+                         lastAdd = 2;
+                         alphabet = "";
+                    }
+                }
+                if (alphabet == "-") {
+
+                }else if (isOparation(alphabet)) {
+                     oparationList.push_back(alphabet);
+                        lastAdd = 1;
+                        alphabet = "";
+                    
+                }
             }
             alphabet += oparation[i];
         }
@@ -89,23 +231,26 @@ static double Calculate(string problem, string function = "")
                 if (alphabet[0] == '-') {
                     if (alphabet.size() == 1) {
                         oparationList.push_back("+");
+                        lastAdd = 1;
                     }
                     else {
                         int i = 1;
                         while (alphabet[i] == '-') i++;
-                        numList.push_back(pow(-1, i) * stod(alphabet.substr(i)));
+                        numList.push_back(pow(-1, i) * TryStod(alphabet.substr(i), result));
+                        lastAdd = 2;
                         alphabet = "";
                     }
                 }
                 else if (alphabet[0] >= '0' && alphabet[0] <= '9') 
                 {
-                    numList.push_back(stod(alphabet));
+                    numList.push_back(TryStod(alphabet, result));
+                    lastAdd = 2;
                     alphabet = "";
                 }
-                 
                 else 
                 {
                     oparationList.push_back(alphabet);
+                    lastAdd = 1;
                     alphabet = "";
                 }
                 
@@ -113,8 +258,21 @@ static double Calculate(string problem, string function = "")
         }
     }
 
+    for (int i = 0; i < numList.size(); i++) cout << numList[i] << endl;
+
+    if (numList.size() < 2 && oparationList.size() > 0) {
+        *result = "Wrong Format";
+        return -1;
+    }
+
+    if (numList.size() != oparationList.size() + 1) {
+        *result = "Wrong Format";
+        return -1;
+    }
+
     for (int i = oparationList.size() - 1; i >= 0; i--)
     {
+        cout << oparationList[i] << endl;
         if (oparationList[i] == "^")
         {
             double op = pow(numList[i], numList[i + 1]);
@@ -123,7 +281,7 @@ static double Calculate(string problem, string function = "")
             oparationList.erase(oparationList.begin() + i);
         }
     }
-    for (int i = oparationList.size() - 1; i >= 0; i--)
+    for (int i = 0; i < oparationList.size(); i++)
     {
         if (oparationList[i] == "/")
         {
@@ -131,6 +289,7 @@ static double Calculate(string problem, string function = "")
             numList[i] = op;
             numList.erase(numList.begin() + i + 1);
             oparationList.erase(oparationList.begin() + i);
+            i--;
         }
     }
 
@@ -163,13 +322,16 @@ static double Calculate(string problem, string function = "")
         }
     }
 
+    if(result) if (numList.size() > 1 || oparationList.size() > 0) *result = "Wrong Format";
     return Function(function, numList[0]);
 }
 static vector<string> GetInputVariablesList(string formula)
 {
+    int equalSymbol = formula.find('=');
     vector<string> variables;
+    variables.push_back(formula.substr(0, equalSymbol));
     string var = "";
-    for (int k = 0; k < formula.size(); k++)
+    for (int k = equalSymbol + 1; k < formula.size(); k++)
     {
         char i = formula[k];
         if ((i >= 'a' && i <= 'z') || (i >= 'A' && i <= 'Z') || i == '_' || i == ':')
@@ -188,6 +350,7 @@ static vector<string> GetInputVariablesList(string formula)
             }
             var = "";
         }
+        if (var != "") if (i >= '0' && i <= '9') var += i;
     }
     if (var != "") {
         if (var != "c:e" && var != "c:pi") {
@@ -196,7 +359,7 @@ static vector<string> GetInputVariablesList(string formula)
     }
     return variables;
 }
-static double CalcualteEquation(string formula, unordered_map<string, double> variables)
+static double CalcualteEquation(string formula, unordered_map<string, double> variables, string *result = 0)
 {
     formula = formula.substr(formula.find("=") + 1);
     string var = "";
@@ -222,6 +385,7 @@ static double CalcualteEquation(string formula, unordered_map<string, double> va
             }
             var = "";
         }
+        if (var != "") if (formula[i] >= '0' && formula[i] <= '9') var += formula[i];
     }
     if (var != "")
     {
@@ -231,7 +395,7 @@ static double CalcualteEquation(string formula, unordered_map<string, double> va
         else formula.replace(formula.size() - var.size(), var.size(), to_string(variables[var]));
         cout << formula << endl;
     }
-    double value = Calculate(formula);
+    double value = Calculate(formula,"", result);
     return value;
 }
 /*
