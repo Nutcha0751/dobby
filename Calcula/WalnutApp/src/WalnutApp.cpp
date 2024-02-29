@@ -412,9 +412,7 @@ public:
 					if (k < test.size()) inputWarnning = "\\ is illegal character";
 					else {
 						inputWarnning = "";
-						DeleteEquation(edit_index); //ลบสมการเดิมออก
-						EquationManager::SaveEquations(equations);//เพิ่มสมการที่ผู้ใช้กรอกเข้าไปใหม่
-						equations.push_back(EquationData(inputEquation, inputDescription));
+						equations[edit_index].setFormula(inputEquation);
 						EquationManager::SaveEquations(equations);
 						menu = 0;
 					}

@@ -1,2 +1,2 @@
-A = B - K,
-A = B,
+e = p + f,poiuhg
+l = n * k,ink
