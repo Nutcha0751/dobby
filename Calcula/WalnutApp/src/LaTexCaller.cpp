@@ -8,11 +8,27 @@ static unsigned Hashing(const std::string& name) {
 	return hasher(name);
 }
 
+static int CheckLaTex() {
+	string command = "LaTex\\LaTex.exe";
+	int k = system(command.c_str());
+	return k;
+}
+
+static int CheckValid(const std::string& formula) {
+	//cout << formula << endl;
+	string cm = "\"check\"";
+	string fl = " \"" + formula + "\"";
+	string command = "LaTex\\LaTex.exe " + cm + fl;
+	int k = system(command.c_str());
+	return k;
+}
+
 static int GenarateImage(const std::string& formula, const std::string& fileName) {
-	cout << formula << endl;
-	string fl = "\"" + formula + "\"";
+	//cout << formula << endl;
+	string cm = "\"gen\"";
+	string fl = " \"" + formula + "\"";
 	string fn = " \"" + fileName + ".png\"";
-	string command = "LaTex\\LaTex.exe " + fl + fn;
+	string command = "LaTex\\LaTex.exe " + cm + fl + fn;
 	int k = system(command.c_str());
 	cout << k << endl;
 	return k;
