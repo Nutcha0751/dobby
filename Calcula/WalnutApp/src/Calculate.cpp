@@ -51,7 +51,7 @@ static double Factorial(double value) {
     return fvalue;
 }
 vector<string> allOparations = { "+", "-", "*", "/", "^" };
-bool isOparation(string alphabet) {
+static bool isOparation(string alphabet) {
     //cout << "Alphabet: " << alphabet << endl;
     for (auto i : allOparations) {
         //cout << "Check: " << i << endl;
@@ -59,7 +59,7 @@ bool isOparation(string alphabet) {
     }
     return 0;
 }
-bool isOparation(char alphabet) {
+static bool isOparation(char alphabet) {
     //cout << "Alphabet: " << alphabet << endl;
     for (auto i : allOparations) {
         //cout << "Check: " << i << endl;
@@ -67,7 +67,15 @@ bool isOparation(char alphabet) {
     }
     return 0;
 }
-
+vector<string> allFunction = {"sin", "sine", "cos", "cosine", "tan", "tangent", "cosec", "cosecent"
+, "csc", "sec", "secant", "cot", "cotan", "cotangent", "ln", "log", "arcsin", "asin", "arccos", "acos", "arctan", "atan", "arccos", "acos"
+, "arctan", "atan", "arcsec", "asec", "arccsc", "acsc", "arccot", "acot"};
+static bool isFunctionName(string text) {
+    for (auto i : allFunction) {
+        if (text == i) return 1;
+    }
+    return 0;
+}
 enum readType {
     None, Oparation, Number
 };
@@ -152,6 +160,7 @@ static double Calculate(string problem, string function = "", string* result = 0
     int lastAdd = 0;
     debug = debugProb;
     printDebug("Calculate: " + problem);
+    printDebug("Function: " + function);
     for (int i = 0; i < oparation.size(); i++)
     {   
         if (*result == "Wrong Format") return -1;
@@ -160,7 +169,7 @@ static double Calculate(string problem, string function = "", string* result = 0
         {
             if (oparation[i] == '(')
             {
-                if (i > 2) if (oparation[i - 1] == ')')
+                if (i > 2) if (oparation[i - 1] == ')' || oparation[i - 1] == '!')
                 {
                     oparationList.push_back("*");
                     printDebug("166 push *");
@@ -172,7 +181,11 @@ static double Calculate(string problem, string function = "", string* result = 0
                 double number = TryStod(alphabet, &testNum);
                 if (alphabet.size() > 0)
                 {
-                    if (isOparation(alphabet) && alphabet != "-") {
+                    if (isFunctionName(alphabet)) {
+                        func = alphabet;
+                        alphabet = "";
+                    }
+                    else if (isOparation(alphabet) && alphabet != "-") {
                         oparationList.push_back(alphabet);
                         printDebug("177 push " + alphabet);
                         alphabet = "";
@@ -280,6 +293,7 @@ static double Calculate(string problem, string function = "", string* result = 0
                 }
             }
             alphabet += oparation[i];
+            printDebug("296 " + alphabet);
             if(alphabet == "!")alphabet = "";
             if(alphabet == "--") alphabet = "";
         }
@@ -324,7 +338,7 @@ static double Calculate(string problem, string function = "", string* result = 0
         }
     }
 
-    
+
 
     //for (int i = 0; i < numList.size(); i++) cout << numList[i] << endl;
 
@@ -411,7 +425,7 @@ static vector<string> GetInputVariablesList(string formula)
         if (i == ' ' || i == '+' || i == '-' || i == '*' || i == '/' || i == '^' || i == ')' || i == '(' || i == '!')
         {
             if (var != "") {
-                if (var != "c:e" && var != "c:pi") {
+                if (var != "c:e" && var != "c:pi" && !isFunctionName(var)) {
                     variables.push_back(var);
                 }
             }
@@ -444,7 +458,7 @@ static double CalcualteEquation(string formula, unordered_map<string, double> va
                 //cout << var << endl;
                 if(var == "c:e") formula.replace(i - var.size(), var.size(), to_string(M_E));
                 else if (var == "c:pi") formula.replace(i - var.size(), var.size(), to_string(M_PI));
-                else { 
+                else if(!isFunctionName(var)){ 
                     string thingToReplace = to_string(variables[var]);
                     //if(i > 0) if(formula[i - 1] >= '0' && formula[i - 1] <= '9')
                     formula.replace(i - var.size(), var.size(), "(" + thingToReplace + ")");
