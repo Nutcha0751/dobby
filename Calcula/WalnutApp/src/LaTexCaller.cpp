@@ -18,7 +18,13 @@ static int GenarateImage(const std::string& formula, const std::string& fileName
 	return k;
 }
 
+vector<string> greekAlphabet = {
+	"alpha", "beta", "gamma", "Gamma", "delta", "Delta", "epsilon", "zeta", "theta", "Theta"
+	,"iota", "kappa", "lamda", "Lamda", "mu", "nu", "xi", "Xi", "pi", "Pi", "rho", "sigma", "Sigma"
+	, "tau", "upsilon", "Upsilon", "phi", "Phi", "chi", "psi", "Psi", "omega", "Omega", "eta"
+};
 static string ToLaTexFormat(const std::string& formula) {
+
 	string result = formula;
 	int i = result.find("c:pi");
 	while (i < result.size()) {
@@ -38,6 +44,15 @@ static string ToLaTexFormat(const std::string& formula) {
 		i = result.find("*");
 	}
 
+	for (int k = 0; k < greekAlphabet.size(); k++) {
+		i = result.find(greekAlphabet[k]);
+		while (i < result.size()) {
+			if (i > 0) {
+				if (result[i - 1] == ' ' ||((result[i - 1] >= '0' && (result[i - 1] <= '9')))) result.replace(i, greekAlphabet[k].size(), "\\" + greekAlphabet[k]);
+			}else result.replace(i, greekAlphabet[k].size(), "\\" + greekAlphabet[k]);
+			i = result.find(greekAlphabet[k],i + greekAlphabet[k].size());
+		}
+	}
 
 	return result;
 }

@@ -251,6 +251,7 @@ static double Calculate(string problem, string function = "", string* result = 0
                 if(result) if (*result == "Wrong Format") return -1;
                 continue;
             }
+
             if (oparation[i] == '!') {
                 if (alphabet != "") {
                     double v = Factorial((TryStod(alphabet, result)) + 1);
