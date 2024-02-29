@@ -138,19 +138,24 @@ static double TryStod(const string& str, string* result = 0) {
     return d;
 }
 
-static double Calculate(string problem, string function = "", string* result = 0)
+bool debug = true;
+void printDebug(string text) {
+    if(debug) cout << text << endl;
+}
+
+static double Calculate(string problem, string function = "", string* result = 0, bool debugProb = true)
 {
     vector<string> oparationList;
     vector<double> numList;
     string oparation = problem;
     string alphabet = "";
     int lastAdd = 0;
-    //cout << "Calculate: " << problem << endl;
+    debug = debugProb;
+    printDebug("Calculate: " + problem);
     for (int i = 0; i < oparation.size(); i++)
     {   
         if (*result == "Wrong Format") return -1;
-        cout << i << " " << alphabet << endl;
-        cout << oparation[i] << endl;
+
         if (oparation[i] != ' ')
         {
             if (oparation[i] == '(')
@@ -158,6 +163,7 @@ static double Calculate(string problem, string function = "", string* result = 0
                 if (i > 2) if (oparation[i - 1] == ')')
                 {
                     oparationList.push_back("*");
+                    printDebug("166 push *");
                     lastAdd = 1;
                 }
 
@@ -168,11 +174,14 @@ static double Calculate(string problem, string function = "", string* result = 0
                 {
                     if (isOparation(alphabet) && alphabet != "-") {
                         oparationList.push_back(alphabet);
+                        printDebug("177 push " + alphabet);
+                        alphabet = "";
                         lastAdd = 1;
                     }
                     else if (alphabet == "-") {
                         if (lastAdd == 2) {
                             oparationList.push_back("+");
+                            printDebug("183 push +");
                             func = "-";
                             alphabet = "";
                             lastAdd = 1;
@@ -186,14 +195,19 @@ static double Calculate(string problem, string function = "", string* result = 0
                     else if (testNum == "") {
                         if (lastAdd == 2) {
                             oparationList.push_back("+");
+                            printDebug("197 push +");
                             numList.push_back(number);
+                            printDebug("199 push " + to_string(number));
                             oparationList.push_back("*");
+                            printDebug("201 push *");
                             alphabet = "";
                             lastAdd = 1;
                         }
                         else {
                             numList.push_back(number);
+                            printDebug("207 push " + to_string(number));
                             oparationList.push_back("*");
+                            printDebug("209 push *");
                             alphabet = "";
                             lastAdd = 1;
                         }
@@ -216,21 +230,27 @@ static double Calculate(string problem, string function = "", string* result = 0
                     subProblem += oparation[i];
                     i++;
                 }
-                numList.push_back(Calculate(subProblem, func, result));
+                double v = Calculate(subProblem, func, result, false);
+                numList.push_back(v);
+                if(debugProb) debug = true;
+                printDebug("235 push " + to_string(v));
                 lastAdd = 2;
                 if(result) if (*result == "Wrong Format") return -1;
                 continue;
             }
             if (oparation[i] == '!') {
                 if (alphabet != "") {
-                    double v = (TryStod(alphabet, result));
+                    double v = Factorial((TryStod(alphabet, result)) + 1);
                     if (*result == "Wrong Format") return -1;
-                    numList.push_back(Factorial(v + 1));
+                    numList.push_back(v);
+                    printDebug("245 push " + to_string(v));
                     lastAdd = 2;
                 }
                 else if (lastAdd == 2) {
-                    double v = Factorial(1 + numList[numList.size() - 1]);
+                    double o = numList[numList.size() - 1];
+                    double v = Factorial(1 + o);;
                     numList[numList.size() - 1] = v;
+                    printDebug("252 change " + to_string(o) + " to " + to_string(v));
                     lastAdd = 2;
                 }               
                 alphabet = "";
@@ -239,9 +259,11 @@ static double Calculate(string problem, string function = "", string* result = 0
             {
                 if (alphabet[0] >= '0' && alphabet[0] <= '9' || (alphabet[0] == '-' && oparation[i] != '-')) {
                     if (isOparation(string("") + oparation[i])) {
-                         numList.push_back(TryStod(alphabet, result));
-                         lastAdd = 2;
-                         alphabet = "";
+                        double v = TryStod(alphabet, result);
+                        numList.push_back(v);
+                        printDebug("263 push " + to_string(v));
+                        lastAdd = 2;
+                        alphabet = "";
                     }
                     else {
 
@@ -251,6 +273,7 @@ static double Calculate(string problem, string function = "", string* result = 0
                     
                 }else if (isOparation(alphabet)) {
                      oparationList.push_back(alphabet);
+                     printDebug("275 push " + alphabet);
                         lastAdd = 1;
                         alphabet = "";
                     
@@ -268,25 +291,31 @@ static double Calculate(string problem, string function = "", string* result = 0
                 if (alphabet[0] == '-') {
                     if (alphabet.size() == 1) {
                         oparationList.push_back("+");
+                        printDebug("100 push +");
                         lastAdd = 1;
                     }
                     else {
                         int i = 1;
                         while (alphabet[i] == '-') i++;
-                        numList.push_back(pow(-1, i) * TryStod(alphabet.substr(i), result));
+                        double v = pow(-1, i) * TryStod(alphabet.substr(i), result);
+                        numList.push_back(v);
+                        printDebug("101 push " + to_string(v));
                         lastAdd = 2;
                         alphabet = "";
                     }
                 }
                 else if (alphabet[0] >= '0' && alphabet[0] <= '9') 
                 {
-                    numList.push_back(TryStod(alphabet, result));
+                    double v = TryStod(alphabet, result);
+                    numList.push_back(v);
+                    printDebug("102 push " + to_string(v));
                     lastAdd = 2;
                     alphabet = "";
                 }
                 else 
                 {
                     oparationList.push_back(alphabet);
+                    printDebug("103 push " + alphabet);
                     lastAdd = 1;
                     alphabet = "";
                 }
@@ -295,7 +324,9 @@ static double Calculate(string problem, string function = "", string* result = 0
         }
     }
 
-    for (int i = 0; i < numList.size(); i++) cout << numList[i] << endl;
+    
+
+    //for (int i = 0; i < numList.size(); i++) cout << numList[i] << endl;
 
     if (numList.size() < 2 && oparationList.size() > 0) {
         *result = "Wrong Format";
@@ -307,9 +338,11 @@ static double Calculate(string problem, string function = "", string* result = 0
         return -1;
     }
 
+    printDebug("Calculating..");
+
     for (int i = oparationList.size() - 1; i >= 0; i--)
     {
-        cout << oparationList[i] << endl;
+        //cout << oparationList[i] << endl;
         if (oparationList[i] == "^")
         {
             double op = pow(numList[i], numList[i + 1]);
