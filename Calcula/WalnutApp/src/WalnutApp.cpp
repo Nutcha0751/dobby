@@ -41,6 +41,8 @@ class ExampleLayer : public Walnut::Layer
 	string onWorkFormula;
 	string onWorkDesc;
 
+	string inputWarnning = "";
+
 	//Background Image
 	std::shared_ptr<Walnut::Image> backgroundImage;
 
@@ -92,9 +94,8 @@ class ExampleLayer : public Walnut::Layer
 		}
 		else if (!CheckFile(filename)) {
 			try {
-				if (GenarateImage(ToLaTexFormat(equation), to_string(id)) == 2) {
-					throw(2);
-				}
+				int result = GenarateImage(ToLaTexFormat(equation), to_string(id));
+				if (result) throw(result);			
 			}
 			catch (int x)
 			{
@@ -146,6 +147,7 @@ class ExampleLayer : public Walnut::Layer
 	void OnEditEquationButton(int equationIndex) {
 		menu = 3;
 		edit_index = equationIndex;
+		inputWarnning = "";
 		strcpy(inputEquation, equations[equationIndex].getFormula().c_str());
 		strcpy(inputDescription, equations[equationIndex].getDescription().c_str());
 	}
@@ -178,6 +180,18 @@ public:
 			if (ImGui::MenuItem("Save"))
 			{
 				EquationManager::SaveEquations(equations);
+			}
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("LaTeX")) {
+			if (ImGui::MenuItem("Activate"))
+			{
+				isLaTexUsable = CheckFile("LaTex\\LaTex.exe") && CheckLaTex() == 0;
+			}
+			if (ImGui::MenuItem("Deactivate"))
+			{
+				isLaTexUsable = 0;
 			}
 			ImGui::EndMenu();
 		}
@@ -228,8 +242,6 @@ public:
 			}
 		}
 
-
-
 		//Start Columns
 		ImGui::Columns(3, "MyLayout", false);
 
@@ -250,25 +262,29 @@ public:
 		// Create List of Equation Button
 		for (int i = 0; i < equations.size(); i++) {
 			// If can use LaTex use Image from LaTex
+			bool bottonCreate = false;
 			if (isLaTexUsable) {
 				auto img = GetImage(equations[i].getFormula());
-				double width = img->GetWidth() / (lbHeight + 2) ;
-				double height = img->GetHeight() / (lbHeight + 2);
-				float offsetX = ((float)screenSize.x * 0.3 - width) / 2.0;
-				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { offsetX, 10 });
-				if (ImGui::ImageButton(img->GetDescriptorSet(), ImVec2(width, height), {0,0}, {1,1})) 
-				OnEquationButton(equations[i].getFormula(), equations[i].getDescription());
-				ImGui::PopStyleVar();
-				ImGui::SameLine();
-				ImGui::PushID(i);
-				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
-				if (ImGui::Button("EDIT", ImVec2(50, height + 20))) 
-				OnEditEquationButton(i);
-				ImGui::PopID();
-				ImGui::PopStyleColor();
+				if (img != 0) {
+					double width = img->GetWidth() / (lbHeight + 2);
+					double height = img->GetHeight() / (lbHeight + 2);
+					float offsetX = ((float)screenSize.x * 0.3 - width) / 2.0;
+					ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { offsetX, 10 });
+					if (ImGui::ImageButton(img->GetDescriptorSet(), ImVec2(width, height), { 0,0 }, { 1,1 }))
+						OnEquationButton(equations[i].getFormula(), equations[i].getDescription());
+					ImGui::PopStyleVar();
+					ImGui::SameLine();
+					ImGui::PushID(i);
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+					if (ImGui::Button("EDIT", ImVec2(50, height + 20)))
+						OnEditEquationButton(i);
+					ImGui::PopID();
+					ImGui::PopStyleColor();
+					bottonCreate = true;
+				}
 			}
-			// Else If cant use just use normal text
-			else {
+			
+			if(!bottonCreate) {
 				if (ImGui::Button(equations[i].getFormula().c_str(), ImVec2((float)screenSize.x * 0.3, 30)))
 				OnEquationButton(equations[i].getFormula(), equations[i].getDescription());		
 				ImGui::SameLine();
@@ -302,6 +318,7 @@ public:
 		{
 			inputEquation[0] = '\0';
 			inputDescription[0] = '\0';
+			inputWarnning = "";
 			menu = 1;
 		}			
 		ImGui::EndChild();
@@ -332,14 +349,19 @@ public:
 			// Add equation button
 			if (ImGui::Button("Add", ImVec2((2*l)/3,0))) {
 				if (inputEquation[0] != '\0') {
+					string test = inputEquation;
+					int k = test.find('\\');
+					if (k < test.size()) inputWarnning = "\\ is illegal character";
+					else {
+					inputWarnning = "";
 					equations.push_back(EquationData(inputEquation, inputDescription));
 					EquationManager::SaveEquations(equations);
-					string test = inputEquation;
-					//CalculateV2(test);
 					inputEquation[0] = '\0';
 					inputDescription[0] = '\0';
+					}
 				}
 			}
+			ImGui::Text(inputWarnning.c_str());
 			ImGui::PopItemWidth();
 			ImGui::PopStyleColor();
 		}
@@ -386,13 +408,18 @@ public:
 
 			if (ImGui::Button("SAVE", ImVec2(l, 0))) {
 				if (inputEquation[0] != '\0') {
-					DeleteEquation(edit_index); //ลบสมการเดิมออก
-					EquationManager::SaveEquations(equations);//เพิ่มสมการที่ผู้ใช้กรอกเข้าไปใหม่
-					equations.push_back(EquationData(inputEquation, inputDescription));
-					EquationManager::SaveEquations(equations);
-					menu = 0;
+					string test = inputEquation;
+					int k = test.find('\\');
+					if (k < test.size()) inputWarnning = "\\ is illegal character";
+					else {
+						inputWarnning = "";
+						equations[edit_index].setFormula(inputEquation);
+						EquationManager::SaveEquations(equations);
+						menu = 0;
+					}
 				}
 			}
+			
 
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
 
@@ -402,6 +429,7 @@ public:
 				inputDescription[0] = '\0';
 				menu = 0;
 			}
+			ImGui::Text(inputWarnning.c_str());
 			ImGui::PopStyleColor(5);
 			
 		}
@@ -411,18 +439,17 @@ public:
 		ImGui::EndVertical();
 		ImGui::End();
 
-		//ImGui::ShowMetricsWindow();
 	}
 };
 
 Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
 {
-	
 	Walnut::ApplicationSpecification spec;
 	spec.Name = "Walnut Example";
 	Walnut::Application* app = new Walnut::Application(spec);
 
 	isLaTexUsable = CheckFile("LaTex\\LaTex.exe");
+	if (isLaTexUsable) isLaTexUsable = CheckLaTex() == 0;
 	app->PushLayer<ExampleLayer>();
 	return app;
 }
