@@ -1,2 +1,1 @@
-e = p + f,poiuhg
-l = n * k,ink
+p = m_1 * t,

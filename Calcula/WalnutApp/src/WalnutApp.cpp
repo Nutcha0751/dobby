@@ -224,7 +224,7 @@ public:
 		float centerPosX = (windowWidth - textWidth) / 2.0f;
 		ImGui::SetCursorPosX(centerPosX);
 		ImGui::Text("Dobby's Calculator");
-		ImGui::PopFont();
+		ImGui::PopFont();                                                                  
 
 		//UI Debugging Tool
 		if (debugEnable) {
@@ -402,8 +402,8 @@ public:
 			ImGui::PopItemWidth();
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.5f, 0.8f, 1.0f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.4f, 0.5f, 0.8f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 1.0f, 0.0f, 1.0f)); //When the mouse touches
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.4f, 0.5f, 0.8f, 1.0f)); //When the button is pressed
 
 			if (ImGui::Button("SAVE", ImVec2(l, 0))) {
 				if (inputEquation[0] != '\0') {
