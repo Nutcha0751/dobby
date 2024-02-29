@@ -48,7 +48,7 @@ class ExampleLayer : public Walnut::Layer
 	string resultValue;
 	string resultVariable;
 	unordered_map<string, double> variable;
-
+	
 	// Current Right Menu
 	int menu = 0;
 
@@ -181,6 +181,7 @@ public:
 			}
 			ImGui::EndMenu();
 		}
+
 		ImGui::EndMenuBar();
 
 		ImFont* k =  ImGui::GetIO().Fonts->Fonts[1];

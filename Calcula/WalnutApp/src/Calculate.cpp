@@ -46,7 +46,10 @@ static double Function(string func, double value)
     }
     return sign * result;
 }
-
+static double Factorial(double value) {
+    double fvalue = tgamma(value);
+    return fvalue;
+}
 vector<string> allOparations = { "+", "-", "*", "/", "^" };
 bool isOparation(string alphabet) {
     //cout << "Alphabet: " << alphabet << endl;
@@ -142,6 +145,7 @@ static double Calculate(string problem, string function = "", string* result = 0
     string oparation = problem;
     string alphabet = "";
     int lastAdd = 0;
+    //cout << "Calculate: " << problem << endl;
     for (int i = 0; i < oparation.size(); i++)
     {   
         if (*result == "Wrong Format") return -1;
@@ -156,12 +160,10 @@ static double Calculate(string problem, string function = "", string* result = 0
                     oparationList.push_back("*");
                     lastAdd = 1;
                 }
-                /*
-                if (isOparation(alphabet)) {
-                    oparationList.push_back(alphabet);
-                    alphabet = "";
-                }*/
+
                 string func = "";
+                string testNum = "";
+                double number = TryStod(alphabet, &testNum);
                 if (alphabet.size() > 0)
                 {
                     if (isOparation(alphabet) && alphabet != "-") {
@@ -181,10 +183,26 @@ static double Calculate(string problem, string function = "", string* result = 0
                             lastAdd = 1;
                         }
                     }
+                    else if (testNum == "") {
+                        if (lastAdd == 2) {
+                            oparationList.push_back("+");
+                            numList.push_back(number);
+                            oparationList.push_back("*");
+                            alphabet = "";
+                            lastAdd = 1;
+                        }
+                        else {
+                            numList.push_back(number);
+                            oparationList.push_back("*");
+                            alphabet = "";
+                            lastAdd = 1;
+                        }
+                    }
                     else {
                         func = alphabet;
                         alphabet = "";
                     }
+
                 }
                 i++;
                 string subProblem = "";
@@ -203,6 +221,20 @@ static double Calculate(string problem, string function = "", string* result = 0
                 if(result) if (*result == "Wrong Format") return -1;
                 continue;
             }
+            if (oparation[i] == '!') {
+                if (alphabet != "") {
+                    double v = (TryStod(alphabet, result));
+                    if (*result == "Wrong Format") return -1;
+                    numList.push_back(Factorial(v + 1));
+                    lastAdd = 2;
+                }
+                else if (lastAdd == 2) {
+                    double v = Factorial(1 + numList[numList.size() - 1]);
+                    numList[numList.size() - 1] = v;
+                    lastAdd = 2;
+                }               
+                alphabet = "";
+            }
             if (alphabet != "")
             {
                 if (alphabet[0] >= '0' && alphabet[0] <= '9' || (alphabet[0] == '-' && oparation[i] != '-')) {
@@ -210,6 +242,9 @@ static double Calculate(string problem, string function = "", string* result = 0
                          numList.push_back(TryStod(alphabet, result));
                          lastAdd = 2;
                          alphabet = "";
+                    }
+                    else {
+
                     }
                 }
                 if (alphabet == "-") {
@@ -222,6 +257,7 @@ static double Calculate(string problem, string function = "", string* result = 0
                 }
             }
             alphabet += oparation[i];
+            if(alphabet == "!")alphabet = "";
             if(alphabet == "--") alphabet = "";
         }
 
@@ -339,10 +375,7 @@ static vector<string> GetInputVariablesList(string formula)
         {
             var += i;
         }
-        if (i == '(') {
-            var = "";
-        }
-        if (i == ' ' || i == '+' || i == '-' || i == '*' || i == '/' || i == '^' || i == ')')
+        if (i == ' ' || i == '+' || i == '-' || i == '*' || i == '/' || i == '^' || i == ')' || i == '(' || i == '!')
         {
             if (var != "") {
                 if (var != "c:e" && var != "c:pi") {
@@ -371,18 +404,20 @@ static double CalcualteEquation(string formula, unordered_map<string, double> va
         {
             var += formula[i];
         }
-        if (formula[i] == '(') {
-            var = "";
-        }
-        if (formula[i] == ' ' || formula[i] == '+' || formula[i] == '-' || formula[i] == '*' || formula[i] == '/' || formula[i] == '^' || formula[i] == ')')
+        if (formula[i] == ' ' || formula[i] == '+' || formula[i] == '-' || formula[i] == '*' || formula[i] == '/' || formula[i] == '^' || formula[i] == ')' || formula[i] == '(' || formula[i] == '!')
         {
             if (var != "")
             {
-                cout << var << endl;
+                //cout << var << endl;
                 if(var == "c:e") formula.replace(i - var.size(), var.size(), to_string(M_E));
                 else if (var == "c:pi") formula.replace(i - var.size(), var.size(), to_string(M_PI));
-                else formula.replace(i - var.size(), var.size(), to_string(variables[var]));
-                cout << formula << endl;
+                else { 
+                    string thingToReplace = to_string(variables[var]);
+                    if(i > 0) if(formula[i - 1] >= '0' && formula[i - 1] <= '9')
+                    formula.replace(i - var.size(), var.size(), "(" + thingToReplace + ")");
+                    else formula.replace(i - var.size(), var.size(), thingToReplace);
+                }
+                //cout << formula << endl;
             }
             var = "";
         }
@@ -390,11 +425,16 @@ static double CalcualteEquation(string formula, unordered_map<string, double> va
     }
     if (var != "")
     {
-        cout << var << endl;
+        //cout << var << endl;
         if (var == "c:e") formula.replace(formula.size() - var.size(), var.size(), to_string(M_E));
         else if (var == "c:pi") formula.replace(formula.size() - var.size(), var.size(), to_string(M_PI));
-        else formula.replace(formula.size() - var.size(), var.size(), to_string(variables[var]));
-        cout << formula << endl;
+        else { 
+            string thingToReplace = to_string(variables[var]);
+            if (formula[formula.size() - 2] >= '0' && formula[formula.size() - 2] <= '9')
+                formula.replace(formula.size() - var.size(), var.size(), "(" + thingToReplace + ")");
+            else formula.replace(formula.size() - var.size(), var.size(), thingToReplace);
+        }
+        //cout << formula << endl;
     }
     double value = Calculate(formula,"", result);
     return value;
