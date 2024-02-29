@@ -243,7 +243,7 @@ static double Calculate(string problem, string function = "", string* result = 0
                     subProblem += oparation[i];
                     i++;
                 }
-                double v = Calculate(subProblem, func, result, false);
+                double v = Calculate(subProblem, func, result, true);
                 numList.push_back(v);
                 if(debugProb) debug = true;
                 printDebug("235 push " + to_string(v));
@@ -319,6 +319,10 @@ static double Calculate(string problem, string function = "", string* result = 0
                         int i = 1;
                         while (alphabet[i] == '-') i++;
                         double v = pow(-1, i) * TryStod(alphabet.substr(i), result);
+                        if (lastAdd == 2) {
+                            oparationList.push_back("+");
+                            printDebug("101 push +");
+                        }
                         numList.push_back(v);
                         printDebug("101 push " + to_string(v));
                         lastAdd = 2;
