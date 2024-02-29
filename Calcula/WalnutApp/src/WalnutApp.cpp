@@ -300,17 +300,31 @@ public:
 		// Create Build-in Equation Button
 		if (!isLaTexUsable) {
 			if (ImGui::Button("s = v * t", ImVec2((float)screenSize.x * 0.3, 30)))
-			OnEquationButton("s = v * t", "find displacement");	
-
+			OnEquationButton("s = v * t", "Find displacement , v = velocity, t = Time");	
 			if (ImGui::Button("s = u + a * t", ImVec2((float)screenSize.x * 0.3, 30)))		
-			OnEquationButton("s = u + a * t", "Find displacement");			
+			OnEquationButton("s = u + a * t", "Find displacement, u = initial speed, a = acceleration, t = Time");			
 			if (ImGui::Button("y = m * x + b", ImVec2((float)screenSize.x * 0.3, 30)))	
-			OnEquationButton("y = m * x + c", "Find y by using linear formula");	
+			OnEquationButton("y = m * x + b", "Find y by using linear formula");
+			if (ImGui::Button("F_y = F * cos(theta)", ImVec2((float)screenSize.x * 0.3, 30)))
+			OnEquationButton("F_y = F * cos(theta)", "Find force in y axis.");
+			if (ImGui::Button("Gamma(x) = x!", ImVec2((float)screenSize.x * 0.3, 30)))
+			OnEquationButton("Gamma(x) = x!", "Find Gamma function.");
+			if (ImGui::Button("lambda = (2)(c:pi)(f)", ImVec2((float)screenSize.x * 0.3, 30)))
+			OnEquationButton("lambda = (2)(c:pi)(f)", "Find lambda");
+			if (ImGui::Button("y = 2^x", ImVec2((float)screenSize.x * 0.3, 30)))
+			OnEquationButton("y = 2^x", "Find y");
+
 		}
 		else {
 			LaTexEquationButton("s = v * t", "find displacement");
 			LaTexEquationButton("s = u + a * t", "Find displacement");
 			LaTexEquationButton("y = m * x + b", "Find y by using linear formula");
+			LaTexEquationButton("F_y = F * cos(theta)", "Find force in y axis.");
+			LaTexEquationButton("Gamma(x) = x!", "Find Gamma function.");
+			LaTexEquationButton("lambda = (2)(c:pi)(f)", "Find lambda");
+			LaTexEquationButton("y = 2^x", "Find y");
+			
+
 		}
 
 		// Button to open menu for add equation
