@@ -17,7 +17,7 @@ public:
 		string multilinedesc;
 		while (getline(file, equation)) {
 			sscanf(equation.c_str(), "%[^,],%[^,]", formula.c_str(), description.c_str());
-			cout << "Load " << formula.c_str() << "size: " << strlen(formula.c_str());
+			//cout << "Load " << formula.c_str() << "size: " << strlen(formula.c_str());
 			multilinedesc = description.c_str();
 			int newLine = multilinedesc.find('|');
 			while (newLine < multilinedesc.size()) {
@@ -32,7 +32,7 @@ public:
 		ofstream file;
 		file.open("equation.txt");
 		for (int i = 0; i < equations.size(); i++) {
-			cout << "Save " << equations[i].getFormula() << "size: " << equations[i].getFormula().size();
+			//cout << "Save " << equations[i].getFormula() << "size: " << equations[i].getFormula().size();
 			
 			string desc = equations[i].getDescription();
 			int newLine = desc.find('\n');

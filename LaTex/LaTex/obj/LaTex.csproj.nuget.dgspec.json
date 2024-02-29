@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\dobby_old\\LaTex\\LaTex\\LaTex.csproj": {}
+    "D:\\dobby_N\\LaTex\\LaTex\\LaTex.csproj": {}
   },
   "projects": {
-    "D:\\dobby_old\\LaTex\\LaTex\\LaTex.csproj": {
+    "D:\\dobby_N\\LaTex\\LaTex\\LaTex.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\dobby_old\\LaTex\\LaTex\\LaTex.csproj",
+        "projectUniqueName": "D:\\dobby_N\\LaTex\\LaTex\\LaTex.csproj",
         "projectName": "LaTex",
-        "projectPath": "D:\\dobby_old\\LaTex\\LaTex\\LaTex.csproj",
+        "projectPath": "D:\\dobby_N\\LaTex\\LaTex\\LaTex.csproj",
         "packagesPath": "C:\\Users\\Archiash\\.nuget\\packages\\",
-        "outputPath": "D:\\dobby_old\\LaTex\\LaTex\\obj\\",
+        "outputPath": "D:\\dobby_N\\LaTex\\LaTex\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
