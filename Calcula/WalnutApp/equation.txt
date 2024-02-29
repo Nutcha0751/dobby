@@ -1,3 +1,1 @@
-y=2^x,
-A = asin(sin(zeta)),
-A = arcsin(sin(theta)),
+theta = p+m,sdfgbnm,./

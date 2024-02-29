@@ -428,6 +428,7 @@ public:
 					else {
 						inputWarnning = "";
 						equations[edit_index].setFormula(inputEquation);
+						equations[edit_index].setFormula(inputDescription);
 						EquationManager::SaveEquations(equations);
 						menu = 0;
 					}
