@@ -1,2 +1,1 @@
-k = o + n,pre
-p= a+m,pam
+theta = p+m,sdfgbnm,./
