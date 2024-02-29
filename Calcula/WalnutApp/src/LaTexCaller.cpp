@@ -64,7 +64,7 @@ static string ToLaTexFormat(const std::string& formula) {
 		i = result.find(greekAlphabet[k]);
 		while (i < result.size()) {
 			if (i > 0) {
-				if (result[i - 1] == ' ' ||((result[i - 1] >= '0' && (result[i - 1] <= '9')))) result.replace(i, greekAlphabet[k].size(), "\\" + greekAlphabet[k]);
+				if (result[i - 1] == '(' ||result[i - 1] == ' ' ||((result[i - 1] >= '0' && (result[i - 1] <= '9')))) result.replace(i, greekAlphabet[k].size(), "\\" + greekAlphabet[k]);
 			}else result.replace(i, greekAlphabet[k].size(), "\\" + greekAlphabet[k]);
 			i = result.find(greekAlphabet[k],i + greekAlphabet[k].size());
 		}
