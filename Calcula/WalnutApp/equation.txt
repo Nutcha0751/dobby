@@ -1,1 +1,3 @@
-zeta = 8eta,
+O = 2c:pi(g),
+A2 = A1 + 4c:pi,
+A1 = A2*c:pi ,
