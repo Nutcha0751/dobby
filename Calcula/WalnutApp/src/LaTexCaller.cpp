@@ -60,7 +60,7 @@ static string ToLaTexFormat(const std::string& formula) {
 		i = result.find("*");
 	}
 
-	for (int k = 0; k < greekAlphabet.size(); k++) 
+	for (int k = 0; k < greekAlphabet.size(); k++) {
 		i = result.find(greekAlphabet[k]);
 		while (i < result.size()) {
 			if (i > 0) {
