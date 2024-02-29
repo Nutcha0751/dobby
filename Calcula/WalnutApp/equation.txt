@@ -1,1 +1,3 @@
-y=m(x)+b,
+A = 4B,
+A = 7cos(9angle),
+A = 8.95sin(X),

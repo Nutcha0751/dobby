@@ -206,7 +206,7 @@ static double Calculate(string problem, string function = "", string* result = 0
                         }
                     }
                     else if (testNum == "") {
-                        if (lastAdd == 2) {
+                        if (lastAdd == 2 && number < 0) {
                             oparationList.push_back("+");
                             printDebug("197 push +");
                             numList.push_back(number);
@@ -278,8 +278,14 @@ static double Calculate(string problem, string function = "", string* result = 0
                         lastAdd = 2;
                         alphabet = "";
                     }
-                    else {
-
+                    else if(oparation[i] >= 'a' && oparation[i] <= 'z') {
+                        double v = TryStod(alphabet, result);
+                        numList.push_back(v);
+                        printDebug("505 push " + to_string(v));
+                        oparationList.push_back("*");
+                        printDebug("505 push *");
+                        lastAdd = 1;
+                        alphabet = "";
                     }
                 }
                 if (alphabet == "-") {
