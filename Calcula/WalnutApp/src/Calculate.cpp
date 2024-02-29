@@ -413,9 +413,9 @@ static double CalcualteEquation(string formula, unordered_map<string, double> va
                 else if (var == "c:pi") formula.replace(i - var.size(), var.size(), to_string(M_PI));
                 else { 
                     string thingToReplace = to_string(variables[var]);
-                    if(i > 0) if(formula[i - 1] >= '0' && formula[i - 1] <= '9')
+                    //if(i > 0) if(formula[i - 1] >= '0' && formula[i - 1] <= '9')
                     formula.replace(i - var.size(), var.size(), "(" + thingToReplace + ")");
-                    else formula.replace(i - var.size(), var.size(), thingToReplace);
+                    //else formula.replace(i - var.size(), var.size(), thingToReplace);
                 }
                 //cout << formula << endl;
             }
@@ -430,9 +430,9 @@ static double CalcualteEquation(string formula, unordered_map<string, double> va
         else if (var == "c:pi") formula.replace(formula.size() - var.size(), var.size(), to_string(M_PI));
         else { 
             string thingToReplace = to_string(variables[var]);
-            if (formula[formula.size() - 2] >= '0' && formula[formula.size() - 2] <= '9')
+            //if (formula[formula.size() - 2] >= '0' && formula[formula.size() - 2] <= '9')
                 formula.replace(formula.size() - var.size(), var.size(), "(" + thingToReplace + ")");
-            else formula.replace(formula.size() - var.size(), var.size(), thingToReplace);
+            //else formula.replace(formula.size() - var.size(), var.size(), thingToReplace);
         }
         //cout << formula << endl;
     }
