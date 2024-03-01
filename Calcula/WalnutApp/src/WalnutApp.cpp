@@ -33,7 +33,7 @@ static void DeleteEquation(int index) {
 }
 
 // Use to turn on/off UI Debug Tool
-bool debugEnable = true;
+bool debugEnable = false;
 
 class ExampleLayer : public Walnut::Layer
 {
@@ -198,7 +198,8 @@ public:
 
 		ImGui::EndMenuBar();
 
-		ImFont* k =  ImGui::GetIO().Fonts->Fonts[1];
+		ImFont* largeFont =  ImGui::GetIO().Fonts->Fonts[1];
+		ImFont* mediumFont = ImGui::GetIO().Fonts->Fonts[2];
 
 		//Set Padding
 		ImVec2 p = ImGui::GetCursorScreenPos();
@@ -217,7 +218,7 @@ public:
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); //text black color
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.5f, 0.8f, 1.0f)); //button color
 
-		ImGui::PushFont(k);
+		ImGui::PushFont(largeFont);
 		//Adjust the text to be centered on the screen.
 		float textWidth = ImGui::CalcTextSize("Dobby's Calculator").x;
 		float windowWidth = ImGui::GetWindowWidth();
@@ -246,8 +247,9 @@ public:
 		ImGui::Columns(3, "MyLayout", false);
 
 		// Start Column 1
-		ImGui::SetColumnWidth(0, (float)screenSize.x * C0 / 100);
-		ImGui::Text("Equations List");
+		float colWidth1 = (float)screenSize.x * C0 / 100;
+		ImGui::SetColumnWidth(0, colWidth1);
+		
 
 		// Calculate Child Window Y Size
 		float getBeginY = ImGui::GetCursorScreenPos().y;
@@ -256,12 +258,39 @@ public:
 		//Begin Child and Set Slider color
 		ImGui::PushStyleColor(ImGuiCol_ScrollbarBg, ImVec4(0, 0, 0, 0));
 		ImGui::PushStyleColor(ImGuiCol_ScrollbarGrab, ImVec4(0.4f, 0.5f, 0.8f, 0.5f));
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.4f, 0.5f, 0.8f, 0.15f));
+		ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5);
 		ImGui::BeginChild(22,ImVec2(0, childSizeY), debugChildBorder);
-		ImGui::PopStyleColor(2);
+		ImVec2 col1Max = ImGui::GetItemRectMax();
+		ImVec2 col1Min = ImGui::GetItemRectMin();
+		ImGui::PopStyleVar();
+		ImGui::PopStyleColor(3);
+		
+		
 
+		
+		ImGui::SetCursorPosY(10);
+		if (!isLaTexUsable) {
+			ImGui::PushFont(mediumFont);
+			ImGui::SetCursorPosX(10);
+			ImGui::Text("Equations List");
+			ImGui::PopFont();
+		}
+		else {
+			auto equationListImage = GetImage("Equations List");
+			ImGui::SetCursorPosX(175);
+			float width = (float)equationListImage->GetWidth() / (float)equationListImage->GetWidth() * (col1Max.x - col1Min.x - 350);
+			float height = (float)equationListImage->GetHeight() / (float)equationListImage->GetWidth() * (col1Max.x - col1Min.x - 350);
+			ImGui::Image(equationListImage->GetDescriptorSet(), ImVec2(width, height));
+		}
+
+		ImGui::SetCursorPosX(10);
+
+		ImGui::BeginVertical(701);
 		// Create List of Equation Button
 		for (int i = 0; i < equations.size(); i++) {
 			// If can use LaTex use Image from LaTex
+			
 			bool bottonCreate = false;
 			if (isLaTexUsable) {
 				auto img = GetImage(equations[i].getFormula());
@@ -335,6 +364,7 @@ public:
 			inputWarnning = "";
 			menu = 1;
 		}			
+		ImGui::EndVertical();
 		ImGui::EndChild();
 
 		// Start Column 2 to make space between menu
@@ -344,7 +374,11 @@ public:
 		// Start Column 3 AKA Right Menu 
 		ImGui::NextColumn(); 
 		ImGui::SetColumnWidth(2, (float)screenSize.x * C2/100);
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.4f, 0.5f, 0.8f, 0.15f));
+		ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5);
 		ImGui::BeginChild(23, ImVec2(0, childSizeY), debugChildBorder);
+		ImGui::PopStyleVar();
+		ImGui::PopStyleColor();
 		// If check which menu is using
 		// menu1 = หน้าสร้างสมการ
 		if (menu == 1) {
@@ -361,7 +395,7 @@ public:
 			ImGui::Text("Description of Equation");
 			ImGui::InputTextMultilineWithHint("##InputDesc", "Enter Description", inputDescription, 1024, ImVec2(l,150),0,0,0);
 			// Add equation button
-			if (ImGui::Button("Add", ImVec2((2*l)/3,0))) {
+			if (ImGui::Button("Add", ImVec2(l,0))) {
 				if (inputEquation[0] != '\0') {
 					string test = inputEquation;
 					int k = test.find('\\');
@@ -381,6 +415,8 @@ public:
 		}
 		//menu = 2 คือหน้าคำนวณสมการ
 		else if (menu == 2) {
+			double x = ImGui::GetCursorScreenPos().x;
+			double l = screen.x + screenSize.x - x - PaX - 10;
 			if (isLaTexUsable) { 
 				ImGui::Text("Equation");
 				DrawLaTexEquation(onWorkFormula);
@@ -388,13 +424,21 @@ public:
 			}
 			else ImGui::Text(("Equation: " + onWorkFormula).c_str());
 			// Create input for all variable
+			float maxWidth = 0;
 			for (auto i = variable.begin(); i != variable.end(); i++) {
-					ImGui::Text(i->first.c_str());
-					ImGui::SameLine();
-					ImGui::InputDouble(("##" + i->first).c_str(), &i->second);
+				maxWidth = max(ImGui::CalcTextSize(i->first.c_str()).x, maxWidth);
+			}
+			maxWidth += 20;
+			double k = screen.x + screenSize.x - x - PaX - 10 - maxWidth;
+			for (auto i = variable.begin(); i != variable.end(); i++) {
+				ImGui::Text(i->first.c_str());
+				ImGui::SameLine(maxWidth);
+				ImGui::PushItemWidth(k);
+				ImGui::InputDouble(("##" + i->first).c_str(), &i->second);
+				ImGui::PopItemWidth();
 			}
 			ImGui::Text((resultVariable + " = " + resultValue).c_str());
-			if (ImGui::Button("Calculate")) {
+			if (ImGui::Button("Calculate", ImVec2(l,0))) {
 				string result = "";
 				if (onWorkFormula != "") resultValue = to_string(CalcualteEquation(onWorkFormula, variable, &result));
 				if (result == "Wrong Format") resultValue = "Equation Wrong Format or not Compatible";

@@ -54,6 +54,36 @@ static string ToLaTexFormat(const std::string& formula) {
 		i = result.find("c:e");
 	}
 
+	i = result.find_last_of("^") + 1;
+	while (i < result.size() && i > 0) {
+		int left = i + 1;
+		cout << i << endl;
+		int openParent = 0;
+		int closeParent = 0;
+		int openBrac = 0;
+		int closeBrac = 0;
+		int right;
+		for (int k = i; k < result.size(); k++) {
+			if (result[k] == '(') openParent++;
+			if (result[k] == ')') closeParent++;
+			if (result[k] == '{') openBrac++;
+			if (result[k] == '}') closeBrac++;
+			if (k == result.size() - 1) {
+				right = k;
+				break;
+			}
+			if (openParent == closeParent && openBrac == closeBrac || k == result.size() - 1) {
+				if (result[k] == '+' || result[k] == '-' || result[k] == '*' || result[k] == '/' || result[k] == '(') {
+					right = k;
+					break;
+				}
+			}
+		}
+		string replacer = "{" + result.substr(left, right - left) + "}";
+		result.replace(left, right - left, replacer);
+		i = result.find_last_of("^", i - 1);
+	}
+
 	i = result.find("*");
 	while (i < result.size()) {
 		result.replace(i, 1, " \\times ");
@@ -69,6 +99,7 @@ static string ToLaTexFormat(const std::string& formula) {
 			i = result.find(greekAlphabet[k],i + greekAlphabet[k].size());
 		}
 	}
+
 	cout << "result LaTeX: " << result << endl;
 	return result;
 }
