@@ -471,9 +471,7 @@ static double CalcualteEquation(string formula, unordered_map<string, double> va
                 else if (var == "c:pi") formula.replace(i - var.size(), var.size(), "(" + to_string(M_PI) + ")");
                 else if(!isFunctionName(var)){ 
                     string thingToReplace = to_string(variables[var]);
-                    //if(i > 0) if(formula[i - 1] >= '0' && formula[i - 1] <= '9')
                     formula.replace(i - var.size(), var.size(), "(" + thingToReplace + ")");
-                    //else formula.replace(i - var.size(), var.size(), thingToReplace);
                 }
                 //cout << formula << endl;
             }

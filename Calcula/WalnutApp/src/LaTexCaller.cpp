@@ -54,30 +54,36 @@ static string ToLaTexFormat(const std::string& formula) {
 		i = result.find("c:e");
 	}
 
-	i = result.find_last_of("^") + 1;
+	i = result.find_last_of("^");
 	while (i < result.size() && i > 0) {
 		int left = i + 1;
-		cout << i << endl;
+		cout << "Found ^ at " << i << endl;
 		int openParent = 0;
 		int closeParent = 0;
 		int openBrac = 0;
 		int closeBrac = 0;
 		int right;
+		char lastChar = '\0';
 		for (int k = i; k < result.size(); k++) {
 			if (result[k] == '(') openParent++;
 			if (result[k] == ')') closeParent++;
 			if (result[k] == '{') openBrac++;
 			if (result[k] == '}') closeBrac++;
-			if (k == result.size() - 1) {
-				right = k + 1;
-				break;
-			}
 			if (openParent == closeParent && openBrac == closeBrac || k == result.size() - 1) {
 				if (result[k] == '+' || result[k] == '-' || result[k] == '*' || result[k] == '/' || result[k] == '(') {
 					right = k;
 					break;
+				}	
+				if (lastChar == ')' || lastChar == '}' || lastChar >= '0' && lastChar <= '9' && ((result[k] >= 'a' && result[k] <= 'z') || (result[k] >= 'A' && result[k] <= 'Z'))) {
+					right = k;
+					break;
 				}
 			}
+			if (k == result.size() - 1) {
+				right = k + 1;
+				break;
+			}
+			lastChar = result[k];
 		}
 		string replacer = "{" + result.substr(left, right - left) + "}";
 		result.replace(left, right - left, replacer);
