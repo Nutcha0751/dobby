@@ -225,7 +225,7 @@ public:
 		float centerPosX = (windowWidth - textWidth) / 2.0f;
 		ImGui::SetCursorPosX(centerPosX);
 		ImGui::Text("Dobby's Calculator");
-		ImGui::PopFont();
+		ImGui::PopFont();                                                                  
 
 		//UI Debugging Tool
 		if (debugEnable) {
@@ -305,10 +305,11 @@ public:
 					ImGui::SameLine();
 					ImGui::PushID(i);
 					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+					ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); //When the mouse touches (black)
 					if (ImGui::Button("EDIT", ImVec2(50, height + 20)))
 						OnEditEquationButton(i);
 					ImGui::PopID();
-					ImGui::PopStyleColor();
+					ImGui::PopStyleColor(2);
 					bottonCreate = true;
 				}
 			}
@@ -357,7 +358,10 @@ public:
 		}
 
 		// Button to open menu for add equation
-		if (ImGui::Button("+", ImVec2((float)screenSize.x * 0.3, 30)))
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.3f, 0.6f, 1.0f, 1.0f)); //light blue
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.8f, 0.0f, 1.0f)); //When the mouse touches (dark yellow)
+		
+		if (ImGui::Button("Add Equation", ImVec2((float)screenSize.x * 0.3, 30)))
 		{
 			inputEquation[0] = '\0';
 			inputDescription[0] = '\0';
@@ -366,6 +370,7 @@ public:
 		}			
 		ImGui::EndVertical();
 		ImGui::EndChild();
+		ImGui::PopStyleColor(2);
 
 		// Start Column 2 to make space between menu
 		ImGui::NextColumn();
@@ -395,6 +400,7 @@ public:
 			ImGui::Text("Description of Equation");
 			ImGui::InputTextMultilineWithHint("##InputDesc", "Enter Description", inputDescription, 1024, ImVec2(l,150),0,0,0);
 			// Add equation button
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.8f, 0.0f, 1.0f)); //When the mouse touches (dark yellow)
 			if (ImGui::Button("Add", ImVec2(l,0))) {
 				if (inputEquation[0] != '\0') {
 					string test = inputEquation;
@@ -411,7 +417,7 @@ public:
 			}
 			ImGui::Text(inputWarnning.c_str());
 			ImGui::PopItemWidth();
-			ImGui::PopStyleColor();
+			ImGui::PopStyleColor(2);
 		}
 		//menu = 2 คือหน้าคำนวณสมการ
 		else if (menu == 2) {
@@ -460,9 +466,8 @@ public:
 			ImGui::InputTextMultilineWithHint("##InputDesc", "Enter Description", inputDescription, 1024, ImVec2(l, 150), 0, 0, 0);
 			ImGui::PopItemWidth();
 
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.5f, 0.8f, 1.0f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.4f, 0.5f, 0.8f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.5f, 0.8f, 1.0f)); //blue
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 1.0f, 0.0f, 1.0f)); //When the mouse touches (green)
 
 			if (ImGui::Button("SAVE", ImVec2(l, 0))) {
 				if (inputEquation[0] != '\0') {
@@ -480,8 +485,7 @@ public:
 			}
 			
 
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
-
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.0f, 0.0f, 1.0f)); //When the mouse touches (red)
 			if (ImGui::Button("DELETE", ImVec2(l, 0))) {
 				DeleteEquation(edit_index);
 				EquationManager::SaveEquations(equations);
@@ -489,7 +493,7 @@ public:
 				menu = 0;
 			}
 			ImGui::Text(inputWarnning.c_str());
-			ImGui::PopStyleColor(5);
+			ImGui::PopStyleColor(4);
 			
 		}
 
