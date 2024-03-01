@@ -69,7 +69,7 @@ static string ToLaTexFormat(const std::string& formula) {
 			if (result[k] == '{') openBrac++;
 			if (result[k] == '}') closeBrac++;
 			if (k == result.size() - 1) {
-				right = k;
+				right = k + 1;
 				break;
 			}
 			if (openParent == closeParent && openBrac == closeBrac || k == result.size() - 1) {

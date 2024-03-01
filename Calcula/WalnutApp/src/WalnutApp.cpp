@@ -183,7 +183,6 @@ public:
 			}
 			ImGui::EndMenu();
 		}
-
 		if (ImGui::BeginMenu("LaTeX")) {
 			if (ImGui::MenuItem("Activate"))
 			{
@@ -195,9 +194,9 @@ public:
 			}
 			ImGui::EndMenu();
 		}
-
 		ImGui::EndMenuBar();
 
+		//GetFont
 		ImFont* largeFont =  ImGui::GetIO().Fonts->Fonts[1];
 		ImFont* mediumFont = ImGui::GetIO().Fonts->Fonts[2];
 
@@ -218,14 +217,27 @@ public:
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); //text black color
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.5f, 0.8f, 1.0f)); //button color
 
-		ImGui::PushFont(largeFont);
-		//Adjust the text to be centered on the screen.
-		float textWidth = ImGui::CalcTextSize("Dobby's Calculator").x;
+
+
+		//Add Title Text
 		float windowWidth = ImGui::GetWindowWidth();
-		float centerPosX = (windowWidth - textWidth) / 2.0f;
-		ImGui::SetCursorPosX(centerPosX);
-		ImGui::Text("Dobby's Calculator");
-		ImGui::PopFont();                                                                  
+		if (!isLaTexUsable) {
+			ImGui::PushFont(largeFont);
+			//Adjust the text to be centered on the screen.
+			float textWidth = ImGui::CalcTextSize("Dobby's Calculator").x;
+			float centerPosX = (windowWidth - textWidth) / 2.0f;
+			ImGui::SetCursorPosX(centerPosX);
+			ImGui::Text("Dobby's Calculator");
+			ImGui::PopFont();
+		}
+		else {
+			auto titleImage = GetImage("Dobbdy's\\;\\, Calculator");
+			ImGui::SetCursorPosX(650);
+			float width = (float)titleImage->GetWidth() / (float)titleImage->GetWidth() * (windowWidth - 1300);
+			float height = (float)titleImage->GetHeight() / (float)titleImage->GetWidth() * (windowWidth - 1300);
+			ImGui::Image(titleImage->GetDescriptorSet(), ImVec2(width, height));
+		}
+
 
 		//UI Debugging Tool
 		if (debugEnable) {
@@ -248,49 +260,50 @@ public:
 
 		// Start Column 1
 		float colWidth1 = (float)screenSize.x * C0 / 100;
-		ImGui::SetColumnWidth(0, colWidth1);
-		
+		ImGui::SetColumnWidth(0, colWidth1);	
 
 		// Calculate Child Window Y Size
 		float getBeginY = ImGui::GetCursorScreenPos().y;
 		double childSizeY = screen.y + screenSize.y - getBeginY - PaY;
 
-		//Begin Child and Set Slider color
+		//Begin Child and Set Style
 		ImGui::PushStyleColor(ImGuiCol_ScrollbarBg, ImVec4(0, 0, 0, 0));
 		ImGui::PushStyleColor(ImGuiCol_ScrollbarGrab, ImVec4(0.4f, 0.5f, 0.8f, 0.5f));
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.4f, 0.5f, 0.8f, 0.15f));
 		ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5);
 		ImGui::BeginChild(22,ImVec2(0, childSizeY), debugChildBorder);
-		ImVec2 col1Max = ImGui::GetItemRectMax();
-		ImVec2 col1Min = ImGui::GetItemRectMin();
 		ImGui::PopStyleVar();
 		ImGui::PopStyleColor(3);
 		
-		
+		//Get Begin and End Position of Child
+		ImVec2 col1Max = ImGui::GetItemRectMax();
+		ImVec2 col1Min = ImGui::GetItemRectMin();
 
-		
+		//Begin Content of Equation List	
 		ImGui::SetCursorPosY(10);
+
+		//Add Equation List Menu Title
 		if (!isLaTexUsable) {
 			ImGui::PushFont(mediumFont);
-			ImGui::SetCursorPosX(10);
+			float width = ImGui::CalcTextSize("Equations List").x;
+			float offsetX = (col1Max.x - col1Min.x - width) / 2.0f;
+			ImGui::SetCursorPosX(offsetX);
 			ImGui::Text("Equations List");
 			ImGui::PopFont();
 		}
 		else {
 			auto equationListImage = GetImage("Equations List");
-			ImGui::SetCursorPosX(175);
-			float width = (float)equationListImage->GetWidth() / (float)equationListImage->GetWidth() * (col1Max.x - col1Min.x - 350);
-			float height = (float)equationListImage->GetHeight() / (float)equationListImage->GetWidth() * (col1Max.x - col1Min.x - 350);
+			ImGui::SetCursorPosX(200);
+			float width = (float)equationListImage->GetWidth() / (float)equationListImage->GetWidth() * (col1Max.x - col1Min.x - 400);
+			float height = (float)equationListImage->GetHeight() / (float)equationListImage->GetWidth() * (col1Max.x - col1Min.x - 400);
 			ImGui::Image(equationListImage->GetDescriptorSet(), ImVec2(width, height));
 		}
 
-		ImGui::SetCursorPosX(10);
-
-		ImGui::BeginVertical(701);
 		// Create List of Equation Button
+		ImGui::SetCursorPosX(10);
+		ImGui::BeginVertical(701);	
 		for (int i = 0; i < equations.size(); i++) {
-			// If can use LaTex use Image from LaTex
-			
+			// If can use LaTex use Image from LaTex		
 			bool bottonCreate = false;
 			if (isLaTexUsable) {
 				auto img = GetImage(equations[i].getFormula());
@@ -312,8 +325,7 @@ public:
 					ImGui::PopStyleColor(2);
 					bottonCreate = true;
 				}
-			}
-			
+			}		
 			if(!bottonCreate) {
 				if (ImGui::Button(equations[i].getFormula().c_str(), ImVec2((float)screenSize.x * 0.3, 30)))
 				OnEquationButton(equations[i].getFormula(), equations[i].getDescription());		
@@ -360,7 +372,6 @@ public:
 		// Button to open menu for add equation
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.3f, 0.6f, 1.0f, 1.0f)); //light blue
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.8f, 0.0f, 1.0f)); //When the mouse touches (dark yellow)
-		
 		if (ImGui::Button("Add Equation", ImVec2((float)screenSize.x * 0.3, 30)))
 		{
 			inputEquation[0] = '\0';
@@ -384,6 +395,10 @@ public:
 		ImGui::BeginChild(23, ImVec2(0, childSizeY), debugChildBorder);
 		ImGui::PopStyleVar();
 		ImGui::PopStyleColor();
+
+		ImGui::SetCursorPosX(PaX);
+		ImGui::SetCursorPosY(10);
+		ImGui::BeginVertical(702);
 		// If check which menu is using
 		// menu1 = หน้าสร้างสมการ
 		if (menu == 1) {
@@ -424,11 +439,13 @@ public:
 			double x = ImGui::GetCursorScreenPos().x;
 			double l = screen.x + screenSize.x - x - PaX - 10;
 			if (isLaTexUsable) { 
-				ImGui::Text("Equation");
+				ImGui::PushFont(mediumFont);
+				ImGui::Text("Calculate");
+				ImGui::PopFont();
 				DrawLaTexEquation(onWorkFormula);
-				ImGui::Text(("Input Format: " + onWorkFormula).c_str());
+				ImGui::Text(("Equation Format: " + onWorkFormula).c_str());
 			}
-			else ImGui::Text(("Equation: " + onWorkFormula).c_str());
+			else ImGui::Text(("Calculate: " + onWorkFormula).c_str());
 			// Create input for all variable
 			float maxWidth = 0;
 			for (auto i = variable.begin(); i != variable.end(); i++) {
@@ -438,7 +455,7 @@ public:
 			double k = screen.x + screenSize.x - x - PaX - 10 - maxWidth;
 			for (auto i = variable.begin(); i != variable.end(); i++) {
 				ImGui::Text(i->first.c_str());
-				ImGui::SameLine(maxWidth);
+				ImGui::SameLine(maxWidth + PaX);
 				ImGui::PushItemWidth(k);
 				ImGui::InputDouble(("##" + i->first).c_str(), &i->second);
 				ImGui::PopItemWidth();
@@ -496,7 +513,7 @@ public:
 			ImGui::PopStyleColor(4);
 			
 		}
-
+		ImGui::EndVertical();
 		ImGui::EndChild();
 		ImGui::PopStyleColor(2);
 		ImGui::EndVertical();
