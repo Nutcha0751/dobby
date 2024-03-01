@@ -319,8 +319,9 @@ public:
 					ImGui::PushID(i);
 					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
 					ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); //When the mouse touches (black)
-					if (ImGui::Button("EDIT", ImVec2(50, height + 20)))
-						OnEditEquationButton(i);
+
+					float editWidth = col1Max.x - ImGui::GetCursorScreenPos().x - 10;
+					if (ImGui::Button("EDIT", ImVec2(editWidth, height + 20))) OnEditEquationButton(i);
 					ImGui::PopID();
 					ImGui::PopStyleColor(2);
 					bottonCreate = true;
@@ -332,8 +333,8 @@ public:
 				ImGui::SameLine();
 				ImGui::PushID(i);
 				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
-				if (ImGui::Button("EDIT", ImVec2(50, 30))) 
-				OnEditEquationButton(i);			
+				float editWidth = col1Max.x - ImGui::GetCursorScreenPos().x - 10;
+				if (ImGui::Button("EDIT", ImVec2(editWidth, 30))) OnEditEquationButton(i);			
 				ImGui::PopID();
 				ImGui::PopStyleColor();
 			}
