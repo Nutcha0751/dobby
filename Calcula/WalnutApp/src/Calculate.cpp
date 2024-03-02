@@ -6,7 +6,17 @@
 #include <string>
 #include <unordered_map>
 #include <stdexcept>
+#include <sstream>
+
 using namespace std;
+
+
+
+std::string to_string_exact(double x) {
+    std::stringstream str;
+    str << fixed << setprecision(15) << x;
+    return str.str();
+}
 
 void ToLowerCase(string &s)
 {
@@ -131,7 +141,8 @@ static double TryStod(const string& str, string* result = 0) {
 
     double d;
     try {
-        d = std::strtod(str.c_str(),0);
+        cout << std::fixed << std::setprecision(14);
+        d = std::strtod(str.c_str(),NULL);
     }
     catch (const std::invalid_argument&) {
         std::cerr << "Argument is invalid\n";
@@ -467,10 +478,11 @@ static double CalcualteEquation(string formula, unordered_map<string, double> va
             if (var != "")
             {
                 //cout << var << endl;
-                if(var == "c:e") formula.replace(i - var.size(), var.size(), "(" + to_string(M_E) + ")");
-                else if (var == "c:pi") formula.replace(i - var.size(), var.size(), "(" + to_string(M_PI) + ")");
+                if(var == "c:e") formula.replace(i - var.size(), var.size(), "(" + to_string_exact(M_E) + ")");
+                else if (var == "c:pi") formula.replace(i - var.size(), var.size(), "(" + to_string_exact(M_PI) + ")");
                 else if(!isFunctionName(var)){ 
-                    string thingToReplace = to_string(variables[var]);
+                    string thingToReplace = to_string_exact(variables[var]);
+                    //string thingToReplace = //to_string(variables[var]);
                     formula.replace(i - var.size(), var.size(), "(" + thingToReplace + ")");
                 }
                 //cout << formula << endl;
@@ -482,10 +494,10 @@ static double CalcualteEquation(string formula, unordered_map<string, double> va
     if (var != "")
     {
         //cout << var << endl;
-        if (var == "c:e") formula.replace(formula.size() - var.size(), var.size(), "(" + to_string(M_E) + ")");
-        else if (var == "c:pi") formula.replace(formula.size() - var.size(), var.size(), "(" + to_string(M_PI) + ")");
+        if (var == "c:e") formula.replace(formula.size() - var.size(), var.size(), "(" + to_string_exact(M_E) + ")");
+        else if (var == "c:pi") formula.replace(formula.size() - var.size(), var.size(), "(" + to_string_exact(M_PI) + ")");
         else { 
-            string thingToReplace = to_string(variables[var]);
+            string thingToReplace = to_string_exact(variables[var]);
             //if (formula[formula.size() - 2] >= '0' && formula[formula.size() - 2] <= '9')
                 formula.replace(formula.size() - var.size(), var.size(), "(" + thingToReplace + ")");
             //else formula.replace(formula.size() - var.size(), var.size(), thingToReplace);
@@ -495,7 +507,29 @@ static double CalcualteEquation(string formula, unordered_map<string, double> va
     double value = Calculate(formula,"", result);
     return value;
 }
-/*
-unordered_map<string, double> constances { 
-    ("c:e", M_E), ("c:pi", M_PI)
-};*/
+static unordered_map<string, double> ConvertInputVariable(unordered_map<string, string> variableString) {
+    unordered_map<string, double> result;
+    cout << "Convert\n";
+    for (const auto& variable : variableString)
+    {
+        cout << "value: " << variable.second << endl;
+        /*
+        cout << "---------------------\n";
+        cout << "value: " << variable.second << endl;
+        string mantissa;
+        string exponent;
+        bool foundE = false;
+        for (int i = 0; i < variable.second.size(); i++) {
+            if (!foundE) mantissa += variable.second[i];
+            else exponent += variable.second[i];
+
+            if (variable.second[i] == 'e' || variable.second[i] == 'E') foundE = true;
+        }
+        result[variable.first] = TryStod(mantissa) * pow(10, TryStod(exponent));
+        */
+        // Create an output string stream
+        result[variable.first] = TryStod(variable.second);
+        cout << "result" << result[variable.first] << endl;
+    }
+    return result;
+}

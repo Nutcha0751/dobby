@@ -7,6 +7,8 @@
 #include "EquationManager.h"
 #include "LaTexCaller.cpp"
 #include <imgui_internal.h>
+#include "misc/cpp/imgui_stdlib.cpp"
+#include <charconv>
 
 using namespace std;
 
@@ -17,6 +19,8 @@ namespace ImGui
 	{
 		return InputTextEx(label, hint, buf, (int)buf_size, size, flags | ImGuiInputTextFlags_Multiline, callback, user_data);
 	}
+
+	//IMGUI_API bool InputText(const char* label, std::string* str, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
 };
 
 // List of User Equation
@@ -33,7 +37,7 @@ static void DeleteEquation(int index) {
 }
 
 // Use to turn on/off UI Debug Tool
-bool debugEnable = false;
+bool debugEnable = true;
 
 class ExampleLayer : public Walnut::Layer
 {
@@ -50,6 +54,7 @@ class ExampleLayer : public Walnut::Layer
 	string resultValue;
 	string resultVariable;
 	unordered_map<string, double> variable;
+	unordered_map<string, string> variableString;
 	
 	// Current Right Menu
 	int menu = 0;
@@ -114,10 +119,12 @@ class ExampleLayer : public Walnut::Layer
 		onWorkFormula = equationFormula;
 		onWorkDesc = equationDesc;
 		variable.clear();
+		variableString.clear();
 		vector<string> var = GetInputVariablesList(onWorkFormula);
 		resultVariable = var[0];
 		for (int i = 1; i < var.size(); i++) {
 			variable[var[i]] = 0;
+			variableString[var[i]] = "";
 		}
 		resultValue = "";
 	}
@@ -135,6 +142,7 @@ class ExampleLayer : public Walnut::Layer
 		ImGui::PopStyleVar();
 	}
 
+	//Function to Draw Image of LaTex Equation
 	void DrawLaTexEquation(string equationFormula) {
 		if (!isLaTexUsable) return;
 		auto img = GetImage(equationFormula);
@@ -144,6 +152,7 @@ class ExampleLayer : public Walnut::Layer
 		ImGui::Image(img->GetDescriptorSet(), ImVec2(width, height));
 	}
 
+	//Funtion to open editor menu of i-th equation 
 	void OnEditEquationButton(int equationIndex) {
 		menu = 3;
 		edit_index = equationIndex;
@@ -167,7 +176,7 @@ public:
 		ImGui::SetNextWindowViewport(viewport->ID);
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-		ImGui::Begin("Dobby's Calculator", 0, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_MenuBar );
+		ImGui::Begin("Dobby's Calculator", 0, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_AlwaysAutoResize);
 		ImGui::PopStyleVar();
 
 		//Menubar
@@ -449,6 +458,7 @@ public:
 			else ImGui::Text(("Calculate: " + onWorkFormula).c_str());
 			// Create input for all variable
 			float maxWidth = 0;
+			/*
 			for (auto i = variable.begin(); i != variable.end(); i++) {
 				maxWidth = max(ImGui::CalcTextSize(i->first.c_str()).x, maxWidth);
 			}
@@ -460,11 +470,26 @@ public:
 				ImGui::PushItemWidth(k);
 				ImGui::InputDouble(("##" + i->first).c_str(), &i->second);
 				ImGui::PopItemWidth();
+			}*/
+
+			for (auto i = variableString.begin(); i != variableString.end(); i++) {
+				maxWidth = max(ImGui::CalcTextSize(i->first.c_str()).x, maxWidth);
 			}
+			maxWidth += 20;
+			double k = screen.x + screenSize.x - x - PaX - 10 - maxWidth;
+			for (auto i = variableString.begin(); i != variableString.end(); i++) {
+				ImGui::Text(i->first.c_str());
+				ImGui::SameLine(maxWidth + PaX);
+				ImGui::PushItemWidth(k);
+				ImGui::InputText(("##" + i->first).c_str(), &i->second);
+				ImGui::PopItemWidth();
+			}
+
 			ImGui::Text((resultVariable + " = " + resultValue).c_str());
 			if (ImGui::Button("Calculate", ImVec2(l,0))) {
 				string result = "";
-				if (onWorkFormula != "") resultValue = to_string(CalcualteEquation(onWorkFormula, variable, &result));
+				variable = ConvertInputVariable(variableString);
+				if (onWorkFormula != "") resultValue = to_string_exact(CalcualteEquation(onWorkFormula, variable, &result));
 				if (result == "Wrong Format") resultValue = "Equation Wrong Format or not Compatible";
 			}
 			ImGui::Text(("Description\n" + onWorkDesc).c_str());
@@ -502,7 +527,6 @@ public:
 				}
 			}
 			
-
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.0f, 0.0f, 1.0f)); //When the mouse touches (red)
 			if (ImGui::Button("DELETE", ImVec2(l, 0))) {
 				DeleteEquation(edit_index);
@@ -520,6 +544,8 @@ public:
 		ImGui::EndVertical();
 		ImGui::End();
 
+		//ImGui::ShowDemoWindow();
+		
 	}
 };
 
