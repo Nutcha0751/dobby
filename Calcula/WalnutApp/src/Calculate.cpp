@@ -449,6 +449,19 @@ static vector<string> GetInputVariablesList(string formula)
         {
             if (var != "") {
                 if (var != "" && var != "c:e" && var != "c:pi" && !isFunctionName(var)) {
+                    //---------------------
+                    if (var[0] == 'e' || var[0] == 'E') {
+                        bool isNum = true;
+                        for (int i = 1; i < var.size(); i++) {
+                            if (i == 1 && var[1] == '-') continue;
+                            if (!(var[i] >= '0' && var[i] <= '9')) { 
+                                isNum = false; 
+                                break;
+                            }
+                        }
+                        if(isNum) var = "e:" + var;
+                    }
+                        //------------------------
                     variables.push_back(var);
                 }
             }
@@ -459,6 +472,19 @@ static vector<string> GetInputVariablesList(string formula)
     if (var != "") {
 
             if (var != "" && var != "c:e" && var != "c:pi" && !isFunctionName(var)) {
+                //---------------------
+                if (var[0] == 'e' || var[0] == 'E') {
+                    bool isNum = true;
+                    for (int i = 1; i < var.size(); i++) {
+                        if (i == 1 && var[1] == '-') continue;
+                        if (!(var[i] >= '0' && var[i] <= '9')) {
+                            isNum = false;
+                            break;
+                        }
+                    }
+                    if (isNum) var = "e:" + var;
+                }
+                //------------------------
                 variables.push_back(var);
             }
         
@@ -485,7 +511,21 @@ static double CalcualteEquation(string formula, unordered_map<string, double> va
                 if(var == "c:e") formula.replace(i - var.size(), var.size(), "(" + to_string_exact(M_E) + ")");
                 else if (var == "c:pi") formula.replace(i - var.size(), var.size(), "(" + to_string_exact(M_PI) + ")");
                 else if(!isFunctionName(var)){ 
-                    string thingToReplace = to_string_exact(variables[var]);
+                    //---------------------
+                    string key = var;
+                    if (var[0] == 'e' || var[0] == 'E') {
+                        bool isNum = true;
+                        for (int i = 1; i < var.size(); i++) {
+                            if (i == 1 && var[1] == '-') continue;
+                            if (!(var[i] >= '0' && var[i] <= '9')) {
+                                isNum = false;
+                                break;
+                            }
+                        }
+                        if (isNum) key = "e:" + var;
+                    }
+                    //------------------------
+                    string thingToReplace = to_string_exact(variables[key]);
                     //string thingToReplace = //to_string(variables[var]);
                     formula.replace(i - var.size(), var.size(), "(" + thingToReplace + ")");
                 }
@@ -501,7 +541,21 @@ static double CalcualteEquation(string formula, unordered_map<string, double> va
         if (var == "c:e") formula.replace(formula.size() - var.size(), var.size(), "(" + to_string_exact(M_E) + ")");
         else if (var == "c:pi") formula.replace(formula.size() - var.size(), var.size(), "(" + to_string_exact(M_PI) + ")");
         else { 
-            string thingToReplace = to_string_exact(variables[var]);
+            //---------------------
+            string key = var;
+            if (var[0] == 'e' || var[0] == 'E') {
+                bool isNum = true;
+                for (int i = 1; i < var.size(); i++) {
+                    if (i == 1 && var[1] == '-') continue;
+                    if (!(var[i] >= '0' && var[i] <= '9')) {
+                        isNum = false;
+                        break;
+                    }
+                }
+                if (isNum) key = "e:" + var;
+            }
+            //------------------------
+            string thingToReplace = to_string_exact(variables[key]);
             //if (formula[formula.size() - 2] >= '0' && formula[formula.size() - 2] <= '9')
                 formula.replace(formula.size() - var.size(), var.size(), "(" + thingToReplace + ")");
             //else formula.replace(formula.size() - var.size(), var.size(), thingToReplace);
@@ -516,11 +570,17 @@ static unordered_map<string, double> ConvertInputVariable(unordered_map<string, 
     cout << "Convert\n";
     for (const auto& variable : variableString)
     {
+        cout << variable.first << " " << variable.second << endl;
+        //if (variable.first.size() > 2) if (variable.first[0] == 'e' && variable.first[1] == ':') result[variable.first] = TryStod("1"+variable.first.substr(2));
+        //else{
         string x = variable.second;
+        if (variable.first.size() > 2) if (variable.first[0] == 'e' && variable.first[1] == ':') x = variable.first.substr(2);
         if (x[0] == 'e') x = "1" + x;
+        cout << "x: " << x << endl;
         //cout << "value: " << variable.second << endl;
         result[variable.first] = TryStod(x);
         //cout << "result" << result[variable.first] << endl;
+        //}
     }
     return result;
 }

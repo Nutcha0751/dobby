@@ -478,6 +478,7 @@ public:
 			maxWidth += 20;
 			double k = screen.x + screenSize.x - x - PaX - 10 - maxWidth;
 			for (auto i = variableString.begin(); i != variableString.end(); i++) {
+				if (i->first.size() > 2) if (i->first[0] == 'e' && i->first[1] == ':') continue;
 				ImGui::Text(i->first.c_str());
 				ImGui::SameLine(maxWidth + PaX);
 				ImGui::PushItemWidth(k);
