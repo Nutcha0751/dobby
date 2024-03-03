@@ -571,6 +571,7 @@ static unordered_map<string, double> ConvertInputVariable(unordered_map<string, 
     for (const auto& variable : variableString)
     {
         cout << variable.first << " " << variable.second << endl;
+        
         //if (variable.first.size() > 2) if (variable.first[0] == 'e' && variable.first[1] == ':') result[variable.first] = TryStod("1"+variable.first.substr(2));
         //else{
         string x = variable.second;
@@ -578,7 +579,9 @@ static unordered_map<string, double> ConvertInputVariable(unordered_map<string, 
         if (x[0] == 'e') x = "1" + x;
         cout << "x: " << x << endl;
         //cout << "value: " << variable.second << endl;
-        result[variable.first] = TryStod(x);
+        if (variable.second == "c:e") result[variable.first] = M_E;
+        else if(variable.second == "c:pi")  result[variable.first] = M_PI;
+        else result[variable.first] = TryStod(x);
         //cout << "result" << result[variable.first] << endl;
         //}
     }
