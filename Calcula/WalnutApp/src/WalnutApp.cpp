@@ -486,7 +486,11 @@ public:
 			if (ImGui::Button("Calculate", ImVec2(l,0))) {
 				string result = "";
 				variable = ConvertInputVariable(variableString);
-				if (onWorkFormula != "") resultValue = to_string_exact(CalcualteEquation(onWorkFormula, variable, &result));
+				double calValue = CalcualteEquation(onWorkFormula, variable, &result);
+				if (onWorkFormula != "") {
+					resultValue = to_string_exact(calValue);
+					if (calValue < 1 || calValue > 10) resultValue += " = " + to_scientific_form(calValue);
+				}
 				if (result == "Wrong Format") resultValue = "Equation Wrong Format or not Compatible";
 			}
 			ImGui::Text(("Description\n" + onWorkDesc).c_str());

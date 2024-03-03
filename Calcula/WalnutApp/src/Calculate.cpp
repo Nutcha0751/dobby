@@ -16,6 +16,23 @@ std::string to_string_exact(double x) {
     return str.str();
 }
 
+std::string to_scientific_form(double x) {
+    int power = 0;
+    while (x < 1) {
+        x  *= 10;
+        power--;
+    }
+
+    while (x > 10) {
+        x /= 10;
+        power++;
+    }
+    std::stringstream str;
+    if (power != 0) str << fixed << setprecision(15) << x << "e" << power;
+    else str << fixed << setprecision(15) << x;
+    return str.str();
+}
+
 void ToLowerCase(string &s)
 {
     string r = "";
