@@ -10,8 +10,6 @@
 
 using namespace std;
 
-
-
 std::string to_string_exact(double x) {
     std::stringstream str;
     str << fixed << setprecision(15) << x;
@@ -27,6 +25,7 @@ void ToLowerCase(string &s)
     }
     s = r;
 }
+
 static double Function(string func, double value)
 {
     ToLowerCase(func);
@@ -56,11 +55,14 @@ static double Function(string func, double value)
     }
     return sign * result;
 }
+
 static double Factorial(double value) {
     double fvalue = tgamma(value);
     return fvalue;
 }
+
 vector<string> allOparations = { "+", "-", "*", "/", "^" };
+
 static bool isOparation(string alphabet) {
     //cout << "Alphabet: " << alphabet << endl;
     for (auto i : allOparations) {
@@ -69,6 +71,7 @@ static bool isOparation(string alphabet) {
     }
     return 0;
 }
+
 static bool isOparation(char alphabet) {
     //cout << "Alphabet: " << alphabet << endl;
     for (auto i : allOparations) {
@@ -77,65 +80,21 @@ static bool isOparation(char alphabet) {
     }
     return 0;
 }
+
 vector<string> allFunction = {"sin", "sine", "cos", "cosine", "tan", "tangent", "cosec", "cosecent"
 , "csc", "sec", "secant", "cot", "cotan", "cotangent", "ln", "log", "arcsin", "asin", "arccos", "acos", "arctan", "atan", "arccos", "acos"
 , "arctan", "atan", "arcsec", "asec", "arccsc", "acsc", "arccot", "acot"};
+
 static bool isFunctionName(string text) {
     for (auto i : allFunction) {
         if (text == i) return 1;
     }
     return 0;
 }
+
 enum readType {
     None, Oparation, Number
 };
-/*
-static string Read(string problem, unsigned& index) {
-    string read = "";
-    while (problem[index] == ' ') index++;
-    switch (problem[index]) {
-        case '0':case '1':case '2':case '3':case '4':case '5':case '6':case '7':case '8':case '9':
-            do {
-                read += problem[index];
-                index++;
-                if (index >= problem.size()) break;
-            } while (problem[index] >= '0' && problem[index] <= '9');
-            break;
-        case '+':case '*':case '/':case '^':
-            read += problem[index];
-            index++;
-            break;
-        case '-':
-            read += '-';
-            index++;
-            while (problem[index] >= '0' && problem[index] <= '9') {
-                read += problem[index];
-                index++;
-                if(index >= problem.size())break;
-            }
-            break;
-        case '(':
-            int open = 1;
-            int close = 0;
-            index++;
-            for (int i = index; i < problem.size(); i++) {
-                if (problem[i] == '(') open++;
-                if (problem[i] == ')') close++;
-                if (open == close) break;
-                read += problem[i];
-                index++;
-            }
-            index++;
-            break;
-    }
-    cout << read << endl;
-    return read;
-}
-static double CalculateV2(string problem, string function = "", string* result = 0) {
-    vector<string> alphabet;
-    unsigned index = 0;
-    alphabet.push_back(Read(problem, index));
-}*/
 
 static double TryStod(const string& str, string* result = 0) {
 
@@ -157,12 +116,13 @@ static double TryStod(const string& str, string* result = 0) {
     return d;
 }
 
-bool debug = true;
+bool debug = false;
+
 void printDebug(string text) {
     if(debug) cout << text << endl;
 }
 
-static double Calculate(string problem, string function = "", string* result = 0, bool debugProb = true)
+static double Calculate(string problem, string function = "", string* result = 0, bool debugProb = false)
 {
     vector<string> oparationList;
     vector<double> numList;
@@ -565,6 +525,7 @@ static double CalcualteEquation(string formula, unordered_map<string, double> va
     double value = Calculate(formula,"", result);
     return value;
 }
+
 static unordered_map<string, double> ConvertInputVariable(unordered_map<string, string> variableString) {
     unordered_map<string, double> result;
     cout << "Convert\n";

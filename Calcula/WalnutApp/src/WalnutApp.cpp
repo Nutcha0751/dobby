@@ -19,8 +19,6 @@ namespace ImGui
 	{
 		return InputTextEx(label, hint, buf, (int)buf_size, size, flags | ImGuiInputTextFlags_Multiline, callback, user_data);
 	}
-
-	//IMGUI_API bool InputText(const char* label, std::string* str, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
 };
 
 // List of User Equation
@@ -37,9 +35,9 @@ static void DeleteEquation(int index) {
 }
 
 // Use to turn on/off UI Debug Tool
-bool debugEnable = true;
+bool debugEnable = false;
 
-class ExampleLayer : public Walnut::Layer
+class DobbyLayer : public Walnut::Layer
 {
 	// Use to send equation between menu 
 	string onWorkFormula;
@@ -374,15 +372,13 @@ public:
 			LaTexEquationButton("F_y = F * cos(theta)", "Find force in y axis.");
 			LaTexEquationButton("Gamma(x) = x!", "Find Gamma function.");
 			LaTexEquationButton("lambda = (2)(c:pi)(f)", "Find lambda");
-			LaTexEquationButton("y = 2^x", "Find y");
-			
-
+			LaTexEquationButton("y = 2^x", "Find y");		
 		}
 
 		// Button to open menu for add equation
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.3f, 0.6f, 1.0f, 1.0f)); //light blue
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.8f, 0.0f, 1.0f)); //When the mouse touches (dark yellow)
-		if (ImGui::Button("Add Equation", ImVec2((float)screenSize.x * 0.3, 30)))
+		if (ImGui::Button("Add Equation", ImVec2((float)screenSize.x * 0.3, 0)))
 		{
 			inputEquation[0] = '\0';
 			inputDescription[0] = '\0';
@@ -545,19 +541,17 @@ public:
 		ImGui::EndVertical();
 		ImGui::End();
 
-		//ImGui::ShowDemoWindow();
-		
 	}
 };
 
 Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
 {
 	Walnut::ApplicationSpecification spec;
-	spec.Name = "Walnut Example";
+	spec.Name = "Dobby's Calculator";
 	Walnut::Application* app = new Walnut::Application(spec);
 
 	isLaTexUsable = CheckFile("LaTex\\LaTex.exe");
 	if (isLaTexUsable) isLaTexUsable = CheckLaTex() == 0;
-	app->PushLayer<ExampleLayer>();
+	app->PushLayer<DobbyLayer>();
 	return app;
 }
