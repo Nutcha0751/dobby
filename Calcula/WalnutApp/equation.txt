@@ -1,1 +1,1 @@
-a = D * lambda / slope,use to calculate width of single slid of lab light 5 in physic lab 2|- D unit is in meter|- lambda unit is in meter|- slope unit is in meter
+10e-9,

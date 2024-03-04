@@ -17,13 +17,14 @@ std::string to_string_exact(double x) {
 }
 
 std::string to_scientific_form(double x) {
+    if (x == 0) return "0";
     int power = 0;
-    while (x < 1) {
+    while (abs(x) < 1) {
         x  *= 10;
         power--;
     }
 
-    while (x > 10) {
+    while (abs(x) >= 10) {
         x /= 10;
         power++;
     }
@@ -139,7 +140,7 @@ void printDebug(string text) {
     if(debug) cout << text << endl;
 }
 
-static double Calculate(string problem, string function = "", string* result = 0, bool debugProb = false)
+static double Calculate(string problem, string function = "", string* result = 0, bool debugProb = true)
 {
     vector<string> oparationList;
     vector<double> numList;
@@ -418,6 +419,10 @@ static vector<string> GetInputVariablesList(string formula)
     for (int k = equalSymbol + 1; k < formula.size(); k++)
     {
         char i = formula[k];
+        if ((var == "e" || var == "E") && i == '-') { 
+            var += i; 
+            continue;
+        }
         if ((i >= 'a' && i <= 'z') || (i >= 'A' && i <= 'Z') || i == '_' || i == ':')
         {
             var += i;
@@ -426,7 +431,9 @@ static vector<string> GetInputVariablesList(string formula)
         {
             if (var != "") {
                 if (var != "" && var != "c:e" && var != "c:pi" && !isFunctionName(var)) {
+                    cout << "var: " << var << endl;
                     //---------------------
+                    if(var.size() > 1)
                     if (var[0] == 'e' || var[0] == 'E') {
                         bool isNum = true;
                         for (int i = 1; i < var.size(); i++) {
@@ -445,6 +452,7 @@ static vector<string> GetInputVariablesList(string formula)
             var = "";
         }
         if (var != "") if (i >= '0' && i <= '9') var += i;
+        
     }
     if (var != "") {
 
@@ -476,6 +484,10 @@ static double CalcualteEquation(string formula, unordered_map<string, double> va
     cout << formula << endl;
     for (int i = 0; i < formula.size(); i++)
     {
+        if ((var == "e" || var == "E") && formula[i] == '-') {
+            var += formula[i];
+            continue;
+        }
         if ((formula[i] >= 'a' && formula[i] <= 'z') || (formula[i] >= 'A' && formula[i] <= 'Z') || formula[i] == '_' || formula[i] == ':')
         {
             var += formula[i];
@@ -490,6 +502,7 @@ static double CalcualteEquation(string formula, unordered_map<string, double> va
                 else if(!isFunctionName(var)){ 
                     //---------------------
                     string key = var;
+                    if (var.size() > 1)
                     if (var[0] == 'e' || var[0] == 'E') {
                         bool isNum = true;
                         for (int i = 1; i < var.size(); i++) {
