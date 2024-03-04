@@ -485,13 +485,15 @@ public:
 			ImGui::Text((resultVariable + " = " + resultValue).c_str());
 			if (ImGui::Button("Calculate", ImVec2(l,0))) {
 				string result = "";
-				variable = ConvertInputVariable(variableString);
-				double calValue = CalcualteEquation(onWorkFormula, variable, &result);
-				if (onWorkFormula != "") {
-					resultValue = to_string_exact(calValue);
-					if (calValue < 1 || calValue > 10) resultValue += " = " + to_scientific_form(calValue);
-				}
-				if (result == "Wrong Format") resultValue = "Equation Wrong Format or not Compatible";
+				variable = ConvertInputVariable(variableString, 0, &result);
+				if (result != "Has Variable") {
+					double calValue = CalcualteEquation(onWorkFormula, variable, &result);
+					if (onWorkFormula != "") {
+						resultValue = to_string_exact(calValue);
+						if (calValue < 1 || calValue > 10) resultValue += " = " + to_scientific_form(calValue);
+					}
+					if (result == "Wrong Format") resultValue = "Equation Wrong Format or not Compatible";
+				}else resultValue = "Input variable can not have variable";
 			}
 			ImGui::Text(("Description\n" + onWorkDesc).c_str());
 			}

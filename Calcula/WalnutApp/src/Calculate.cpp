@@ -152,7 +152,7 @@ static double Calculate(string problem, string function = "", string* result = 0
     printDebug("Function: " + function);
     for (int i = 0; i < oparation.size(); i++)
     {   
-        if (*result == "Wrong Format") return -1;
+        if(result != 0) if (*result == "Wrong Format") return -1;
 
         if (oparation[i] != ' ')
         {
@@ -244,7 +244,7 @@ static double Calculate(string problem, string function = "", string* result = 0
             if (oparation[i] == '!') {
                 if (alphabet != "") {
                     double v = Factorial((TryStod(alphabet, result)) + 1);
-                    if (*result == "Wrong Format") return -1;
+                    if (result) if (*result == "Wrong Format") return -1;
                     numList.push_back(v);
                     printDebug("245 push " + to_string(v));
                     lastAdd = 2;
@@ -343,12 +343,12 @@ static double Calculate(string problem, string function = "", string* result = 0
     //for (int i = 0; i < numList.size(); i++) cout << numList[i] << endl;
 
     if (numList.size() < 2 && oparationList.size() > 0) {
-        *result = "Wrong Format";
+        if (result) *result = "Wrong Format";
         return -1;
     }
 
     if (numList.size() != oparationList.size() + 1) {
-        *result = "Wrong Format";
+        if (result)*result = "Wrong Format";
         return -1;
     }
 
@@ -477,7 +477,7 @@ static vector<string> GetInputVariablesList(string formula)
     return variables;
 }
 
-static double CalcualteEquation(string formula, unordered_map<string, double> variables, string *result = 0)
+static double CalcualteEquation(string formula, unordered_map<string, double> variables = {}, string* result = 0)
 {
     formula = formula.substr(formula.find("=") + 1);
     string var = "";
@@ -556,25 +556,42 @@ static double CalcualteEquation(string formula, unordered_map<string, double> va
     return value;
 }
 
-static unordered_map<string, double> ConvertInputVariable(unordered_map<string, string> variableString) {
+static unordered_map<string, double> ConvertInputVariable(unordered_map<string, string> variableString, int inception = 0, string* report = 0) {
     unordered_map<string, double> result;
     cout << "Convert\n";
     for (const auto& variable : variableString)
     {
         cout << variable.first << " " << variable.second << endl;
-        
-        //if (variable.first.size() > 2) if (variable.first[0] == 'e' && variable.first[1] == ':') result[variable.first] = TryStod("1"+variable.first.substr(2));
-        //else{
-        string x = variable.second;
-        if (variable.first.size() > 2) if (variable.first[0] == 'e' && variable.first[1] == ':') x = variable.first.substr(2);
-        if (x[0] == 'e') x = "1" + x;
-        cout << "x: " << x << endl;
-        //cout << "value: " << variable.second << endl;
-        if (variable.second == "c:e") result[variable.first] = M_E;
-        else if(variable.second == "c:pi")  result[variable.first] = M_PI;
-        else result[variable.first] = TryStod(x);
-        //cout << "result" << result[variable.first] << endl;
-        //}
+ 
+        if (!inception) {
+            unordered_map<string, string> varr;
+            auto varList = GetInputVariablesList(variable.second);
+            if (varList.size() > 0) {
+                for(int i = 1; i < varList.size(); i++){
+                    auto vv = varList[i];
+                    cout << "vvvv: " << vv << endl;
+                    if (vv.substr(0, 2) != "c:" && vv.substr(0, 2) != "e:")
+                    {
+                        *report = "Has Variable";
+                        return {};
+                    }
+                    varr[vv] = vv;
+                }           
+            }
+            auto varNum = ConvertInputVariable(varr, 1);
+            
+            double valuee = CalcualteEquation(variable.second, varNum);
+            result[variable.first] = valuee;
+        }
+        else {
+            string x = variable.second;
+            if (variable.first.size() > 2) if (variable.first[0] == 'e' && variable.first[1] == ':') x = variable.first.substr(2);
+            if (x[0] == 'e') x = "1" + x;
+            cout << "x: " << x << endl;
+            if (variable.second == "c:e") result[variable.first] = M_E;
+            else if (variable.second == "c:pi")  result[variable.first] = M_PI;
+            else result[variable.first] = TryStod(x);
+        }
     }
     return result;
 }
