@@ -28,6 +28,7 @@ bool isLaTexUsable = false;
 
 // Control Hint Color
 float Saturation = 0;
+float Colorola = 0;
 
 // Function For Delete User Equation
 static void DeleteEquation(int index) {
@@ -227,12 +228,14 @@ public:
 
 		// Draw Background
 		ImDrawList* background = ImGui::GetWindowDrawList();
+		ImDrawList* foreground = ImGui::GetForegroundDrawList();
  		background->AddImage(backgroundImage->GetDescriptorSet(), screen, ImVec2(screen.x + screenSize.x, screenSize.y + screen.y));
 		
 		if (calleso) {
-			posila -= 100 * ImGui::GetIO().DeltaTime;
-			background->AddImage(victora->GetDescriptorSet(), ImVec2(posila, screenSize.y + screen.y - victora->GetHeight() / 2), ImVec2(victora->GetWidth() / 2 + posila, screenSize.y + screen.y));
-			if (posila <= -2000) {
+			posila -= 250 * ImGui::GetIO().DeltaTime;
+			foreground->AddImage(victora->GetDescriptorSet(), ImVec2(posila, screenSize.y + screen.y - victora->GetHeight()), ImVec2(victora->GetWidth() + posila, screenSize.y + screen.y));
+			if (posila <= -800) {
+				Colorola = 0;
 				calleso = false;
 				posila = 2000;
 			}
@@ -240,7 +243,11 @@ public:
 
 		//Set Main Color Theme
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); //text black color
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.5f, 0.8f, 1.0f)); //button color
+		if (calleso){
+			Colorola += 500 * ImGui::GetIO().DeltaTime;
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor::HSV(((int)Colorola % 1001) / 1000.0, 0.6f, 0.8f, 1.0f)));
+		}
+		else ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.5f, 0.8f, 1.0f)); //button color
 
 
 
@@ -394,7 +401,12 @@ public:
 		}
 
 		// Button to open menu for add equation
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.3f, 0.6f, 1.0f, 1.0f)); //light blue
+		
+		if (calleso) {
+			Colorola += 500 * ImGui::GetIO().DeltaTime;
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor::HSV(((int)Colorola % 1001) / 1000.0, 0.6f, 0.8f, 1.0f)));
+		}
+		else ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.3f, 0.6f, 1.0f, 1.0f)); //light blue
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.8f, 0.0f, 1.0f)); //When the mouse touches (dark yellow)
 		if (ImGui::Button("Add Equation", ImVec2((float)screenSize.x * 0.3, 0)))
 		{
