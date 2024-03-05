@@ -54,6 +54,42 @@ static string ToLaTexFormat(const std::string& formula) {
 		i = result.find("c:e");
 	}
 
+	i = result.find_last_of("^");
+	while (i < result.size() && i > 0) {
+		int left = i + 1;
+		cout << "Found ^ at " << i << endl;
+		int openParent = 0;
+		int closeParent = 0;
+		int openBrac = 0;
+		int closeBrac = 0;
+		int right;
+		char lastChar = '\0';
+		for (int k = i; k < result.size(); k++) {
+			if (result[k] == '(') openParent++;
+			if (result[k] == ')') closeParent++;
+			if (result[k] == '{') openBrac++;
+			if (result[k] == '}') closeBrac++;
+			if (openParent == closeParent && openBrac == closeBrac || k == result.size() - 1) {
+				if (result[k] == '+' || result[k] == '-' || result[k] == '*' || result[k] == '/' || result[k] == '(') {
+					right = k;
+					break;
+				}	
+				if (lastChar == ')' || lastChar == '}' || lastChar >= '0' && lastChar <= '9' && ((result[k] >= 'a' && result[k] <= 'z') || (result[k] >= 'A' && result[k] <= 'Z'))) {
+					right = k;
+					break;
+				}
+			}
+			if (k == result.size() - 1) {
+				right = k + 1;
+				break;
+			}
+			lastChar = result[k];
+		}
+		string replacer = "{" + result.substr(left, right - left) + "}";
+		result.replace(left, right - left, replacer);
+		i = result.find_last_of("^", i - 1);
+	}
+
 	i = result.find("*");
 	while (i < result.size()) {
 		result.replace(i, 1, " \\times ");
@@ -64,11 +100,12 @@ static string ToLaTexFormat(const std::string& formula) {
 		i = result.find(greekAlphabet[k]);
 		while (i < result.size()) {
 			if (i > 0) {
-				if (result[i - 1] == ' ' ||((result[i - 1] >= '0' && (result[i - 1] <= '9')))) result.replace(i, greekAlphabet[k].size(), "\\" + greekAlphabet[k]);
+				if (result[i - 1] == '(' ||result[i - 1] == ' ' ||((result[i - 1] >= '0' && (result[i - 1] <= '9')))) result.replace(i, greekAlphabet[k].size(), "\\" + greekAlphabet[k]);
 			}else result.replace(i, greekAlphabet[k].size(), "\\" + greekAlphabet[k]);
 			i = result.find(greekAlphabet[k],i + greekAlphabet[k].size());
 		}
 	}
+
 	cout << "result LaTeX: " << result << endl;
 	return result;
 }
