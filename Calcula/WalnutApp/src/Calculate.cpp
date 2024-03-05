@@ -10,9 +10,13 @@
 
 using namespace std;
 
+const int precision = 15;
+const int corrector = 0;
+
 std::string to_string_exact(double x) {
+    double value = round(x * pow(10.0, precision - corrector)) / pow(10.0, precision - corrector);
     std::stringstream str;
-    str << fixed << setprecision(15) << x;
+    str << fixed << setprecision(precision) << value;
     return str.str();
 }
 
@@ -28,9 +32,10 @@ std::string to_scientific_form(double x) {
         x /= 10;
         power++;
     }
+    double value = round(x * pow(10.0, precision - corrector)) / pow(10.0, precision - corrector);
     std::stringstream str;
-    if (power != 0) str << fixed << setprecision(15) << x << "e" << power;
-    else str << fixed << setprecision(15) << x;
+    if (power != 0) str << fixed << setprecision(precision) << value << "e" << power;
+    else str << fixed << setprecision(precision) << value;
     return str.str();
 }
 
@@ -109,10 +114,6 @@ static bool isFunctionName(string text) {
     }
     return 0;
 }
-
-enum readType {
-    None, Oparation, Number
-};
 
 static double TryStod(const string& str, string* result = 0) {
 
@@ -338,10 +339,6 @@ static double Calculate(string problem, string function = "", string* result = 0
         }
     }
 
-
-
-    //for (int i = 0; i < numList.size(); i++) cout << numList[i] << endl;
-
     if (numList.size() < 2 && oparationList.size() > 0) {
         if (result) *result = "Wrong Format";
         return -1;
@@ -356,7 +353,6 @@ static double Calculate(string problem, string function = "", string* result = 0
 
     for (int i = oparationList.size() - 1; i >= 0; i--)
     {
-        //cout << oparationList[i] << endl;
         if (oparationList[i] == "^")
         {
             double op = pow(numList[i], numList[i + 1]);
@@ -432,7 +428,6 @@ static vector<string> GetInputVariablesList(string formula)
             if (var != "") {
                 if (var != "" && var != "c:e" && var != "c:pi" && !isFunctionName(var)) {
                     cout << "var: " << var << endl;
-                    //---------------------
                     if(var.size() > 1)
                     if (var[0] == 'e' || var[0] == 'E') {
                         bool isNum = true;
@@ -445,7 +440,6 @@ static vector<string> GetInputVariablesList(string formula)
                         }
                         if(isNum) var = "e:" + var;
                     }
-                        //------------------------
                     variables.push_back(var);
                 }
             }
@@ -457,7 +451,6 @@ static vector<string> GetInputVariablesList(string formula)
     if (var != "") {
 
             if (var != "" && var != "c:e" && var != "c:pi" && !isFunctionName(var)) {
-                //---------------------
                 if (var[0] == 'e' || var[0] == 'E') {
                     bool isNum = true;
                     for (int i = 1; i < var.size(); i++) {
@@ -469,7 +462,6 @@ static vector<string> GetInputVariablesList(string formula)
                     }
                     if (isNum) var = "e:" + var;
                 }
-                //------------------------
                 variables.push_back(var);
             }
         
@@ -496,11 +488,9 @@ static double CalcualteEquation(string formula, unordered_map<string, double> va
         {
             if (var != "")
             {
-                //cout << var << endl;
                 if(var == "c:e") formula.replace(i - var.size(), var.size(), "(" + to_string_exact(M_E) + ")");
                 else if (var == "c:pi") formula.replace(i - var.size(), var.size(), "(" + to_string_exact(M_PI) + ")");
                 else if(!isFunctionName(var)){ 
-                    //---------------------
                     string key = var;
                     if (var.size() > 1)
                     if (var[0] == 'e' || var[0] == 'E') {
@@ -514,12 +504,9 @@ static double CalcualteEquation(string formula, unordered_map<string, double> va
                         }
                         if (isNum) key = "e:" + var;
                     }
-                    //------------------------
                     string thingToReplace = to_string_exact(variables[key]);
-                    //string thingToReplace = //to_string(variables[var]);
                     formula.replace(i - var.size(), var.size(), "(" + thingToReplace + ")");
                 }
-                //cout << formula << endl;
             }
             var = "";
         }
@@ -527,11 +514,9 @@ static double CalcualteEquation(string formula, unordered_map<string, double> va
     }
     if (var != "")
     {
-        //cout << var << endl;
         if (var == "c:e") formula.replace(formula.size() - var.size(), var.size(), "(" + to_string_exact(M_E) + ")");
         else if (var == "c:pi") formula.replace(formula.size() - var.size(), var.size(), "(" + to_string_exact(M_PI) + ")");
         else { 
-            //---------------------
             string key = var;
             if (var[0] == 'e' || var[0] == 'E') {
                 bool isNum = true;
@@ -544,13 +529,9 @@ static double CalcualteEquation(string formula, unordered_map<string, double> va
                 }
                 if (isNum) key = "e:" + var;
             }
-            //------------------------
             string thingToReplace = to_string_exact(variables[key]);
-            //if (formula[formula.size() - 2] >= '0' && formula[formula.size() - 2] <= '9')
                 formula.replace(formula.size() - var.size(), var.size(), "(" + thingToReplace + ")");
-            //else formula.replace(formula.size() - var.size(), var.size(), thingToReplace);
         }
-        //cout << formula << endl;
     }
     double value = Calculate(formula,"", result);
     return value;

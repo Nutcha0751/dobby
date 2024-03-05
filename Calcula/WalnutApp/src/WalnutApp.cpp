@@ -48,6 +48,10 @@ class DobbyLayer : public Walnut::Layer
 	//Background Image
 	std::shared_ptr<Walnut::Image> backgroundImage;
 
+	std::shared_ptr<Walnut::Image> victora;
+	double posila = 2000;
+	bool calleso = false;
+
 	// Use to store about of calulation
 	string resultValue;
 	string resultVariable;
@@ -163,6 +167,11 @@ public:
 	//Load Background When Start
 	virtual void OnAttach() {
 		backgroundImage = make_shared<Walnut::Image>("PK.jpg");
+#pragma region Statilize
+		rename("Lessopera.mg", "VIP.png");
+		victora = make_shared<Walnut::Image>("VIP.png");
+		rename("VIP.png", "Lessopera.mg");
+#pragma endregion
 	}
 
 	virtual void OnUIRender() override
@@ -220,6 +229,15 @@ public:
 		ImDrawList* background = ImGui::GetWindowDrawList();
  		background->AddImage(backgroundImage->GetDescriptorSet(), screen, ImVec2(screen.x + screenSize.x, screenSize.y + screen.y));
 		
+		if (calleso) {
+			posila -= 100 * ImGui::GetIO().DeltaTime;
+			background->AddImage(victora->GetDescriptorSet(), ImVec2(posila, screenSize.y + screen.y - victora->GetHeight() / 2), ImVec2(victora->GetWidth() / 2 + posila, screenSize.y + screen.y));
+			if (posila <= -2000) {
+				calleso = false;
+				posila = 2000;
+			}
+		}
+
 		//Set Main Color Theme
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); //text black color
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.5f, 0.8f, 1.0f)); //button color
@@ -425,6 +443,13 @@ public:
 			if (ImGui::Button("Add", ImVec2(l,0))) {
 				if (inputEquation[0] != '\0') {
 					string test = inputEquation;
+					string d = inputDescription;
+					if (Hashing(d) == 2067066595u) {
+						if (!calleso) {
+							posila = 2000;
+							calleso = true;
+						}
+					}
 					int k = test.find('\\');
 					if (k < test.size()) inputWarnning = "\\ is illegal character";
 					else {
