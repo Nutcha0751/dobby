@@ -263,7 +263,7 @@ public:
 			ImGui::PopFont();
 		}
 		else {
-			auto titleImage = GetImage("Dobbdy's\\;\\, Calculator");
+			auto titleImage = GetImage("Dobby's\\;\\, Calculator");
 			ImGui::SetCursorPosX(650);
 			float width = (float)titleImage->GetWidth() / (float)titleImage->GetWidth() * (windowWidth - 1300);
 			float height = (float)titleImage->GetHeight() / (float)titleImage->GetWidth() * (windowWidth - 1300);
@@ -592,7 +592,7 @@ Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
 	Walnut::ApplicationSpecification spec;
 	spec.Name = "Dobby's Calculator";
 	Walnut::Application* app = new Walnut::Application(spec);
-
+	EquationManager::LoadEquations(equations);
 	isLaTexUsable = CheckFile("LaTex\\LaTex.exe");
 	if (isLaTexUsable) isLaTexUsable = CheckLaTex() == 0;
 	app->PushLayer<DobbyLayer>();
